@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BingX OpenAPI Skills - 面向 AI 編碼助手的交易 API 技能庫，支持永續合約、現貨交易、賬戶管理等完整業務場景">
+    <title>BingX OpenAPI Skills - AI 交易技能中心</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* BingX 官網风格色系 */
+            --primary-color: #1E8FFF;
+            --primary-light: #4DA4FF;
+            --primary-dark: #0066CC;
+            --accent-color: #4DA4FF;
+            --accent-red: #FF4757;
+            --accent-green: #2ECC71;
+            --bg-dark: #000000;
+            --bg-darker: #000000;
+            --bg-card: rgba(26, 26, 26, 0.6);
+            --bg-card-hover: rgba(35, 35, 35, 0.8);
+            --text-primary: #FFFFFF;
+            --text-secondary: #999999;
+            --text-muted: #666666;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --gradient-primary: linear-gradient(135deg, #1E8FFF 0%, #0066CC 100%);
+            --gradient-accent: linear-gradient(135deg, #4DA4FF 0%, #1E8FFF 100%);
+            --gradient-glow: radial-gradient(circle at center, rgba(30, 143, 255, 0.3), transparent);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            font-feature-settings: 'tnum';
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* AI 科技感动画背景 */
+        .ai-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* 粒子效果 */
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(30, 143, 255, 0.7);
+            border-radius: 50%;
+            animation: float-particle 20s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(30, 143, 255, 0.8);
+        }
+
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty));
+                opacity: 0;
+            }
+        }
+
+        /* 神经网络连接線 */
+        .neural-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(30, 143, 255, 0.5),
+                transparent);
+            animation: neural-pulse 4s infinite ease-in-out;
+            transform-origin: left center;
+            box-shadow: 0 0 10px rgba(30, 143, 255, 0.6);
+        }
+
+        @keyframes neural-pulse {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scaleX(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scaleX(1.2);
+            }
+        }
+
+        /* 扫描線效果 */
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(30, 143, 255, 0.6),
+                transparent);
+            animation: scan 5s linear infinite;
+            box-shadow: 0 0 10px rgba(30, 143, 255, 0.8);
+        }
+
+        @keyframes scan {
+            0% {
+                top: -2px;
+            }
+            100% {
+                top: 100%;
+            }
+        }
+
+        /* 數據流效果 */
+        .data-stream {
+            position: absolute;
+            width: 2px;
+            height: 120px;
+            background: linear-gradient(180deg,
+                transparent,
+                rgba(30, 143, 255, 0.8),
+                transparent);
+            animation: stream-fall 3s linear infinite;
+            box-shadow: 0 0 10px rgba(30, 143, 255, 0.6);
+        }
+
+        @keyframes stream-fall {
+            0% {
+                top: -100px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* 六边形网格 */
+        .hexagon {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 2px solid rgba(30, 143, 255, 0.3);
+            animation: hex-pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes hex-pulse {
+            0%, 100% {
+                opacity: 0.2;
+                box-shadow: 0 0 10px rgba(30, 143, 255, 0.3);
+            }
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 30px rgba(30, 143, 255, 0.6);
+            }
+        }
+
+        /* 电路板线条 */
+        .circuit-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(30, 143, 255, 0.8),
+                transparent);
+            animation: circuit-flow 6s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(30, 143, 255, 0.6);
+        }
+
+        @keyframes circuit-flow {
+            0%, 100% {
+                opacity: 0.3;
+                width: 0%;
+            }
+            50% {
+                opacity: 1;
+                width: 100%;
+            }
+        }
+
+        /* 光点移动 */
+        .light-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #1E8FFF;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(30, 143, 255, 1),
+                        0 0 40px rgba(30, 143, 255, 0.8),
+                        0 0 60px rgba(30, 143, 255, 0.4);
+            animation: dot-move 20s linear infinite;
+        }
+
+        @keyframes dot-move {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy));
+                opacity: 0;
+            }
+        }
+
+        /* 全息扫描线 */
+        .holo-scan {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(30, 143, 255, 0.9),
+                transparent);
+            box-shadow: 0 0 25px rgba(30, 143, 255, 0.9),
+                        0 0 50px rgba(30, 143, 255, 0.5);
+            animation: scan-vertical 16s linear infinite;
+        }
+
+        @keyframes scan-vertical {
+            0% {
+                top: -10px;
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                top: calc(100% + 10px);
+                opacity: 0;
+            }
+        }
+
+        /* 全息网格 */
+        .holo-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(43, 110, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(43, 110, 246, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 20s linear infinite;
+        }
+
+        @keyframes grid-move {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        /* 浮动代碼符號 */
+        .floating-code {
+            position: absolute;
+            color: rgba(30, 143, 255, 0.5);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 1.6rem;
+            font-weight: 600;
+            animation: float-code 15s infinite ease-in-out;
+            pointer-events: none;
+            text-shadow: 0 0 15px rgba(30, 143, 255, 0.7);
+        }
+
+        @keyframes float-code {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(var(--dx), var(--dy)) rotate(180deg);
+                opacity: 0.8;
+            }
+        }
+
+        /* 数字矩阵效果 */
+        .matrix-text {
+            position: absolute;
+            color: rgba(30, 143, 255, 0.5);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            animation: matrix-fall 8s linear infinite;
+            white-space: nowrap;
+            text-shadow: 0 0 10px rgba(30, 143, 255, 0.7);
+        }
+
+        @keyframes matrix-fall {
+            0% {
+                top: -20px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* AI思考波纹 */
+        .ai-ripple {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 3px solid rgba(30, 143, 255, 0.5);
+            border-radius: 50%;
+            animation: ripple-expand 4s ease-out infinite;
+            box-shadow: 0 0 20px rgba(30, 143, 255, 0.6);
+        }
+
+        @keyframes ripple-expand {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 2rem 100px;
+            text-align: center;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(30, 143, 255, 0.15), transparent 70%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                linear-gradient(90deg, transparent, rgba(30, 143, 255, 0.1), transparent);
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            text-shadow: 0 0 80px rgba(30, 143, 255, 0.4);
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: rgba(30, 143, 255, 0.15);
+            border: 1px solid rgba(30, 143, 255, 0.4);
+            border-radius: 24px;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: badge-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes badge-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(30, 143, 255, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(30, 143, 255, 0.7);
+            }
+        }
+
+        .badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent);
+            animation: badge-shine 3s infinite;
+        }
+
+        @keyframes badge-shine {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* CTA Buttons */
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 0.01em;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 0 30px rgba(30, 143, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(30, 143, 255, 0.8);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+            background: rgba(30, 143, 255, 0.1);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+            font-weight: 400;
+            margin-bottom: 4rem;
+            line-height: 1.8;
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2.5rem;
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                rgba(30, 143, 255, 0.4),
+                transparent 30%
+            );
+            animation: rotate-border 5s linear infinite;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes rotate-border {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(30, 143, 255, 0.4);
+            box-shadow: 0 20px 60px rgba(30, 143, 255, 0.25);
+            background: var(--bg-card-hover);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(30, 143, 255, 0.4);
+            box-shadow: 0 20px 60px rgba(30, 143, 255, 0.25);
+            background: var(--bg-card-hover);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            animation: float-icon 3s ease-in-out infinite;
+            box-shadow: 0 10px 40px rgba(30, 143, 255, 0.6);
+        }
+
+        @keyframes float-icon {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            background: conic-gradient(
+                from 0deg,
+                #1E8FFF,
+                #4DA4FF,
+                #1E8FFF
+            );
+            border-radius: 20px;
+            z-index: -1;
+            animation: rotate-border 4s linear infinite;
+            opacity: 0.6;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        /* Skills Categories */
+        .skills-category {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 24px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .skills-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(36, 99, 235, 0.1),
+                transparent);
+            animation: skill-shine 3s infinite;
+            animation-delay: var(--delay, 0s);
+        }
+
+        @keyframes skill-shine {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .skills-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.2rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .skill-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(36, 99, 235, 0.3);
+        }
+
+        .skill-name {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-family: 'Monaco', 'Menlo', monospace;
+            min-width: 200px;
+        }
+
+        .skill-desc {
+            color: var(--text-secondary);
+        }
+
+        /* Installation Steps */
+        .install-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .install-card {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 2px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .install-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(30, 143, 255, 0.3);
+        }
+
+        .install-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .install-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .install-command {
+            background: rgba(10, 10, 10, 0.6);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(30, 143, 255, 0.2);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.95rem;
+            color: var(--primary-color);
+            margin: 1rem 0;
+            overflow-x: auto;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Code Examples */
+        .code-example {
+            background: rgba(10, 10, 10, 0.6);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(30, 143, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin: 2rem 0;
+        }
+
+        .code-example pre {
+            color: var(--text-secondary);
+            overflow-x: auto;
+            line-height: 1.8;
+        }
+
+        .code-comment {
+            color: #6A9955;
+        }
+
+        .code-string {
+            color: #CE9178;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 4rem 0 2rem;
+            margin-top: 100px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        /* Fade-in animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .install-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- AI 科技感背景动画 -->
+    <div class="ai-background">
+        <!-- 全息扫描线 -->
+        <div class="holo-scan"></div>
+        <div class="holo-scan" style="animation-delay: 4s; opacity: 0.6;"></div>
+    </div>
+
+    <!-- Header -->
+    <header style="position: relative; z-index: 1001;">
+        <nav>
+            <div class="logo">🚀 BingX API Skills</div>
+            <ul class="nav-links">
+                <li><a href="#features">特性</a></li>
+                <li><a href="#skills">技能</a></li>
+                <li><a href="#install">安裝</a></li>
+                <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content fade-in-up">
+            <div class="badge">✨ 15 個專業交易技能模組</div>
+            <h1>BingX OpenAPI Skills</h1>
+            <p class="subtitle">
+                面向 AI 編碼助手的 BingX 交易所 API 技能庫<br>
+                用自然語言對話即可查詢行情、下單交易、管理賬戶
+            </p>
+            <div class="cta-buttons">
+                <a href="#install" class="btn btn-primary">立即開始</a>
+                <a href="https://github.com/BingX-API/api-ai-skills" class="btn btn-secondary">查看文檔</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">技能模組</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">API 端点</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">業務場景</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">安裝方式</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title">核心特性</h2>
+            <p class="section-subtitle">讓 AI 助手成為您的專屬交易助理</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">自然語言交互</h3>
+                    <p class="feature-description">
+                        無需編寫代碼，直接用對話方式查詢行情、下單交易。
+                        AI 自動處理 HMAC SHA256 簽名等複雜邏輯。
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">完整業務覆蓋</h3>
+                    <p class="feature-description">
+                        涵蓋永續合約、現貨、幣本位、跟單交易、賬戶管理等
+                        15 個技能模組，100+ API 端点全支持。
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">安全可靠</h3>
+                    <p class="feature-description">
+                        生產環境写操作需用戶確認，API Key 脫敏展示，
+                        支持備用域名自動降級，確保交易安全。
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">快速上手</h3>
+                    <p class="feature-description">
+                        三種安裝方式任選，支持 Claude Code、Cursor、
+                        Windsurf 等主流 AI 編碼助手。
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3 class="feature-title">多環境支持</h3>
+                    <p class="feature-description">
+                        支持生產實盤、模拟盘、測試環境，靈活切换，
+                        滿足不同階段的交易需求。
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3 class="feature-title">完善文檔</h3>
+                    <p class="feature-description">
+                        每個技能提供詳細的 TypeScript 示例代碼和
+                        完整 API 文檔，快速上手無障礙。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" style="background: rgba(255, 255, 255, 0.02);">
+        <div class="container">
+            <h2 class="section-title">技能列表</h2>
+            <p class="section-subtitle">覆蓋 BingX 交易所全業務場景</p>
+
+            <!-- U本位永續合約 -->
+            <div class="skills-category">
+                <div class="category-header">
+                    <div class="category-icon">📈</div>
+                    <div>
+                        <h3 class="category-title">U本位永續合約</h3>
+                        <p style="color: var(--text-secondary); margin-top: 0.3rem;">USDT-M Perpetual Futures</p>
+                    </div>
+                </div>
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-swap-market</span>
+                        <span class="skill-desc">查詢永續合約行情數據（價格、深度、K線、資金費率、持倉量等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-swap-trade</span>
+                        <span class="skill-desc">進行永續合約交易操作（下單、撤單、槓桿設置、保證金模式等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-swap-account</span>
+                        <span class="skill-desc">查詢賬戶信息（餘額、持倉、手续費率、資金流水等）</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 現貨交易 -->
+            <div class="skills-category">
+                <div class="category-header">
+                    <div class="category-icon" style="background: var(--gradient-accent);">💱</div>
+                    <div>
+                        <h3 class="category-title">現貨交易</h3>
+                        <p style="color: var(--text-secondary); margin-top: 0.3rem;">Spot Trading</p>
+                    </div>
+                </div>
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-spot-market</span>
+                        <span class="skill-desc">查詢現貨行情數據（價格、深度、K線、成交記錄等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-spot-trade</span>
+                        <span class="skill-desc">進行現貨交易操作（下單、撤單、訂單查詢、OCO訂單等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-spot-account</span>
+                        <span class="skill-desc">查詢現貨賬戶信息（餘額、資產總覽、資產划转等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-spot-wallet</span>
+                        <span class="skill-desc">錢包操作（充值、提现、划转記錄等）</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 幣本位合約 -->
+            <div class="skills-category">
+                <div class="category-header">
+                    <div class="category-icon" style="background: var(--gradient-primary);">🪙</div>
+                    <div>
+                        <h3 class="category-title">幣本位合約</h3>
+                        <p style="color: var(--text-secondary); margin-top: 0.3rem;">Coin-M Perpetual Futures</p>
+                    </div>
+                </div>
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-coinm-market</span>
+                        <span class="skill-desc">查詢幣本位合約行情（價格、深度、K線、資金費率等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-coinm-trade</span>
+                        <span class="skill-desc">幣本位合約交易操作（下單、撤單、槓桿、保證金模式等）</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 其他業務 -->
+            <div class="skills-category">
+                <div class="category-header">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">⚙️</div>
+                    <div>
+                        <h3 class="category-title">賬戶管理 & 其他</h3>
+                        <p style="color: var(--text-secondary); margin-top: 0.3rem;">Account Management & More</p>
+                    </div>
+                </div>
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-copytrade-spot</span>
+                        <span class="skill-desc">現貨跟單（賣出跟單持倉、查詢盈利等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-copytrade-swap</span>
+                        <span class="skill-desc">合約跟單（平倉、設置止盈止损、佣金設置等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-fund-account</span>
+                        <span class="skill-desc">資金賬戶管理（餘額查詢、資產總覽、賬戶間划转等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-sub-account</span>
+                        <span class="skill-desc">子賬戶管理（创建/冻结子賬戶、API Key 管理等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-agent</span>
+                        <span class="skill-desc">代理/經紀商（邀請用戶、佣金查詢、合作夥伴數據等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-standard-trade</span>
+                        <span class="skill-desc">標準合約（持倉查詢、訂單歷史、餘額查詢等）</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="install">
+        <div class="container">
+            <h2 class="section-title">快速開始</h2>
+            <p class="section-subtitle">三種安裝方式任選，1 分钟完成配置</p>
+
+            <div class="install-methods">
+                <div class="install-card">
+                    <div class="install-number">1</div>
+                    <h3 class="install-title">AI 對話安裝（推薦）</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        適用于 OpenClaw、Cursor、Claude Code 等 AI 編碼助手
+                    </p>
+                    <div class="install-command">
+                        安裝skills https://github.com/BingX-API/api-ai-skills
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        直接在 AI 對話中说这句话，AI 會自動識別并完成安裝！
+                    </p>
+                </div>
+
+                <div class="install-card">
+                    <div class="install-number">2</div>
+                    <h3 class="install-title">Claude Code 外掛程式安裝</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        使用 Claude Code 內建的外掛程式管理器
+                    </p>
+                    <div class="install-command">
+                        /plugin marketplace add BingX-API/api-ai-skills<br>
+                        /plugin install bingx-ai-skills
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        支持自動更新，推薦 Claude Code 用戶使用
+                    </p>
+                </div>
+
+                <div class="install-card">
+                    <div class="install-number">3</div>
+                    <h3 class="install-title">NPX 命令安裝</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        適用于 Cursor、Windsurf 等支持 skills 机制的 AI 助手
+                    </p>
+                    <div class="install-command">
+                        npx skills add BingX-API/api-ai-skills
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        需要 Node.js 環境，一行命令完成安裝
+                    </p>
+                </div>
+            </div>
+
+            <!-- Usage Example -->
+            <div style="margin-top: 4rem;">
+                <h3 style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">使用示例</h3>
+                <div class="code-example">
+                    <pre><span class="code-comment"># 查詢行情（無需 API Key）</span>
+<span class="code-string">"查詢 BTC-USDT 的當前價格"</span>
+
+<span class="code-comment"># 下單交易（需要配置 API Key）</span>
+<span class="code-string">"幫我下一個 BTC-USDT 的限價買单，價格 50000，數量 0.01"</span>
+
+<span class="code-comment"># 查詢賬戶</span>
+<span class="code-string">"查看我的賬戶餘額和持倉"</span>
+
+<span class="code-comment"># 現貨查詢</span>
+<span class="code-string">"查詢現貨 ETH-USDT 的深度數據"</span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="background: var(--gradient-primary); padding: 60px 2rem; text-align: center; margin-top: 80px;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">準備好開始了吗？</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                立即安裝 BingX API Skills，讓 AI 助手成為您的專屬交易助理
+            </p>
+            <div class="cta-buttons">
+                <a href="https://github.com/BingX-API/api-ai-skills" class="btn" style="background: white; color: #2B6EF6;">
+                    查看 GitHub
+                </a>
+                <a href="#install" class="btn btn-secondary" style="border-color: white; color: white;">
+                    安裝指南
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>BingX API Skills</h3>
+                <p style="color: var(--text-secondary); margin-top: 1rem;">
+                    面向 AI 編碼助手的 BingX 交易所 API 技能庫
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h3>快速鏈接</h3>
+                <ul>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub 倉库</a></li>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills/blob/master/README.md">使用文檔</a></li>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills/blob/master/GUIDE.md">技能指南</a></li>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills/issues">問題反饋</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>相關資源</h3>
+                <ul>
+                    <li><a href="https://bingx.com">BingX 官網</a></li>
+                    <li><a href="https://bingx-api.github.io/docs">API 文檔</a></li>
+                    <li><a href="https://bingx.com/en/accounts/api">API Key 管理</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>支持的 AI 助手</h3>
+                <ul>
+                    <li>Claude Code</li>
+                    <li>Cursor</li>
+                    <li>Windsurf</li>
+                    <li>OpenClaw</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 BingX API Skills. 基于 MIT 协议开源.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .skill-category, .install-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // 生成科技感动画效果
+        const aiBackground = document.querySelector('.ai-background');
+
+        // 生成六边形网格
+        const hexCount = 20;
+        for (let i = 0; i < hexCount; i++) {
+            const hex = document.createElement('div');
+            hex.className = 'hexagon';
+            hex.style.left = Math.random() * 100 + '%';
+            hex.style.top = Math.random() * 100 + '%';
+            hex.style.animationDelay = Math.random() * 8 + 's';
+            hex.style.animationDuration = (6 + Math.random() * 4) + 's';
+            aiBackground.appendChild(hex);
+        }
+
+        // 生成电路板线条
+        const circuitCount = 15;
+        for (let i = 0; i < circuitCount; i++) {
+            const circuit = document.createElement('div');
+            circuit.className = 'circuit-line';
+            circuit.style.left = Math.random() * 100 + '%';
+            circuit.style.top = Math.random() * 100 + '%';
+            circuit.style.width = (100 + Math.random() * 300) + 'px';
+            circuit.style.transform = `rotate(${Math.random() * 360}deg)`;
+            circuit.style.animationDelay = Math.random() * 6 + 's';
+            circuit.style.animationDuration = (4 + Math.random() * 4) + 's';
+            aiBackground.appendChild(circuit);
+        }
+
+        // 生成光点
+        const dotCount = 25;
+        for (let i = 0; i < dotCount; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'light-dot';
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.top = Math.random() * 100 + '%';
+            dot.style.setProperty('--dx', (Math.random() - 0.5) * 800 + 'px');
+            dot.style.setProperty('--dy', (Math.random() - 0.5) * 800 + 'px');
+            dot.style.animationDelay = Math.random() * 20 + 's';
+            dot.style.animationDuration = (16 + Math.random() * 12) + 's';
+            aiBackground.appendChild(dot);
+        }
+
+        // 移除鼠标粒子效果
+
+        // 数字递增动画
+        function animateNumber(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + (element.dataset.suffix || '');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + (element.dataset.suffix || '');
+                }
+            }, 16);
+        }
+
+        // 观察数字卡片并触发动画
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    entry.target.dataset.animated = 'true';
+                    const number = entry.target.querySelector('.stat-number');
+                    const targetValue = parseInt(number.textContent);
+                    animateNumber(number, targetValue);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-card').forEach(card => {
+            statObserver.observe(card);
+        });
+
+        // 为skills-category添加延迟动画
+        document.querySelectorAll('.skills-category').forEach((category, index) => {
+            category.style.setProperty('--delay', (index * 0.5) + 's');
+        });
+    </script>
+</body>
+</html>
