@@ -44,6 +44,15 @@ Public market data for BingX perpetual futures. No special API KEY permission is
 
 * **interval**: `1m` | `3m` | `5m` | `15m` | `30m` | `1h` | `2h` | `4h` | `6h` | `8h` | `12h` | `1d` | `3d` | `1w` | `1M`
 
+### Parameter Validation Rules
+
+* **symbol**: Must match `^[A-Z0-9]+-[A-Z]+$`; max 20 characters (e.g., `BTC-USDT`)
+* **limit**: Positive integer; default and max vary per endpoint (typically 500–1000)
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`
+* **interval**: Must exactly match one of the enum values above
+* **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

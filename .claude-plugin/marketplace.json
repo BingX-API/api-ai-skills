@@ -13,7 +13,7 @@
       "name": "bingx-ai-skills",
       "source": "./",
       "description": "15 BingX trading skills — USDT-M perpetual (market/trade/account), Spot (market/trade/account/wallet), Coin-M perpetual, Copy trading, Account management",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "BingX"
       },

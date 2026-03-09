@@ -7,7 +7,7 @@
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | timestamp | int64 | Yes | Request timestamp in milliseconds |
-| recvWindow | int64 | No | Request validity window in ms, max 60000 |
+| recvWindow | int64 | No | Request validity window in ms, max 5000 |
 
 > **Body type note:** Endpoints marked **JSON** must be called with `Content-Type: application/json` and the params (including `signature`) sent as a JSON object in the request body. All other POST endpoints use `application/x-www-form-urlencoded`.
 

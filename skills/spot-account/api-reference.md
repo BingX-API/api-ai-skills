@@ -7,7 +7,7 @@
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | timestamp | int64 | Yes | Request timestamp in milliseconds |
-| recvWindow | int64 | No | Request validity window in ms, max 60000 |
+| recvWindow | int64 | No | Request validity window in ms, max 5000 |
 
 ---
 
@@ -122,7 +122,7 @@ Query asset transfer history between accounts.
 | `endTime` | int | No | End time (milliseconds) |
 | `current` | int | No | current page default1 |
 | `size` | int | No | Page size default 10 can not exceed 100 |
-| `recvWindow` | int | No | Request validity window (milliseconds), max 60000 |
+| `recvWindow` | int | No | Request validity window (milliseconds), max 5000 |
 
 > **Note:** This endpoint returns `{ total, rows }` directly at the top level, NOT wrapped in the standard `{ code, msg, data }` envelope.
 

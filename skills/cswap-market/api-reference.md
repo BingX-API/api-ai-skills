@@ -7,7 +7,7 @@
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | timestamp | int64 | Yes | Request timestamp in milliseconds |
-| recvWindow | int64 | No | Request validity window in ms, max 60000 |
+| recvWindow | int64 | No | Request validity window in ms, max 5000 |
 
 **Note:** Market data endpoints do not require HMAC; a `timestamp` query parameter is required for all endpoints.
 

@@ -73,6 +73,19 @@ Authenticated trading endpoints for BingX spot market. All endpoints require HMA
 **cancelRestrictions** (limit cancellation by order status):
 - `NEW` | `PENDING` | `PARTIALLY_FILLED`
 
+### Parameter Validation Rules
+
+Before sending a request, validate parameters client-side to avoid unnecessary API errors:
+
+* **symbol**: Must match `^[A-Z0-9]+-[A-Z]+$`; max 20 characters (e.g., `BTC-USDT`)
+* **quantity**: Must be a positive number (> 0); precision depends on the symbol's lot-size filter
+* **quoteOrderQty**: When provided, must be a positive number (> 0); represents amount in quote asset
+* **price**: When provided, must be a positive number (> 0)
+* **stopPrice**: When provided, must be a positive number (> 0)
+* **newClientOrderId**: 1–40 characters; avoid special characters that could be interpreted as injection
+* **recvWindow**: Integer, 1–5000 ms; keep as small as possible (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

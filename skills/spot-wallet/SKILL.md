@@ -85,6 +85,20 @@ Authenticated endpoints for BingX wallet deposits and withdrawals. All endpoints
 - `2` — Standard contract account
 - `3` — Perpetual futures account
 
+### Parameter Validation Rules
+
+Before sending a request, validate parameters client-side to avoid unnecessary API errors:
+
+* **coin**: Uppercase letters and digits only; pattern `^[A-Z0-9]{1,20}$` (e.g., `USDT`, `BTC`)
+* **address**: Non-empty string; max 200 characters; must be a valid blockchain address for the target network
+* **amount**: Must be a positive number (> 0); must meet the minimum withdrawal amount for the coin/network (query via coin network config endpoint)
+* **network**: Uppercase network identifier (e.g., `ERC20`, `BEP20`, `TRC20`); must match a supported network for the coin
+* **addressTag**: When required by the coin (e.g., XRP, EOS), must be a non-empty string; max 128 characters
+* **limit**: Integer, 1–1000; default is `1000` for history, `100` for addresses
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`; max range 90 days
+* **recvWindow**: Integer, 1–5000 ms; keep as small as possible (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

@@ -58,6 +58,18 @@ This skill covers the **trader (signal provider)** side of USDT-M perpetual futu
 
 * **commissionRate**: Commission rate value as a decimal string, e.g. `"0.001"` (required)
 
+### Parameter Validation Rules
+
+* **orderId**: Required for close/TP-SL operations; must be a valid order ID string
+* **takeProfit** / **stopLoss**: When provided, must be a positive number (> 0) as a string decimal
+* **symbol**: When provided, must match `^[A-Z0-9]+-USDT$` (e.g., `BTC-USDT`)
+* **commissionRate**: Decimal string, must be ≥ 0 (e.g., `"0.001"`)
+* **pageIndex**: Positive integer, must be > 0
+* **pageSize**: Positive integer, must be > 0; varies per endpoint
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`
+* **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

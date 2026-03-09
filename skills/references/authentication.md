@@ -47,7 +47,7 @@ Collect **all** request parameters (query string + request body fields), **sort 
 **Example parameters (after ASCII sort):**
 
 ```
-limit=100&recvWindow=5000&symbol=BTC-USDT&timestamp=1702731600000&type=MARKET
+limit=100&recvWindow=5000&symbol=BTC-USDT&timestamp=170273150000&type=MARKET
 ```
 
 ### Step 2 — Sign with HMAC SHA256
@@ -118,7 +118,7 @@ When a parameter value contains `[` or `{`, URL-encode only the **value** (not t
 **Example URL** (the `data` value is URL-encoded):
 
 ```
-https://open-api.bingx.com/openApi/spot/v1/trade/batchOrders?data=%5B%7B%22symbol%22%3A%22BTC-USDT%22%2C%22side%22%3A%22BUY%22%2C%22type%22%3A%22LIMIT%22%2C%22quantity%22%3A0.001%2C%22price%22%3A85000%7D%5D&recvWindow=60000&timestamp=1766679008165&signature=<hex>
+https://open-api.bingx.com/openApi/spot/v1/trade/batchOrders?data=%5B%7B%22symbol%22%3A%22BTC-USDT%22%2C%22side%22%3A%22BUY%22%2C%22type%22%3A%22LIMIT%22%2C%22quantity%22%3A0.001%2C%22price%22%3A85000%7D%5D&recvWindow=5000&timestamp=1766679008165&signature=<hex>
 ```
 
 ---
@@ -131,7 +131,7 @@ For endpoints that use `application/json`, `timestamp` and `signature` must be i
 
 ```json
 {
-  "recvWindow": 10000,
+  "recvWindow": 5000,
   "symbol": "ETH-USDT",
   "type": "MARKET",
   "side": "SELL",
@@ -143,14 +143,14 @@ For endpoints that use `application/json`, `timestamp` and `signature` must be i
 **Signing string** (all fields including timestamp, ASCII-sorted):
 
 ```
-positionSide=SHORT&quantity=0.01&recvWindow=10000&side=SELL&symbol=ETH-USDT&timestamp=1696751141337&type=MARKET
+positionSide=SHORT&quantity=0.01&recvWindow=5000&side=SELL&symbol=ETH-USDT&timestamp=1696751141337&type=MARKET
 ```
 
 **Final request body:**
 
 ```json
 {
-  "recvWindow": 10000,
+  "recvWindow": 5000,
   "symbol": "ETH-USDT",
   "type": "MARKET",
   "side": "SELL",
@@ -166,8 +166,20 @@ positionSide=SHORT&quantity=0.01&recvWindow=10000&side=SELL&symbol=ETH-USDT&time
 ## Timestamp & recvWindow
 
 - `timestamp`: current Unix time in milliseconds.
-- `recvWindow` (optional): specifies how many milliseconds the request is valid. Default is `5000`; maximum is `60000`.
+- `recvWindow` (optional): specifies how many milliseconds the request is valid. Default is `5000`; maximum is `5000`.
 - The server rejects requests where `serverTime - timestamp > recvWindow`.
+
+---
+
+## Replay Protection
+
+BingX API uses `timestamp` + `recvWindow` to guard against replay attacks. The server rejects any request whose timestamp falls outside the acceptance window. To maximize security:
+
+- **Keep recvWindow as small as possible.** The default of `5000` (5 seconds) is recommended. Only increase it if you experience clock-drift or high-latency conditions.
+- **Synchronize your clock.** Use NTP or the BingX server-time endpoint (`GET /openApi/swap/v1/server/time`) to keep your local clock within 1–2 seconds of the server.
+- **Use HTTPS only.** All BingX API base URLs enforce TLS. Never downgrade to HTTP — this prevents man-in-the-middle interception and replay.
+- **Nonce (not yet supported).** The BingX API does not currently accept a `nonce` parameter. If nonce support is added in the future, include a `crypto.randomUUID()` value in every request for stronger per-request uniqueness. Monitor the official changelog for updates.
+- **IP whitelist.** Binding your API Key to a specific IP address prevents replayed requests from unauthorized networks, even within the `recvWindow` window.
 
 ---
 
@@ -332,7 +344,7 @@ const result = await fetchSigned(
     side: "SELL",
     positionSide: "SHORT",
     quantity: 0.01,
-    recvWindow: 10000,
+    recvWindow: 5000,
   },
   true // jsonBody
 );

@@ -43,6 +43,15 @@ This skill covers the **trader (signal provider)** side of spot copy trading: se
 * **pageSize**: Number of records per page (optional, default varies by endpoint)
 * **recvWindow**: Request validity window in milliseconds (optional)
 
+### Parameter Validation Rules
+
+* **orderId**: Required for sell operations; must be a valid buy order ID string
+* **pageIndex**: Positive integer, must be > 0
+* **pageSize**: Positive integer, must be > 0
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`
+* **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

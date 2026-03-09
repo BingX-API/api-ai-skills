@@ -7,7 +7,7 @@
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | timestamp | int64 | Yes | Request timestamp in milliseconds |
-| recvWindow | int64 | No | Request validity window in ms, max 60000 |
+| recvWindow | int64 | No | Request validity window in ms, max 5000 |
 
 > **Note:** Copy Trade Spot endpoints are documented at `https://bingx-api.github.io/docs-v3/#/en/Copy%20Trade/Spot%20Trading/`. The paths below use the `/openApi/copyTrading/v1/` prefix per the official BingX API documentation.
 

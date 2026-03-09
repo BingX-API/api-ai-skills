@@ -7,7 +7,7 @@
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | timestamp | int64 | Yes | Request timestamp in milliseconds |
-| recvWindow | int64 | No | Request validity window in ms, max 60000 |
+| recvWindow | int64 | No | Request validity window in ms, max 5000 |
 
 > **Note:** Endpoint paths use the `/openApi/copyTrading/v1/` prefix per the official BingX API documentation. Order management APIs use `/swap/trace/` path, while trader profile and profit APIs use `/PFutures/` path.
 

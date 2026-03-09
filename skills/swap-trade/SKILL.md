@@ -142,6 +142,20 @@ When attaching `stopLoss` or `takeProfit` to a `MARKET` or `LIMIT` order:
 
 > **Constraint:** `stopLoss`/`takeProfit` objects are **only** supported on `MARKET` or `LIMIT` order types. They cannot be used with `STOP_MARKET`, `STOP`, `TAKE_PROFIT_MARKET`, `TAKE_PROFIT`, `TRAILING_STOP_MARKET`, or `TRAILING_TP_SL`.
 
+### Parameter Validation Rules
+
+Before sending a request, validate parameters client-side to avoid unnecessary API errors:
+
+* **symbol**: Must match `^[A-Z0-9]+-[A-Z]+$`; max 20 characters (e.g., `BTC-USDT`)
+* **quantity**: Must be a positive number (> 0); max precision depends on the symbol's contract specification
+* **price**: When provided, must be a positive number (> 0)
+* **stopPrice**: When provided, must be a positive number (> 0); must differ from current market price
+* **leverage**: Positive integer; range varies per symbol (typically 1–125 for BTC-USDT)
+* **clientOrderId**: Alphanumeric only, 1–40 characters; pattern `^[a-zA-Z0-9]{1,40}$`; no special characters
+* **priceRate**: Trailing callback rate; must satisfy 0 < value ≤ 1 (e.g., `0.05` = 5%)
+* **recvWindow**: Integer, 1–5000 ms; keep as small as possible (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

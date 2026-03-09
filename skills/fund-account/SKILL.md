@@ -83,6 +83,20 @@ Authenticated endpoints for BingX fund account management. All endpoints require
 - `1` — Fund account
 - `2` — Standard contract account
 
+### Parameter Validation Rules
+
+Before sending a request, validate parameters client-side to avoid unnecessary API errors:
+
+* **asset** / **coin**: Uppercase letters and digits only; pattern `^[A-Z0-9]{1,20}$` (e.g., `USDT`, `BTC`)
+* **amount**: Must be a positive number (> 0); precision depends on the asset
+* **type**: Must exactly match one of the `TransferDirection` enum values (e.g., `FUND_PFUTURES`)
+* **userAccount**: Non-empty string; format depends on `userAccountType` — UID (digits), email, or phone number
+* **callingCode**: Required when `userAccountType` is `2` (phone); must be a valid international dialing code (e.g., `86`, `1`)
+* **size**: Integer, 1–100; default `10`
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`
+* **recvWindow**: Integer, 1–5000 ms; keep as small as possible (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

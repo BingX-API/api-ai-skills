@@ -1,6 +1,6 @@
 {
   "name": "@bingx-api/ai-skills",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "BingX OpenAPI skills for AI coding assistants - Complete trading API support for perpetual contracts, spot, and account management",
   "keywords": [
     "claude-code",

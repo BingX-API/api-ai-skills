@@ -108,6 +108,19 @@ When attaching `stopLoss` or `takeProfit` to a `MARKET` or `LIMIT` order:
 }
 ```
 
+### Parameter Validation Rules
+
+Before sending a request, validate parameters client-side to avoid unnecessary API errors:
+
+* **symbol**: Must match `^[A-Z0-9]+-USD$`; max 20 characters (e.g., `BTC-USD`). Coin-M uses `USD`, not `USDT`
+* **quantity**: Positive integer (number of contracts); each contract has a fixed notional value (e.g., $10)
+* **price**: When provided, must be a positive number (> 0)
+* **stopPrice**: When provided, must be a positive number (> 0); must differ from current market price
+* **leverage**: Positive integer; range varies per symbol (typically 1–125)
+* **clientOrderId**: Alphanumeric only, 1–40 characters; pattern `^[a-zA-Z0-9]{1,40}$`; no special characters
+* **recvWindow**: Integer, 1–5000 ms; keep as small as possible (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

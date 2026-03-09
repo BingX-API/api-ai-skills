@@ -67,6 +67,16 @@ Authenticated read-only endpoints for BingX Agent (affiliate/broker) data. All e
 - `81` — Perpetual contract API commission
 - `82` — Spot trading API commission
 
+### Parameter Validation Rules
+
+* **pageIndex**: Positive integer, must be > 0
+* **pageSize**: Positive integer, must be > 0; max 100 or 200 depending on endpoint
+* **startTime** / **endTime**: Format varies — milliseconds for invited users, date string `"YYYYMMDD"` for commission/partner endpoints; `endTime` must be ≥ `startTime`; max query window 30 days
+* **uid**: When provided, must be a positive integer
+* **commissionBizType**: Must be `81` (perpetual) or `82` (spot)
+* **lastUid**: When paginating > 10,000 records, pass the last UID from the previous page
+* **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
 
 ---
 

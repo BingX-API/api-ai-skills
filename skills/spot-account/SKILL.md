@@ -92,6 +92,19 @@ Authenticated endpoints for BingX spot trading and account management. All endpo
 - `eran` — Wealth management
 - `c2c` — C2C account
 
+### Parameter Validation Rules
+
+* **symbol**: Must match `^[A-Z0-9]+-[A-Z]+$`; max 20 characters (e.g., `BTC-USDT`)
+* **quantity**: Must be a positive number (> 0); precision depends on the symbol
+* **quoteOrderQty**: When provided, must be a positive number (> 0)
+* **price**: When provided, must be a positive number (> 0)
+* **stopPrice**: When provided, must be a positive number (> 0)
+* **newClientOrderId**: 1–40 characters; avoid special characters
+* **amount**: Must be a positive number (> 0) for transfers
+* **type**: Must exactly match one of the `TransferType` enum values
+* **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

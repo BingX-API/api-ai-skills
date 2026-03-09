@@ -47,6 +47,15 @@ Authenticated read-only endpoints for BingX perpetual futures account data. All 
 | `SYSTEM_DEDUCTION` | System deduction |
 | `GTD_PRICE` | Guaranteed price |
 
+### Parameter Validation Rules
+
+* **symbol**: When provided, must match `^[A-Z0-9]+-[A-Z]+$`; max 20 characters (e.g., `BTC-USDT`)
+* **incomeType**: When provided, must exactly match one of the enum values above
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`
+* **limit**: Positive integer, 1–1000; default 100
+* **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

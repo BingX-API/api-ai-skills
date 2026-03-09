@@ -39,6 +39,14 @@ Public market data for BingX spot trading. No authentication required.
 * **interval**: `1m` | `3m` | `5m` | `15m` | `30m` | `1h` | `2h` | `4h` | `6h` | `8h` | `12h` | `1d` | `3d` | `1w` | `1M`
 * **type** (order book aggregation precision): `step0` | `step1` | `step2` | `step3` | `step4` | `step5`
 
+### Parameter Validation Rules
+
+* **symbol**: Must match `^[A-Z0-9]+-[A-Z]+$` (e.g., `BTC-USDT`); depth endpoint uses `BTC_USDT` (underscore)
+* **limit**: Positive integer; default and max vary per endpoint
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`
+* **interval**: Must exactly match one of the enum values above
+* **type**: When used, must be one of `step0`–`step5`
+
 ---
 
 ## Quick Start

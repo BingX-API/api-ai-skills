@@ -92,6 +92,19 @@ Authenticated endpoints for managing BingX sub-accounts (master account operatio
 - `1` — Completed
 - `6` — Chain uploaded
 
+### Parameter Validation Rules
+
+* **subAccountString**: Must start with a letter, contain at least one number, and be longer than 6 characters
+* **subUid**: Positive integer (long)
+* **coin**: Uppercase letters and digits only; pattern `^[A-Z0-9]{1,20}$` (e.g., `USDT`)
+* **amount** / **transferAmount**: Must be a positive number (> 0)
+* **permissions**: Array of integers; each must be one of `1, 2, 3, 4, 5, 7`
+* **ipAddresses**: When provided, each must be a valid IPv4 address
+* **page**: Positive integer, starting from 1
+* **limit**: Positive integer, 1–1000
+* **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start

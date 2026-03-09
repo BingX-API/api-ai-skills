@@ -36,6 +36,13 @@ Coin-M contracts are **coin-margined** (settled in the base asset, e.g., BTC). S
 
 * **interval**: `1m` | `3m` | `5m` | `15m` | `30m` | `1h` | `2h` | `4h` | `6h` | `12h` | `1d` | `3d` | `1w` | `1M`
 
+### Parameter Validation Rules
+
+* **symbol**: Must match `^[A-Z0-9]+-USD$`; max 20 characters (e.g., `BTC-USD`). Coin-M uses `USD`, not `USDT`
+* **limit**: Positive integer; default and max vary per endpoint
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`
+* **interval**: Must exactly match one of the enum values above
+
 ---
 
 ## Quick Start

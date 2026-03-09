@@ -111,6 +111,15 @@ Query the standard contract account balance.
 | `marginAvailable` | bool | Whether it can be used as margin |
 | `updateTime` | number | Last update timestamp |
 
+### Parameter Validation Rules
+
+* **symbol**: Must match `^[A-Z0-9]+-[A-Z]+$`; max 20 characters (e.g., `BTC-USDT`)
+* **orderId**: When provided, must be a positive integer
+* **startTime** / **endTime**: Unix timestamps in milliseconds; `endTime` must be ≥ `startTime`
+* **limit**: Positive integer
+* **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
+* **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
+
 ---
 
 ## Quick Start
