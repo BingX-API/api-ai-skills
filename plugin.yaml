@@ -1,5 +1,5 @@
 name: bingx-api-skills
-version: 0.3.0
+version: 0.1.0
 description: BingX OpenAPI Skills - Perpetual contract and spot trading API integration for Claude Code
 author: BingX API Team
 homepage: https://github.com/BingX-API/api-ai-skills

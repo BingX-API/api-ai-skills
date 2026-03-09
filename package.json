@@ -1,6 +1,6 @@
 {
   "name": "@bingx-api/ai-skills",
-  "version": "0.3.6",
+  "version": "0.1.0",
   "description": "BingX OpenAPI skills for AI coding assistants - Complete trading API support for perpetual contracts, spot, and account management",
   "keywords": [
     "claude-code",
@@ -22,22 +22,10 @@
   "license": "MIT",
   "files": [
     "skills/",
-    "hooks/",
-    "scripts/",
-    "rules/",
     "AGENTS.md",
-    "CLAUDE.md",
     "plugin.yaml",
     ".claude-plugin/"
   ],
-  "scripts": {
-    "validate": "python3 scripts/validate.py --level all",
-    "validate:p0": "python3 scripts/validate.py --level p0",
-    "validate:quality": "python3 scripts/validate-skill-quality.py",
-    "validate:api": "python3 scripts/validate-api-coverage.py",
-    "validate:json": "python3 scripts/validate-api-coverage.py --json",
-    "hooks:install": "cp scripts/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push"
-  },
   "claudeCode": {
     "skillsDirectory": "skills"
   },

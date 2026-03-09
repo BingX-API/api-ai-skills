@@ -1,6 +1,6 @@
 {
   "name": "bingx-ai-skills",
-  "version": "0.3.6",
+  "version": "0.1.0",
   "skills": [
     "./skills/"
   ],
