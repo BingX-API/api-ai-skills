@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <!-- background-color: var(--color-blue); -->
+
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="https://bingx.com/favicon.ico"></link>
+    <link rel="icon" href="https://bingx.com/favicon.ico">
+    </link>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="BingX OpenAPI Skills - 面向 AI 編碼助手的交易 API 技能庫，支持永續合約、現貨交易、賬戶管理等完整業務場景">
     <title>BingX OpenAPI Skills - AI 交易技能中心</title>
@@ -426,6 +428,105 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .language-switcher {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lang-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            min-width: 100px;
+        }
+
+        .lang-selector:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .lang-selector::after {
+            content: '▼';
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+            margin-left: auto;
+        }
+
+        .language-switcher.open .lang-selector::after {
+            transform: rotate(180deg);
+        }
+
+        .lang-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            min-width: 120px;
+            z-index: 1000;
+        }
+
+        .language-switcher.open .lang-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .lang-option {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .lang-option:last-child {
+            border-bottom: none;
+        }
+
+        .lang-option:hover {
+            color: var(--text-primary);
+            background: rgba(30, 143, 255, 0.1);
+        }
+
+        .lang-option.active {
+            color: var(--primary-color);
+            font-weight: 600;
+            background: rgba(30, 143, 255, 0.05);
+        }
+
+        .lang-option.active::before {
+            content: '✓ ';
+            margin-right: 0.5rem;
         }
 
         .logo {
@@ -1142,21 +1243,33 @@
     <header style="position: relative; z-index: 1001;">
         <nav>
             <div class="logo">
-                <svg width="76" height="24" viewBox="0 0 76 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                <svg width="76" height="24" viewBox="0 0 76 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M55.9707 5.28027V17.0781C55.9707 19.2285 54.8671 23.9998 48.0898 24C44.6915 24 41.8882 22.5981 40.6113 20.6494L43.4912 18.7197C44.0672 19.5069 45.5843 20.6396 47.8115 20.6396C51.3248 20.6394 52.1309 18.2205 52.1309 17.0781C51.0749 17.8268 49.5968 18.2402 47.6963 18.2402C44.0195 18.2402 40.6211 15.2345 40.6211 11.3945C40.6214 7.55495 44.0478 5.28044 47.7051 5.28027C49.9226 5.28027 51.5838 5.99973 52.1406 6.26855V5.28027H55.9707ZM11.1396 3.36914C13.5202 3.36938 15.5459 5.21277 15.6611 7.57422C15.6995 8.77411 15.2764 9.86864 14.5469 10.6846V10.6943C15.142 11.0975 16.6209 12.201 16.6211 14.3223C16.6211 16.751 14.6337 18.7294 12.1953 18.7295H0.300781V3.36914H11.1396ZM22.3906 18.7197H18.5508V5.28027H22.3906V18.7197ZM28.6211 6.24023C30.0802 5.51068 31.5487 5.28028 32.7871 5.28027C33.1806 5.28027 33.5549 5.31823 33.9004 5.36621C36.7804 5.83661 39.1806 8.07335 39.1807 11.5869V18.7197H35.3408V11.9805C35.3408 9.58054 33.9004 8.31348 31.9805 8.31348C30.195 8.31358 28.6211 9.2831 28.6211 11.9805V18.7197H24.7812V5.28027H28.6211V6.24023ZM75.6992 8.30371C74.2016 8.30371 71.5996 8.68741 69.2764 11.5098C71.5996 14.3322 74.192 14.7168 75.6992 14.7168V18.7002C73.4912 18.7002 69.9582 18.0858 66.8574 14.793C63.8622 18.0666 60.0414 18.7002 57.9102 18.7002V14.7168C59.4846 14.7168 62.326 14.2266 64.4092 11.5098C62.326 8.79339 59.4845 8.30371 57.9102 8.30371V4.32031C60.0413 4.32031 63.8623 4.95325 66.8574 8.22656C69.9582 4.9339 73.4913 4.32031 75.6992 4.32031V8.30371ZM4.14062 15.7725V15.7627H10.8604C11.8492 15.7627 12.762 15.1193 12.7812 14.0537C12.7811 12.9787 11.8779 12.3447 10.8604 12.3447H4.12109L4.14062 15.7725ZM48.3008 8.31348C46.1792 8.31348 44.4609 9.78228 44.4609 11.5967C44.461 13.411 46.1792 14.8799 48.3008 14.8799C50.4223 14.8798 52.1406 13.411 52.1406 11.5967C52.1406 9.78231 50.4223 8.31352 48.3008 8.31348ZM4.14062 9.38867H9.90039C10.8988 9.38867 11.8019 8.94646 11.8115 7.88086C11.8114 6.80585 10.9179 6.32617 9.90039 6.32617H4.14062V9.38867ZM20.4707 0C21.6609 0.000217486 22.6299 0.96989 22.6299 2.16016C22.6298 3.35035 21.6609 4.3201 20.4707 4.32031C19.2804 4.32031 18.3106 3.35048 18.3105 2.16016C18.3105 0.969756 19.2803 0 20.4707 0Z"
                         fill="white"></path>
                 </svg>
-            
+
             </div>
-            <a class="logo bx-nav-svg-icon" href="https://bingx.com/zh-tc" data-v-fac9de9a=""></a>
-            <ul class="nav-links">
-                <li><a href="#features">特性</a></li>
-                <li><a href="#skills">技能</a></li>
-                <li><a href="#install">安裝</a></li>
-                <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub</a></li>
-            </ul>
+            <div class="nav-right">
+                <ul class="nav-links">
+                    <li><a href="#features">特性</a></li>
+                    <li><a href="#skills">技能</a></li>
+                    <li><a href="#install">安裝</a></li>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub</a></li>
+                </ul>
+                <div class="language-switcher">
+
+                    <div class="lang-selector"> <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path
+                                d="M10 1.75C14.5563 1.75 18.25 5.44365 18.25 10C18.25 14.5563 14.5563 18.25 10 18.25C5.44365 18.25 1.75 14.5563 1.75 10C1.75 5.44365 5.44365 1.75 10 1.75ZM7.43457 10.75C7.5124 12.4332 7.84795 13.9164 8.3291 14.999C8.60514 15.62 8.91419 16.0764 9.21973 16.3672C9.52129 16.6541 9.78391 16.7499 10 16.75C10.2161 16.7499 10.4796 16.6542 10.7812 16.3672C11.0867 16.0763 11.3959 15.6198 11.6719 14.999C12.153 13.9164 12.4886 12.4331 12.5664 10.75H7.43457ZM3.29297 10.75C3.55981 13.1633 5.0979 15.1916 7.22363 16.1523C7.1294 15.9779 7.04157 15.7954 6.95801 15.6074C6.38002 14.3068 6.01121 12.6093 5.93262 10.75H3.29297ZM14.0674 10.75C13.9888 12.6092 13.6209 14.3068 13.043 15.6074C12.9593 15.7956 12.8698 15.9777 12.7754 16.1523C14.9015 15.1917 16.4402 13.1636 16.707 10.75H14.0674ZM12.7754 3.84668C12.87 4.02156 12.9592 4.2041 13.043 4.39258C13.6209 5.69318 13.9888 7.39081 14.0674 9.25H16.707C16.4401 6.83629 14.9017 4.80725 12.7754 3.84668ZM10 3.25C9.78392 3.2501 9.52128 3.34591 9.21973 3.63281C8.9142 3.92362 8.60514 4.38006 8.3291 5.00098C7.84795 6.08356 7.5124 7.5668 7.43457 9.25H12.5664C12.4886 7.56685 12.153 6.08355 11.6719 5.00098C11.3959 4.38016 11.0867 3.92369 10.7812 3.63281C10.4796 3.34578 10.2161 3.25013 10 3.25ZM7.22363 3.84668C5.09772 4.8074 3.55983 6.83659 3.29297 9.25H5.93262C6.01121 7.39071 6.38002 5.69322 6.95801 4.39258C7.04169 4.20431 7.12925 4.02138 7.22363 3.84668Z"
+                                fill="white"></path>
+                        </svg>繁體中文</div>
+                    <div class="lang-dropdown">
+                        <a href="https://bingx-api.github.io/api-ai-skills/" class="lang-option">English</a>
+                        <a href="https://bingx-api.github.io/api-ai-skills/zh-tw" class="lang-option active">繁體中文</a>
+                    </div>
+                </div>
+            </div>
         </nav>
     </header>
 
@@ -1164,7 +1277,7 @@
     <section class="hero">
         <div class="hero-content fade-in-up">
             <!-- <div class="badge">✨ 15 個專業交易技能模組</div> -->
-            <h1 style="font-size: 7rem;">AI  Skill Hub</h1>
+            <h1 style="font-size: 7rem;">AI Skill Hub</h1>
             <p class="subtitle" style="font-size: 1.2rem;">
                 面向 AI 編碼助手的 BingX 交易所 API 技能庫,
                 用自然語言對話即可查詢行情、下單交易、管理賬戶
@@ -1518,6 +1631,27 @@
     </footer>
 
     <script>
+        // Language switcher dropdown
+        const langSwitcher = document.querySelector('.language-switcher');
+        const langSelector = document.querySelector('.lang-selector');
+
+        if (langSelector) {
+            langSelector.addEventListener('click', (e) => {
+                e.stopPropagation();
+                langSwitcher.classList.toggle('open');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                langSwitcher.classList.remove('open');
+            });
+
+            // Prevent closing when clicking inside dropdown
+            langSwitcher.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
