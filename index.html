@@ -19,10 +19,10 @@
 
         :root {
             /* BingX 官網风格色系 */
-            --primary-color: #1E8FFF;
-            --primary-light: #4DA4FF;
-            --primary-dark: #0066CC;
-            --accent-color: #4DA4FF;
+            --primary-color: #0047FF;
+            --primary-light: #0047FF;
+            --primary-dark: #0047FF;
+            --accent-color: #0047FF;
             --accent-red: #FF4757;
             --accent-green: #2ECC71;
             --bg-dark: #000000;
@@ -33,9 +33,9 @@
             --text-secondary: #999999;
             --text-muted: #666666;
             --border-color: rgba(255, 255, 255, 0.05);
-            --gradient-primary: linear-gradient(135deg, #1E8FFF 0%, #0066CC 100%);
-            --gradient-accent: linear-gradient(135deg, #4DA4FF 0%, #1E8FFF 100%);
-            --gradient-glow: radial-gradient(circle at center, rgba(30, 143, 255, 0.3), transparent);
+            --gradient-primary: linear-gradient(135deg, #0047FF 0%, #0047FF 100%);
+            --gradient-accent: linear-gradient(135deg, #0047FF 0%, #0047FF 100%);
+            --gradient-glow: radial-gradient(circle at center, rgba(0, 71, 255, 0.3), transparent);
         }
 
         body {
@@ -100,9 +100,9 @@
             position: absolute;
             height: 2px;
             background: linear-gradient(90deg,
-            transparent,
-            rgba(30, 143, 255, 0.5),
-            transparent);
+                    transparent,
+                    rgba(30, 143, 255, 0.5),
+                    transparent);
             animation: neural-pulse 4s infinite ease-in-out;
             transform-origin: left center;
             box-shadow: 0 0 10px rgba(30, 143, 255, 0.6);
@@ -123,19 +123,19 @@
         }
 
         /* 扫描線效果 */
-        .scan-line {
+        /* .scan-line {
             position: absolute;
             width: 100%;
             height: 3px;
             background: linear-gradient(90deg,
-            transparent,
-            rgba(30, 143, 255, 0.6),
-            transparent);
+                    transparent,
+                    rgba(30, 143, 255, 0.6),
+                    transparent);
             animation: scan 5s linear infinite;
             box-shadow: 0 0 10px rgba(30, 143, 255, 0.8);
-        }
+        } */
 
-        @keyframes scan {
+        /* @keyframes scan {
             0% {
                 top: -2px;
             }
@@ -143,7 +143,7 @@
             100% {
                 top: 100%;
             }
-        }
+        } */
 
         /* 數據流效果 */
         .data-stream {
@@ -151,9 +151,9 @@
             width: 2px;
             height: 120px;
             background: linear-gradient(180deg,
-            transparent,
-            rgba(30, 143, 255, 0.8),
-            transparent);
+                    transparent,
+                    rgba(30, 143, 255, 0.8),
+                    transparent);
             animation: stream-fall 3s linear infinite;
             box-shadow: 0 0 10px rgba(30, 143, 255, 0.6);
         }
@@ -207,9 +207,9 @@
             position: absolute;
             height: 2px;
             background: linear-gradient(90deg,
-            transparent,
-            rgba(30, 143, 255, 0.8),
-            transparent);
+                    transparent,
+                    rgba(30, 143, 255, 0.8),
+                    transparent);
             animation: circuit-flow 6s ease-in-out infinite;
             box-shadow: 0 0 10px rgba(30, 143, 255, 0.6);
         }
@@ -236,8 +236,8 @@
             background: #1E8FFF;
             border-radius: 50%;
             box-shadow: 0 0 20px rgba(30, 143, 255, 1),
-            0 0 40px rgba(30, 143, 255, 0.8),
-            0 0 60px rgba(30, 143, 255, 0.4);
+                0 0 40px rgba(30, 143, 255, 0.8),
+                0 0 60px rgba(30, 143, 255, 0.4);
             animation: dot-move 20s linear infinite;
         }
 
@@ -262,18 +262,18 @@
         }
 
         /* 全息扫描线 */
-        .holo-scan {
+        /* .holo-scan {
             position: absolute;
             width: 100%;
             height: 4px;
             background: linear-gradient(90deg,
-            transparent,
-            rgba(30, 143, 255, 0.9),
-            transparent);
+                    transparent,
+                    rgba(30, 143, 255, 0.9),
+                    transparent);
             box-shadow: 0 0 25px rgba(30, 143, 255, 0.9),
-            0 0 50px rgba(30, 143, 255, 0.5);
+                0 0 50px rgba(30, 143, 255, 0.5);
             animation: scan-vertical 16s linear infinite;
-        }
+        } */
 
         @keyframes scan-vertical {
             0% {
@@ -301,8 +301,8 @@
             width: 100%;
             height: 100%;
             background-image:
-                    linear-gradient(rgba(43, 110, 246, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(43, 110, 246, 0.05) 1px, transparent 1px);
+                linear-gradient(rgba(43, 110, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(43, 110, 246, 0.05) 1px, transparent 1px);
             background-size: 50px 50px;
             animation: grid-move 20s linear infinite;
         }
@@ -488,7 +488,7 @@
             right: 0;
             bottom: 0;
             background:
-                    linear-gradient(90deg, transparent, rgba(30, 143, 255, 0.1), transparent);
+                linear-gradient(90deg, transparent, rgba(30, 143, 255, 0.1), transparent);
             animation: shimmer 4s infinite;
         }
 
@@ -563,9 +563,9 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg,
-            transparent,
-            rgba(255, 255, 255, 0.3),
-            transparent);
+                    transparent,
+                    rgba(255, 255, 255, 0.3),
+                    transparent);
             animation: badge-shine 3s infinite;
         }
 
@@ -703,9 +703,9 @@
             width: 200%;
             height: 200%;
             background: conic-gradient(from 0deg,
-            transparent,
-            rgba(30, 143, 255, 0.4),
-            transparent 30%);
+                    transparent,
+                    rgba(30, 143, 255, 0.4),
+                    transparent 30%);
             animation: rotate-border 5s linear infinite;
             opacity: 0;
             transition: opacity 0.4s;
@@ -820,9 +820,9 @@
             position: absolute;
             inset: -3px;
             background: conic-gradient(from 0deg,
-            #1E8FFF,
-            #4DA4FF,
-            #1E8FFF);
+                    #1E8FFF,
+                    #4DA4FF,
+                    #1E8FFF);
             border-radius: 20px;
             z-index: -1;
             animation: rotate-border 4s linear infinite;
@@ -866,9 +866,9 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg,
-            transparent,
-            rgba(36, 99, 235, 0.1),
-            transparent);
+                    transparent,
+                    rgba(36, 99, 235, 0.1),
+                    transparent);
             animation: skill-shine 3s infinite;
             animation-delay: var(--delay, 0s);
         }
@@ -1131,312 +1131,312 @@
 </head>
 
 <body>
-<!-- AI 科技感背景动画 -->
-<div class="ai-background">
-    <!-- 全息扫描线 -->
-    <div class="holo-scan"></div>
-    <div class="holo-scan" style="animation-delay: 4s; opacity: 0.6;"></div>
-</div>
+    <!-- AI 科技感背景动画 -->
+    <div class="ai-background">
+        <!-- 全息扫描线 -->
+        <div class="holo-scan"></div>
+        <div class="holo-scan" style="animation-delay: 4s; opacity: 0.6;"></div>
+    </div>
 
-<!-- Header -->
-<header style="position: relative; z-index: 1001;">
-    <nav>
-        <div class="logo">
-            <svg width="76" height="24" viewBox="0 0 76 24" fill="none"
-                 xmlns="http://www.w3.org/2000/svg">
-                <path
+    <!-- Header -->
+    <header style="position: relative; z-index: 1001;">
+        <nav>
+            <div class="logo">
+                <svg width="76" height="24" viewBox="0 0 76 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
                         d="M55.9707 5.28027V17.0781C55.9707 19.2285 54.8671 23.9998 48.0898 24C44.6915 24 41.8882 22.5981 40.6113 20.6494L43.4912 18.7197C44.0672 19.5069 45.5843 20.6396 47.8115 20.6396C51.3248 20.6394 52.1309 18.2205 52.1309 17.0781C51.0749 17.8268 49.5968 18.2402 47.6963 18.2402C44.0195 18.2402 40.6211 15.2345 40.6211 11.3945C40.6214 7.55495 44.0478 5.28044 47.7051 5.28027C49.9226 5.28027 51.5838 5.99973 52.1406 6.26855V5.28027H55.9707ZM11.1396 3.36914C13.5202 3.36938 15.5459 5.21277 15.6611 7.57422C15.6995 8.77411 15.2764 9.86864 14.5469 10.6846V10.6943C15.142 11.0975 16.6209 12.201 16.6211 14.3223C16.6211 16.751 14.6337 18.7294 12.1953 18.7295H0.300781V3.36914H11.1396ZM22.3906 18.7197H18.5508V5.28027H22.3906V18.7197ZM28.6211 6.24023C30.0802 5.51068 31.5487 5.28028 32.7871 5.28027C33.1806 5.28027 33.5549 5.31823 33.9004 5.36621C36.7804 5.83661 39.1806 8.07335 39.1807 11.5869V18.7197H35.3408V11.9805C35.3408 9.58054 33.9004 8.31348 31.9805 8.31348C30.195 8.31358 28.6211 9.2831 28.6211 11.9805V18.7197H24.7812V5.28027H28.6211V6.24023ZM75.6992 8.30371C74.2016 8.30371 71.5996 8.68741 69.2764 11.5098C71.5996 14.3322 74.192 14.7168 75.6992 14.7168V18.7002C73.4912 18.7002 69.9582 18.0858 66.8574 14.793C63.8622 18.0666 60.0414 18.7002 57.9102 18.7002V14.7168C59.4846 14.7168 62.326 14.2266 64.4092 11.5098C62.326 8.79339 59.4845 8.30371 57.9102 8.30371V4.32031C60.0413 4.32031 63.8623 4.95325 66.8574 8.22656C69.9582 4.9339 73.4913 4.32031 75.6992 4.32031V8.30371ZM4.14062 15.7725V15.7627H10.8604C11.8492 15.7627 12.762 15.1193 12.7812 14.0537C12.7811 12.9787 11.8779 12.3447 10.8604 12.3447H4.12109L4.14062 15.7725ZM48.3008 8.31348C46.1792 8.31348 44.4609 9.78228 44.4609 11.5967C44.461 13.411 46.1792 14.8799 48.3008 14.8799C50.4223 14.8798 52.1406 13.411 52.1406 11.5967C52.1406 9.78231 50.4223 8.31352 48.3008 8.31348ZM4.14062 9.38867H9.90039C10.8988 9.38867 11.8019 8.94646 11.8115 7.88086C11.8114 6.80585 10.9179 6.32617 9.90039 6.32617H4.14062V9.38867ZM20.4707 0C21.6609 0.000217486 22.6299 0.96989 22.6299 2.16016C22.6298 3.35035 21.6609 4.3201 20.4707 4.32031C19.2804 4.32031 18.3106 3.35048 18.3105 2.16016C18.3105 0.969756 19.2803 0 20.4707 0Z"
                         fill="white"></path>
-            </svg>
+                </svg>
+            
+            </div>
+            <a class="logo bx-nav-svg-icon" href="https://bingx.com/zh-tc" data-v-fac9de9a=""></a>
+            <ul class="nav-links">
+                <li><a href="#features">特性</a></li>
+                <li><a href="#skills">技能</a></li>
+                <li><a href="#install">安裝</a></li>
+                <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
 
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content fade-in-up">
+            <!-- <div class="badge">✨ 15 個專業交易技能模組</div> -->
+            <h1 style="font-size: 7rem;">AI  Skill Hub</h1>
+            <p class="subtitle" style="font-size: 1.2rem;">
+                面向 AI 編碼助手的 BingX 交易所 API 技能庫,
+                用自然語言對話即可查詢行情、下單交易、管理賬戶
+            </p>
+            <div class="cta-buttons">
+                <a href="#install" class="btn btn-primary">立即開始</a>
+                <a href="https://github.com/BingX-API/api-ai-skills" class="btn btn-secondary">查看文檔</a>
+            </div>
         </div>
-        <a class="logo bx-nav-svg-icon" href="https://bingx.com/zh-tc" data-v-fac9de9a=""></a>
-        <ul class="nav-links">
-            <li><a href="#features">特性</a></li>
-            <li><a href="#skills">技能</a></li>
-            <li><a href="#install">安裝</a></li>
-            <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub</a></li>
-        </ul>
-    </nav>
-</header>
+    </section>
 
-<!-- Hero Section -->
-<section class="hero">
-    <div class="hero-content fade-in-up">
-        <!-- <div class="badge">✨ 15 個專業交易技能模組</div> -->
-        <h1 style="font-size: 8rem;">AI  SKILLS</h1>
-        <p class="subtitle" style="font-size: 1.2rem;">
-            面向 AI 編碼助手的 BingX 交易所 API 技能庫,
-            用自然語言對話即可查詢行情、下單交易、管理賬戶
-        </p>
-        <div class="cta-buttons">
-            <a href="#install" class="btn btn-primary">立即開始</a>
-            <a href="https://github.com/BingX-API/api-ai-skills" class="btn btn-secondary">查看文檔</a>
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<div class="container">
-    <div class="stats">
-        <div class="stat-card">
-            <div class="stat-number">15+</div>
-            <div class="stat-label">技能模組</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">100+</div>
-            <div class="stat-label">API 端点</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">5</div>
-            <div class="stat-label">業務場景</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">3</div>
-            <div class="stat-label">安裝方式</div>
-        </div>
-    </div>
-</div>
-
-<!-- Features Section -->
-<section id="features">
+    <!-- Stats Section -->
     <div class="container">
-        <h2 class="section-title">核心特性</h2>
-        <p class="section-subtitle">讓 AI 助手成為您的專屬交易助理</p>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🤖</div>
-                <h3 class="feature-title">自然語言交互</h3>
-                <p class="feature-description">
-                    無需編寫代碼，直接用對話方式查詢行情、下單交易。
-                    AI 自動處理 HMAC SHA256 簽名等複雜邏輯。
-                </p>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">技能模組</div>
             </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3 class="feature-title">完整業務覆蓋</h3>
-                <p class="feature-description">
-                    涵蓋永續合約、現貨、幣本位、跟單交易、賬戶管理等
-                    15 個技能模組，100+ API 端点全支持。
-                </p>
+            <div class="stat-card">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">API 端点</div>
             </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3 class="feature-title">安全可靠</h3>
-                <p class="feature-description">
-                    生產環境写操作需用戶確認，API Key 脫敏展示，
-                    支持備用域名自動降級，確保交易安全。
-                </p>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">業務場景</div>
             </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3 class="feature-title">快速上手</h3>
-                <p class="feature-description">
-                    三種安裝方式任選，支持 Claude Code、Cursor、
-                    Windsurf 等主流 AI 編碼助手。
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🌐</div>
-                <h3 class="feature-title">多環境支持</h3>
-                <p class="feature-description">
-                    支持生產實盤、模拟盘、測試環境，靈活切换，
-                    滿足不同階段的交易需求。
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">📝</div>
-                <h3 class="feature-title">完善文檔</h3>
-                <p class="feature-description">
-                    每個技能提供詳細的 TypeScript 示例代碼和
-                    完整 API 文檔，快速上手無障礙。
-                </p>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">安裝方式</div>
             </div>
         </div>
     </div>
-</section>
 
-<!-- Skills Section -->
-<section id="skills" style="background: rgba(255, 255, 255, 0.02);">
-    <div class="container">
-        <h2 class="section-title">技能列表</h2>
-        <p class="section-subtitle">覆蓋 BingX 交易所全業務場景</p>
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title">核心特性</h2>
+            <p class="section-subtitle">讓 AI 助手成為您的專屬交易助理</p>
 
-        <!-- U本位永續合約 -->
-        <div class="skills-category">
-            <div class="category-header">
-                <!-- <div class="category-icon">📈</div> -->
-                <div>
-                    <h3 class="category-title">U本位永續合約</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.3rem;">USDT-M Perpetual Futures</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <!-- <div class="feature-icon">🤖</div> -->
+                    <h3 class="feature-title">自然語言交互</h3>
+                    <p class="feature-description">
+                        無需編寫代碼，直接用對話方式查詢行情、下單交易。
+                        AI 自動處理 HMAC SHA256 簽名等複雜邏輯。
+                    </p>
                 </div>
-            </div>
-            <div class="skills-list">
-                <div class="skill-item">
-                    <span class="skill-name">bingx-swap-market</span>
-                    <span class="skill-desc">查詢永續合約行情數據（價格、深度、K線、資金費率、持倉量等）</span>
+
+                <div class="feature-card">
+                    <!-- <div class="feature-icon">📊</div> -->
+                    <h3 class="feature-title">完整業務覆蓋</h3>
+                    <p class="feature-description">
+                        涵蓋永續合約、現貨、幣本位、跟單交易、賬戶管理等
+                        15 個技能模組，100+ API 端点全支持。
+                    </p>
                 </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-swap-trade</span>
-                    <span class="skill-desc">進行永續合約交易操作（下單、撤單、槓桿設置、保證金模式等）</span>
+
+                <div class="feature-card">
+                    <!-- <div class="feature-icon">🔒</div> -->
+                    <h3 class="feature-title">安全可靠</h3>
+                    <p class="feature-description">
+                        生產環境写操作需用戶確認，API Key 脫敏展示，
+                        支持備用域名自動降級，確保交易安全。
+                    </p>
                 </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-swap-account</span>
-                    <span class="skill-desc">查詢賬戶信息（餘額、持倉、手续費率、資金流水等）</span>
+
+                <div class="feature-card">
+                    <!-- <div class="feature-icon">⚡</div> -->
+                    <h3 class="feature-title">快速上手</h3>
+                    <p class="feature-description">
+                        三種安裝方式任選，支持 Claude Code、Cursor、
+                        Windsurf 等主流 AI 編碼助手。
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <!-- <div class="feature-icon">🌐</div> -->
+                    <h3 class="feature-title">多環境支持</h3>
+                    <p class="feature-description">
+                        支持生產實盤、模拟盘、測試環境，靈活切换，
+                        滿足不同階段的交易需求。
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <!-- <div class="feature-icon">📝</div> -->
+                    <h3 class="feature-title">完善文檔</h3>
+                    <p class="feature-description">
+                        每個技能提供詳細的 TypeScript 示例代碼和
+                        完整 API 文檔，快速上手無障礙。
+                    </p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- 現貨交易 -->
-        <div class="skills-category">
-            <div class="category-header">
-                <!-- <div class="category-icon" style="background: var(--gradient-accent);">💱</div> -->
-                <div>
-                    <h3 class="category-title">現貨交易</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.3rem;">Spot Trading</p>
+    <!-- Skills Section -->
+    <section id="skills" style="background: rgba(255, 255, 255, 0.02);">
+        <div class="container">
+            <h2 class="section-title">技能列表</h2>
+            <p class="section-subtitle">覆蓋 BingX 交易所全業務場景</p>
+
+            <!-- U本位永續合約 -->
+            <div class="skills-category">
+                <div class="category-header">
+                    <!-- <div class="category-icon">📈</div> -->
+                    <div>
+                        <h3 class="category-title">U本位永續合約</h3>
+                        <p style="color: var(--text-secondary); margin-top: 0.3rem;">USDT-M Perpetual Futures</p>
+                    </div>
+                </div>
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-swap-market</span>
+                        <span class="skill-desc">查詢永續合約行情數據（價格、深度、K線、資金費率、持倉量等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-swap-trade</span>
+                        <span class="skill-desc">進行永續合約交易操作（下單、撤單、槓桿設置、保證金模式等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-swap-account</span>
+                        <span class="skill-desc">查詢賬戶信息（餘額、持倉、手续費率、資金流水等）</span>
+                    </div>
                 </div>
             </div>
-            <div class="skills-list">
-                <div class="skill-item">
-                    <span class="skill-name">bingx-spot-market</span>
-                    <span class="skill-desc">查詢現貨行情數據（價格、深度、K線、成交記錄等）</span>
+
+            <!-- 現貨交易 -->
+            <div class="skills-category">
+                <div class="category-header">
+                    <!-- <div class="category-icon" style="background: var(--gradient-accent);">💱</div> -->
+                    <div>
+                        <h3 class="category-title">現貨交易</h3>
+                        <p style="color: var(--text-secondary); margin-top: 0.3rem;">Spot Trading</p>
+                    </div>
                 </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-spot-trade</span>
-                    <span class="skill-desc">進行現貨交易操作（下單、撤單、訂單查詢、OCO訂單等）</span>
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-spot-market</span>
+                        <span class="skill-desc">查詢現貨行情數據（價格、深度、K線、成交記錄等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-spot-trade</span>
+                        <span class="skill-desc">進行現貨交易操作（下單、撤單、訂單查詢、OCO訂單等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-spot-account</span>
+                        <span class="skill-desc">查詢現貨賬戶信息（餘額、資產總覽、資產划转等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-spot-wallet</span>
+                        <span class="skill-desc">錢包操作（充值、提现、划转記錄等）</span>
+                    </div>
                 </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-spot-account</span>
-                    <span class="skill-desc">查詢現貨賬戶信息（餘額、資產總覽、資產划转等）</span>
+            </div>
+
+            <!-- 幣本位合約 -->
+            <div class="skills-category">
+                <div class="category-header">
+                    <!-- <div class="category-icon" style="background: var(--gradient-primary);">🪙</div> -->
+                    <div>
+                        <h3 class="category-title">幣本位合約</h3>
+                        <p style="color: var(--text-secondary); margin-top: 0.3rem;">Coin-M Perpetual Futures</p>
+                    </div>
                 </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-spot-wallet</span>
-                    <span class="skill-desc">錢包操作（充值、提现、划转記錄等）</span>
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-coinm-market</span>
+                        <span class="skill-desc">查詢幣本位合約行情（價格、深度、K線、資金費率等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-coinm-trade</span>
+                        <span class="skill-desc">幣本位合約交易操作（下單、撤單、槓桿、保證金模式等）</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 其他業務 -->
+            <div class="skills-category">
+                <div class="category-header">
+                    <!-- <div class="category-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">⚙️</div> -->
+                    <div>
+                        <h3 class="category-title">賬戶管理 & 其他</h3>
+                        <p style="color: var(--text-secondary); margin-top: 0.3rem;">Account Management & More</p>
+                    </div>
+                </div>
+                <div class="skills-list">
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-copytrade-spot</span>
+                        <span class="skill-desc">現貨跟單（賣出跟單持倉、查詢盈利等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-copytrade-swap</span>
+                        <span class="skill-desc">合約跟單（平倉、設置止盈止损、佣金設置等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-fund-account</span>
+                        <span class="skill-desc">資金賬戶管理（餘額查詢、資產總覽、賬戶間划转等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-sub-account</span>
+                        <span class="skill-desc">子賬戶管理（创建/冻结子賬戶、API Key 管理等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-agent</span>
+                        <span class="skill-desc">代理/經紀商（邀請用戶、佣金查詢、合作夥伴數據等）</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">bingx-standard-trade</span>
+                        <span class="skill-desc">標準合約（持倉查詢、訂單歷史、餘額查詢等）</span>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- 幣本位合約 -->
-        <div class="skills-category">
-            <div class="category-header">
-                <!-- <div class="category-icon" style="background: var(--gradient-primary);">🪙</div> -->
-                <div>
-                    <h3 class="category-title">幣本位合約</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.3rem;">Coin-M Perpetual Futures</p>
+    <!-- Installation Section -->
+    <section id="install">
+        <div class="container">
+            <h2 class="section-title">快速開始</h2>
+            <p class="section-subtitle">三種安裝方式任選，1 分钟完成配置</p>
+
+            <div class="install-methods">
+                <div class="install-card">
+                    <div class="install-number">1</div>
+                    <h3 class="install-title">AI 對話安裝（推薦）</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        適用于 OpenClaw、Cursor、Claude Code 等 AI 編碼助手
+                    </p>
+                    <div class="install-command">
+                        安裝skills https://github.com/BingX-API/api-ai-skills
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        直接在 AI 對話中说这句话，AI 會自動識別并完成安裝！
+                    </p>
+                </div>
+
+                <div class="install-card">
+                    <div class="install-number">2</div>
+                    <h3 class="install-title">Claude Code 外掛程式安裝</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        使用 Claude Code 內建的外掛程式管理器
+                    </p>
+                    <div class="install-command">
+                        /plugin marketplace add BingX-API/api-ai-skills<br>
+                        /plugin install bingx-ai-skills
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        支持自動更新，推薦 Claude Code 用戶使用
+                    </p>
+                </div>
+
+                <div class="install-card">
+                    <div class="install-number">3</div>
+                    <h3 class="install-title">NPX 命令安裝</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        適用于 Cursor、Windsurf 等支持 skills 机制的 AI 助手
+                    </p>
+                    <div class="install-command">
+                        npx skills add BingX-API/api-ai-skills
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        需要 Node.js 環境，一行命令完成安裝
+                    </p>
                 </div>
             </div>
-            <div class="skills-list">
-                <div class="skill-item">
-                    <span class="skill-name">bingx-coinm-market</span>
-                    <span class="skill-desc">查詢幣本位合約行情（價格、深度、K線、資金費率等）</span>
-                </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-coinm-trade</span>
-                    <span class="skill-desc">幣本位合約交易操作（下單、撤單、槓桿、保證金模式等）</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- 其他業務 -->
-        <div class="skills-category">
-            <div class="category-header">
-                <!-- <div class="category-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">⚙️</div> -->
-                <div>
-                    <h3 class="category-title">賬戶管理 & 其他</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.3rem;">Account Management & More</p>
-                </div>
-            </div>
-            <div class="skills-list">
-                <div class="skill-item">
-                    <span class="skill-name">bingx-copytrade-spot</span>
-                    <span class="skill-desc">現貨跟單（賣出跟單持倉、查詢盈利等）</span>
-                </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-copytrade-swap</span>
-                    <span class="skill-desc">合約跟單（平倉、設置止盈止损、佣金設置等）</span>
-                </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-fund-account</span>
-                    <span class="skill-desc">資金賬戶管理（餘額查詢、資產總覽、賬戶間划转等）</span>
-                </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-sub-account</span>
-                    <span class="skill-desc">子賬戶管理（创建/冻结子賬戶、API Key 管理等）</span>
-                </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-agent</span>
-                    <span class="skill-desc">代理/經紀商（邀請用戶、佣金查詢、合作夥伴數據等）</span>
-                </div>
-                <div class="skill-item">
-                    <span class="skill-name">bingx-standard-trade</span>
-                    <span class="skill-desc">標準合約（持倉查詢、訂單歷史、餘額查詢等）</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Installation Section -->
-<section id="install">
-    <div class="container">
-        <h2 class="section-title">快速開始</h2>
-        <p class="section-subtitle">三種安裝方式任選，1 分钟完成配置</p>
-
-        <div class="install-methods">
-            <div class="install-card">
-                <div class="install-number">1</div>
-                <h3 class="install-title">AI 對話安裝（推薦）</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                    適用于 OpenClaw、Cursor、Claude Code 等 AI 編碼助手
-                </p>
-                <div class="install-command">
-                    安裝skills https://github.com/BingX-API/api-ai-skills
-                </div>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                    直接在 AI 對話中说这句话，AI 會自動識別并完成安裝！
-                </p>
-            </div>
-
-            <div class="install-card">
-                <div class="install-number">2</div>
-                <h3 class="install-title">Claude Code 外掛程式安裝</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                    使用 Claude Code 內建的外掛程式管理器
-                </p>
-                <div class="install-command">
-                    /plugin marketplace add BingX-API/api-ai-skills<br>
-                    /plugin install bingx-ai-skills
-                </div>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                    支持自動更新，推薦 Claude Code 用戶使用
-                </p>
-            </div>
-
-            <div class="install-card">
-                <div class="install-number">3</div>
-                <h3 class="install-title">NPX 命令安裝</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                    適用于 Cursor、Windsurf 等支持 skills 机制的 AI 助手
-                </p>
-                <div class="install-command">
-                    npx skills add BingX-API/api-ai-skills
-                </div>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                    需要 Node.js 環境，一行命令完成安裝
-                </p>
-            </div>
-        </div>
-
-        <!-- Usage Example -->
-        <div style="margin-top: 4rem;">
-            <h3 style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">使用示例</h3>
-            <div class="code-example">
+            <!-- Usage Example -->
+            <div style="margin-top: 4rem;">
+                <h3 style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">使用示例</h3>
+                <div class="code-example">
                     <pre><span class="code-comment"># 查詢行情（無需 API Key）</span>
 <span class="code-string">"查詢 BTC-USDT 的當前價格"</span>
 
@@ -1448,191 +1448,192 @@
 
 <span class="code-comment"># 現貨查詢</span>
 <span class="code-string">"查詢現貨 ETH-USDT 的深度數據"</span></pre>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CTA Section -->
-<section style="background: var(--gradient-primary); padding: 60px 2rem; text-align: center; margin-top: 80px;">
-    <div class="container">
-        <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">準備好開始了吗？</h2>
-        <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
-            立即安裝 BingX API Skills，讓 AI 助手成為您的專屬交易助理
-        </p>
-        <div class="cta-buttons">
-            <a href="https://github.com/BingX-API/api-ai-skills" class="btn"
-               style="background: white; color: #2B6EF6;">
-                查看 GitHub
-            </a>
-            <a href="#install" class="btn btn-secondary" style="border-color: white; color: white;">
-                安裝指南
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Footer -->
-<footer>
-    <div class="footer-content">
-        <div class="footer-section">
-            <h3>BingX API Skills</h3>
-            <p style="color: var(--text-secondary); margin-top: 1rem;">
-                面向 AI 編碼助手的 BingX 交易所 API 技能庫
+    <!-- CTA Section -->
+    <section style="background: var(--gradient-primary); padding: 60px 2rem; text-align: center; margin-top: 80px;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">準備好開始了吗？</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                立即安裝 BingX API Skills，讓 AI 助手成為您的專屬交易助理
             </p>
+            <div class="cta-buttons">
+                <a href="https://github.com/BingX-API/api-ai-skills" class="btn"
+                    style="background: white; color: #2B6EF6;">
+                    查看 GitHub
+                </a>
+                <a href="#install" class="btn btn-secondary" style="border-color: white; color: white;">
+                    安裝指南
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>BingX API Skills</h3>
+                <p style="color: var(--text-secondary); margin-top: 1rem;">
+                    面向 AI 編碼助手的 BingX 交易所 API 技能庫
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h3>快速鏈接</h3>
+                <ul>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub 倉库</a></li>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills/blob/master/README.md">使用文檔</a></li>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills/blob/master/GUIDE.md">技能指南</a></li>
+                    <li><a href="https://github.com/BingX-API/api-ai-skills/issues">問題反饋</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>相關資源</h3>
+                <ul>
+                    <li><a href="https://bingx.com">BingX 官網</a></li>
+                    <li><a href="https://bingx-api.github.io/docs">API 文檔</a></li>
+                    <li><a href="https://bingx.com/en/accounts/api">API Key 管理</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>支持的 AI 助手</h3>
+                <ul>
+                    <p style="color: var(--text-secondary); ">Cursor</p>
+                    <p style="color: var(--text-secondary); ">Claude Code</p>
+                    <p style="color: var(--text-secondary); ">Windsurf</p>
+                    <p style="color: var(--text-secondary); ">OpenClaw</p>
+                </ul>
+            </div>
         </div>
 
-        <div class="footer-section">
-            <h3>快速鏈接</h3>
-            <ul>
-                <li><a href="https://github.com/BingX-API/api-ai-skills">GitHub 倉库</a></li>
-                <li><a href="https://github.com/BingX-API/api-ai-skills/blob/master/README.md">使用文檔</a></li>
-                <li><a href="https://github.com/BingX-API/api-ai-skills/issues">問題反饋</a></li>
-            </ul>
-        </div>
+        <!-- <div class="footer-bottom">
+            <p>&copy; 2024 BingX API Skills. 基于 MIT 协议开源.</p>
+        </div> -->
+    </footer>
 
-        <div class="footer-section">
-            <h3>相關資源</h3>
-            <ul>
-                <li><a href="https://bingx.com">BingX 官網</a></li>
-                <li><a href="https://bingx-api.github.io/docs">API 文檔</a></li>
-                <li><a href="https://bingx.com/en/accounts/api">API Key 管理</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-section">
-            <h3>支持的 AI 助手</h3>
-            <ul>
-                <li>Claude Code</li>
-                <li>Cursor</li>
-                <li>Windsurf</li>
-                <li>OpenClaw</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- <div class="footer-bottom">
-        <p>&copy; 2024 BingX API Skills. 基于 MIT 协议开源.</p>
-    </div> -->
-</footer>
-
-<script>
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
         });
-    });
 
-    // Fade in animation on scroll
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .skill-category, .install-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
         });
-    }, observerOptions);
 
-    document.querySelectorAll('.feature-card, .skill-category, .install-card').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-        observer.observe(el);
-    });
+        // 生成科技感动画效果
+        const aiBackground = document.querySelector('.ai-background');
 
-    // 生成科技感动画效果
-    const aiBackground = document.querySelector('.ai-background');
+        // 生成六边形网格
+        const hexCount = 20;
+        for (let i = 0; i < hexCount; i++) {
+            const hex = document.createElement('div');
+            hex.className = 'hexagon';
+            hex.style.left = Math.random() * 100 + '%';
+            hex.style.top = Math.random() * 100 + '%';
+            hex.style.animationDelay = Math.random() * 8 + 's';
+            hex.style.animationDuration = (6 + Math.random() * 4) + 's';
+            aiBackground.appendChild(hex);
+        }
 
-    // 生成六边形网格
-    const hexCount = 20;
-    for (let i = 0; i < hexCount; i++) {
-        const hex = document.createElement('div');
-        hex.className = 'hexagon';
-        hex.style.left = Math.random() * 100 + '%';
-        hex.style.top = Math.random() * 100 + '%';
-        hex.style.animationDelay = Math.random() * 8 + 's';
-        hex.style.animationDuration = (6 + Math.random() * 4) + 's';
-        aiBackground.appendChild(hex);
-    }
+        // 生成电路板线条
+        // const circuitCount = 15;
+        // for (let i = 0; i < circuitCount; i++) {
+        //     const circuit = document.createElement('div');
+        //     circuit.className = 'circuit-line';
+        //     circuit.style.left = Math.random() * 100 + '%';
+        //     circuit.style.top = Math.random() * 100 + '%';
+        //     circuit.style.width = (100 + Math.random() * 300) + 'px';
+        //     circuit.style.transform = `rotate(${Math.random() * 360}deg)`;
+        //     circuit.style.animationDelay = Math.random() * 6 + 's';
+        //     circuit.style.animationDuration = (4 + Math.random() * 4) + 's';
+        //     aiBackground.appendChild(circuit);
+        // }
 
-    // 生成电路板线条
-    const circuitCount = 15;
-    for (let i = 0; i < circuitCount; i++) {
-        const circuit = document.createElement('div');
-        circuit.className = 'circuit-line';
-        circuit.style.left = Math.random() * 100 + '%';
-        circuit.style.top = Math.random() * 100 + '%';
-        circuit.style.width = (100 + Math.random() * 300) + 'px';
-        circuit.style.transform = `rotate(${Math.random() * 360}deg)`;
-        circuit.style.animationDelay = Math.random() * 6 + 's';
-        circuit.style.animationDuration = (4 + Math.random() * 4) + 's';
-        aiBackground.appendChild(circuit);
-    }
+        // 生成光点
+        const dotCount = 25;
+        for (let i = 0; i < dotCount; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'light-dot';
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.top = Math.random() * 100 + '%';
+            dot.style.setProperty('--dx', (Math.random() - 0.5) * 800 + 'px');
+            dot.style.setProperty('--dy', (Math.random() - 0.5) * 800 + 'px');
+            dot.style.animationDelay = Math.random() * 20 + 's';
+            dot.style.animationDuration = (16 + Math.random() * 12) + 's';
+            aiBackground.appendChild(dot);
+        }
 
-    // 生成光点
-    const dotCount = 25;
-    for (let i = 0; i < dotCount; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'light-dot';
-        dot.style.left = Math.random() * 100 + '%';
-        dot.style.top = Math.random() * 100 + '%';
-        dot.style.setProperty('--dx', (Math.random() - 0.5) * 800 + 'px');
-        dot.style.setProperty('--dy', (Math.random() - 0.5) * 800 + 'px');
-        dot.style.animationDelay = Math.random() * 20 + 's';
-        dot.style.animationDuration = (16 + Math.random() * 12) + 's';
-        aiBackground.appendChild(dot);
-    }
+        // 移除鼠标粒子效果
 
-    // 移除鼠标粒子效果
+        // 数字递增动画
+        function animateNumber(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
 
-    // 数字递增动画
-    function animateNumber(element, target, duration = 2000) {
-        const start = 0;
-        const increment = target / (duration / 16);
-        let current = start;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + (element.dataset.suffix || '');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + (element.dataset.suffix || '');
+                }
+            }, 16);
+        }
 
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                element.textContent = target + (element.dataset.suffix || '');
-                clearInterval(timer);
-            } else {
-                element.textContent = Math.floor(current) + (element.dataset.suffix || '');
-            }
-        }, 16);
-    }
+        // 观察数字卡片并触发动画
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    entry.target.dataset.animated = 'true';
+                    const number = entry.target.querySelector('.stat-number');
+                    const targetValue = parseInt(number.textContent);
+                    animateNumber(number, targetValue);
+                }
+            });
+        }, { threshold: 0.5 });
 
-    // 观察数字卡片并触发动画
-    const statObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !entry.target.dataset.animated) {
-                entry.target.dataset.animated = 'true';
-                const number = entry.target.querySelector('.stat-number');
-                const targetValue = parseInt(number.textContent);
-                animateNumber(number, targetValue);
-            }
+        document.querySelectorAll('.stat-card').forEach(card => {
+            statObserver.observe(card);
         });
-    }, { threshold: 0.5 });
 
-    document.querySelectorAll('.stat-card').forEach(card => {
-        statObserver.observe(card);
-    });
-
-    // 为skills-category添加延迟动画
-    document.querySelectorAll('.skills-category').forEach((category, index) => {
-        category.style.setProperty('--delay', (index * 0.5) + 's');
-    });
-</script>
+        // 为skills-category添加延迟动画
+        document.querySelectorAll('.skills-category').forEach((category, index) => {
+            category.style.setProperty('--delay', (index * 0.5) + 's');
+        });
+    </script>
 </body>
 
 </html>
