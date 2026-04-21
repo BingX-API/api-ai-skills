@@ -228,3 +228,9 @@ N/A — Auto-pushed after connecting with listenKey. No explicit subscription ne
 | ac.l | number | Long position leverage |
 | ac.S | number | Short position leverage |
 | ac.mt | string | Margin type (`cross`/`isolated`) |
+
+---
+
+## Error Codes
+
+WebSocket connections may encounter connection-level errors (network disconnects, heartbeat timeouts). For REST API error codes that may occur when managing Listen Keys via `/openApi/user/auth/userDataStream`, see [Error Code Reference](../references/error-codes.md).

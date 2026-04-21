@@ -17,6 +17,8 @@
 
 `GET /openApi/agent/v1/account/inviteAccountList`
 
+Rate limit: 20/s per UID; 2/s per IP.
+
 Returns a paginated list of users invited by the current agent, with KYC, deposit, trade, and welfare status for each invitee.
 
 **Parameters:**
@@ -64,6 +66,8 @@ Returns a paginated list of users invited by the current agent, with KYC, deposi
 ### Endpoint
 
 `GET /openApi/agent/v2/reward/commissionDataList`
+
+Rate limit: 20/s per UID; 2/s per IP.
 
 Returns daily commission data per invited user broken down by business line (spot, perpetual swap, standard contract, copy trading, MT5).
 
@@ -114,6 +118,8 @@ Returns daily commission data per invited user broken down by business line (spo
 
 `GET /openApi/agent/v1/account/inviteRelationCheck`
 
+Rate limit: 20/s per UID; 2/s per IP.
+
 Looks up invitation relationship and account status for a specific user UID. Returns KYC, deposit, trade, welfare, and commission details.
 
 **Parameters:**
@@ -150,6 +156,8 @@ Looks up invitation relationship and account status for a specific user UID. Ret
 ### Endpoint
 
 `GET /openApi/agent/v1/reward/third/commissionDataList`
+
+Rate limit: 20/s per UID; 2/s per IP.
 
 Returns API trading commission data for users who are not under an invitation relationship with the agent. Only supports data after December 1, 2023.
 
@@ -188,6 +196,8 @@ Returns API trading commission data for users who are not under an invitation re
 ### Endpoint
 
 `GET /openApi/agent/v1/asset/partnerData`
+
+Rate limit: 20/s per UID; 2/s per IP.
 
 Returns partner (sub-agent/broker) data including new referrals, first-time traders, deposit amounts, and commission ratios. Only supports querying the last 3 months.
 
@@ -235,6 +245,8 @@ Returns partner (sub-agent/broker) data including new referrals, first-time trad
 
 `GET /openApi/agent/v1/asset/depositDetailList`
 
+Rate limit: see [`references/rate-limits.md`](../references/rate-limits.md) for global policy (per-UID + per-IP throttling, 100410 backoff).
+
 Query deposit details for users invited by the agent.
 
 **Parameters:**
@@ -276,6 +288,8 @@ Query deposit details for users invited by the agent.
 ### Endpoint
 
 `GET /openApi/agent/v1/commissionDataList/referralCode`
+
+Rate limit: 20/s per UID; 2/s per IP.
 
 Query commission data grouped by invitation/referral code.
 
@@ -322,6 +336,8 @@ Query commission data grouped by invitation/referral code.
 
 `GET /openApi/agent/v1/account/superiorCheck`
 
+Rate limit: 20/s per UID; 2/s per IP.
+
 Verify whether a specified UID has an invitation (superior) relationship with the current agent.
 
 **Parameters:**
@@ -341,13 +357,31 @@ Verify whether a specified UID has an invitation (superior) relationship with th
 
 ## Common Error Codes
 
+Common gateway error codes applicable to all endpoints:
+
 | Code | Description |
 |------|-------------|
-| `0` | Success |
-| `80001` | Authentication failed — check API key and signature |
-| `80012` | Parameter error — check required fields and value ranges |
-| `80014` | Timestamp error — ensure timestamp is within valid window |
-| `100500` | Internal server error |
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy. Please retry later. |
+
+Agent-specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `80001` | Authentication failed — check API key and signature. |
+| `80012` | Parameter error — check required fields and value ranges. |
+| `80014` | Timestamp error — ensure timestamp is within valid window. |
+| `100202` | Insufficient assets. Add funds and retry. |
+| `100400` | Invalid request parameters — amount must be greater than 0, main account does not exist, or missing required parameter. |
+| `100403` | The current account is not the main account. This endpoint is restricted to main accounts only. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).
 
 ---
 

@@ -17,6 +17,8 @@
 
 `POST /openApi/swap/v2/trade/order`
 
+Rate limit: 10/s per UID; 3/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -79,6 +81,8 @@
 
 `POST /openApi/swap/v2/trade/order/test`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 Parameters are identical to the Place Order endpoint. No actual trade is executed; used to validate signature and parameter correctness. Response structure is the same as Place Order.
 
 **Parameters:**
@@ -120,6 +124,8 @@ Parameters are identical to the Place Order endpoint. No actual trade is execute
 
 `POST /openApi/swap/v2/trade/batchOrders`
 
+Rate limit: 5/s per UID; 3/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -143,6 +149,8 @@ Parameters are identical to the Place Order endpoint. No actual trade is execute
 
 `DELETE /openApi/swap/v2/trade/order`
 
+Rate limit: 10/s per UID; 3/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -158,6 +166,8 @@ Parameters are identical to the Place Order endpoint. No actual trade is execute
 ### 5. Batch Cancel Orders
 
 `DELETE /openApi/swap/v2/trade/batchOrders`
+
+Rate limit: 5/s per UID; 3/s per IP.
 
 **Parameters:**
 
@@ -180,6 +190,8 @@ Parameters are identical to the Place Order endpoint. No actual trade is execute
 
 `DELETE /openApi/swap/v2/trade/allOpenOrders`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -199,6 +211,8 @@ Parameters are identical to the Place Order endpoint. No actual trade is execute
 ### 7. Cancel All After (Kill Switch)
 
 `POST /openApi/swap/v2/trade/cancelAllAfter`
+
+Rate limit: 1/s per UID; 2/s per IP.
 
 Starts or stops a countdown timer. When the timer expires, all open orders are automatically cancelled. Useful to prevent orders from lingering after a network disconnection.
 
@@ -224,6 +238,8 @@ Starts or stops a countdown timer. When the timer expires, all open orders are a
 ### 8. Query Single Open Order Status
 
 `GET /openApi/swap/v2/trade/openOrder`
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 **Parameters:**
 
@@ -256,6 +272,8 @@ Starts or stops a countdown timer. When the timer expires, all open orders are a
 
 `GET /openApi/swap/v2/trade/order`
 
+Rate limit: 30/s per UID; 2/s per IP.
+
 Query an order by orderId or clientOrderId. Can retrieve orders in any status (including filled or cancelled).
 
 **Parameters:**
@@ -274,6 +292,8 @@ Query an order by orderId or clientOrderId. Can retrieve orders in any status (i
 
 `GET /openApi/swap/v2/trade/openOrders`
 
+Rate limit: 5/s per UID; 3/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -288,6 +308,8 @@ Query an order by orderId or clientOrderId. Can retrieve orders in any status (i
 ### 11. Order History
 
 `GET /openApi/swap/v2/trade/allOrders`
+
+Rate limit: 5/s per UID; 3/s per IP.
 
 **Parameters:**
 
@@ -310,6 +332,8 @@ Query an order by orderId or clientOrderId. Can retrieve orders in any status (i
 
 `GET /openApi/swap/v2/trade/forceOrders`
 
+Rate limit: 10/s per UID; 2/s per IP.
+
 Query forced liquidation orders triggered by liquidation (LIQUIDATION) or auto-deleveraging (ADL).
 
 **Parameters:**
@@ -330,6 +354,8 @@ Query forced liquidation orders triggered by liquidation (LIQUIDATION) or auto-d
 ### 13. Trade Fill History
 
 `GET /openApi/swap/v2/trade/allFillOrders`
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 Query individual trade fills for the account, returning detailed information for each actual execution (including fees and realized PnL).
 
@@ -365,6 +391,8 @@ Query individual trade fills for the account, returning detailed information for
 
 `POST /openApi/swap/v2/trade/closeAllPositions`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -384,6 +412,8 @@ Query individual trade fills for the account, returning detailed information for
 
 `POST /openApi/swap/v1/trade/closePosition`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -402,6 +432,8 @@ Query individual trade fills for the account, returning detailed information for
 ### 16. Adjust Isolated Margin
 
 `POST /openApi/swap/v2/trade/positionMargin`
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 **Parameters:**
 
@@ -429,6 +461,8 @@ Query individual trade fills for the account, returning detailed information for
 
 `GET /openApi/swap/v2/trade/marginType`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -447,6 +481,8 @@ Query individual trade fills for the account, returning detailed information for
 
 `POST /openApi/swap/v2/trade/marginType`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -461,6 +497,8 @@ Query individual trade fills for the account, returning detailed information for
 ### 19. Query Leverage and Available Position
 
 `GET /openApi/swap/v2/trade/leverage`
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 **Parameters:**
 
@@ -485,6 +523,8 @@ Query individual trade fills for the account, returning detailed information for
 
 `POST /openApi/swap/v2/trade/leverage`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -508,6 +548,8 @@ Query individual trade fills for the account, returning detailed information for
 
 `GET /openApi/swap/v1/positionSide/dual`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 **Parameters:** No additional parameters beyond [common parameters](#common-parameters).
 
 **Response `data`:**
@@ -521,6 +563,8 @@ Query individual trade fills for the account, returning detailed information for
 ### 22. Set Position Mode
 
 `POST /openApi/swap/v1/positionSide/dual`
+
+Rate limit: 4/s per UID; 2/s per IP.
 
 **Parameters:**
 
@@ -539,6 +583,8 @@ Query individual trade fills for the account, returning detailed information for
 ### 23. Amend Order
 
 `POST /openApi/swap/v1/trade/amend`
+
+Rate limit: 5/s per UID.
 
 Modifies the quantity of an existing open order. The order must still be open (`NEW` or `PARTIALLY_FILLED`).
 
@@ -565,6 +611,8 @@ Modifies the quantity of an existing open order. The order must still be open (`
 ### 24. Cancel and Replace Order
 
 `POST /openApi/swap/v1/trade/cancelReplace`
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 Atomic operation: cancels an existing open order and immediately submits a new order, eliminating the time-window risk between cancel and re-submit.
 
@@ -612,6 +660,8 @@ Atomic operation: cancels an existing open order and immediately submits a new o
 
 `POST /openApi/swap/v1/trade/batchCancelReplace`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Batch atomic operation: simultaneously cancels multiple open orders and submits multiple new orders. Each operation executes independently; partial failures do not affect other orders.
 
 **Parameters:**
@@ -633,6 +683,8 @@ Batch atomic operation: simultaneously cancels multiple open orders and submits 
 ### 26. Place TWAP Order
 
 `POST /openApi/swap/v1/twap/order`
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 Place a Time-Weighted Average Price (TWAP) order that splits a large order into smaller child orders executed at regular intervals.
 
@@ -662,6 +714,8 @@ Place a Time-Weighted Average Price (TWAP) order that splits a large order into 
 
 `POST /openApi/swap/v1/twap/cancelOrder`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Cancel an active TWAP order.
 
 **Parameters:**
@@ -681,6 +735,8 @@ Cancel an active TWAP order.
 ### 28. Query TWAP Open Orders
 
 `GET /openApi/swap/v1/twap/openOrders`
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 Query currently active TWAP orders.
 
@@ -713,6 +769,8 @@ Query currently active TWAP orders.
 
 `GET /openApi/swap/v1/twap/historyOrders`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Query historical (completed/cancelled) TWAP orders.
 
 **Parameters:**
@@ -737,6 +795,8 @@ Query historical (completed/cancelled) TWAP orders.
 ### 30. TWAP Order Details
 
 `GET /openApi/swap/v1/twap/orderDetail`
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 Query detailed information about a specific TWAP order, including child order execution records.
 
@@ -767,6 +827,8 @@ Query detailed information about a specific TWAP order, including child order ex
 
 `GET /openApi/swap/v1/trade/assetMode`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Query the current multi-assets mode setting.
 
 **Parameters:** No additional parameters beyond [common parameters](#common-parameters).
@@ -782,6 +844,8 @@ Query the current multi-assets mode setting.
 ### 32. Switch Multi-Assets Mode
 
 `POST /openApi/swap/v1/trade/assetMode`
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 Switch between single-asset mode and multi-assets mode. Cannot switch when there are open positions or orders.
 
@@ -803,6 +867,8 @@ Switch between single-asset mode and multi-assets mode. Cannot switch when there
 
 `GET /openApi/swap/v1/trade/multiAssetsRules`
 
+Rate limit: 2/s per IP.
+
 Query multi-assets mode rules including supported margin assets and their discount rates.
 
 **Parameters:** No additional parameters beyond [common parameters](#common-parameters).
@@ -818,6 +884,8 @@ Query multi-assets mode rules including supported margin assets and their discou
 ### 34. Query Multi-Assets Margin
 
 `GET /openApi/swap/v1/user/marginAssets`
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 Query margin assets and their valuations under multi-assets mode.
 
@@ -836,6 +904,8 @@ Query margin assets and their valuations under multi-assets mode.
 ### 35. All Orders (V2)
 
 `GET /openApi/swap/v1/trade/fullOrder`
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 Query all orders (open, filled, cancelled) with extended filter options. Supports pagination.
 
@@ -860,6 +930,8 @@ Query all orders (open, filled, cancelled) with extended filter options. Support
 ### 36. Query Historical Transaction Details
 
 `GET /openApi/swap/v2/trade/fillHistory`
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 Query historical fill/transaction details with pagination support.
 
@@ -888,6 +960,8 @@ Query historical fill/transaction details with pagination support.
 
 `GET /openApi/swap/v1/trade/positionHistory`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 Query closed position history with pagination.
 
 **Parameters:**
@@ -915,6 +989,8 @@ Query closed position history with pagination.
 
 `GET /openApi/swap/v1/positionMargin/history`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 Query the margin adjustment history for isolated-margin positions.
 
 **Parameters:**
@@ -941,6 +1017,8 @@ Query the margin adjustment history for isolated-margin positions.
 
 `GET /openApi/swap/v1/maintMarginRatio`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 Query the maintenance margin ratio tiers for a trading pair.
 
 **Parameters:**
@@ -960,6 +1038,8 @@ Query the maintenance margin ratio tiers for a trading pair.
 ### 40. Automatic Margin Addition
 
 `POST /openApi/swap/v1/trade/autoAddMargin`
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 Enable or disable automatic margin addition for a position in hedge mode.
 
@@ -984,6 +1064,8 @@ Enable or disable automatic margin addition for a position in hedge mode.
 
 `POST /openApi/swap/v1/trade/reverse`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Reverse a position direction with one click. Supports immediate or trigger-based reversal.
 
 **Parameters:**
@@ -1007,6 +1089,8 @@ Reverse a position direction with one click. Supports immediate or trigger-based
 
 `POST /openApi/swap/v2/trade/getVst`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 Apply for or adjust Virtual Simulated Trading (VST) balance.
 
 **Parameters:**
@@ -1021,3 +1105,45 @@ Apply for or adjust Virtual Simulated Trading (VST) balance.
 | Field | Type | Description |
 |-------|------|-------------|
 | `balance` | string | Updated VST balance |
+
+---
+
+## Common Error Codes
+
+Common gateway error codes applicable to all endpoints:
+
+| Code | Description |
+|------|-------------|
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy. Please retry later. |
+
+Futures-specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `101204` | Insufficient margin to place the order. Add margin, lower leverage, or reduce order size. |
+| `101206` | Account available balance is insufficient. Add funds and retry. |
+| `101211` | Order price exceeds the allowed range (too high or too low). Adjust the price. |
+| `101400` | Order parameter validation failed — amount below minimum, TP/SL price mismatch, duplicate clientOrderID, or pair suspended. |
+| `101415` | This trading pair is suspended from opening positions or trading. Check announcements. |
+| `101419` | Pending orders reached the upper limit. Cancel some pending orders first. |
+| `101481` | The clientOrderID has already been used. Use a unique clientOrderID for each new order. |
+| `104103` | Cannot switch position mode while positions or pending orders exist. Close all first. |
+| `109400` | Invalid request parameters — symbol format, missing fields, value range, timestamp, or position mode mismatch. |
+| `109421` | The specified order does not exist — may have been filled, cancelled, or order ID is incorrect. |
+| `109425` | The trading pair does not exist or is not supported. Call /openApi/swap/v2/quote/contracts to verify. |
+
+Rate limit: 1/s per IP.
+
+| `109500` | Internal server error. If it persists, retry later or contact support. |
+| `110206` | TP/SL orders reached the maximum limit. Cancel some existing TP/SL orders first. |
+| `110400` | The submitted order parameters do not meet the requirements. Verify price, quantity, etc. |
+| `110500` | Order system busy. Please retry later. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

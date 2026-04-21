@@ -19,6 +19,8 @@
 
 `GET /openApi/copyTrading/v1/swap/trace/currentTrack`
 
+Rate limit: 10/s per UID; 2/s per IP.
+
 Query the trader's currently open (active) copy trade USDT-M perpetual orders.
 
 **Parameters:**
@@ -92,6 +94,8 @@ Query the trader's currently open (active) copy trade USDT-M perpetual orders.
 
 `POST /openApi/copyTrading/v1/swap/trace/closeTrackOrder`
 
+Rate limit: 10/s per UID; 2/s per IP.
+
 Close (liquidate) a copy trade USDT-M perpetual position identified by its order number. This triggers a market close of the position associated with the given copy trade order.
 
 **Parameters:**
@@ -145,6 +149,8 @@ Close (liquidate) a copy trade USDT-M perpetual position identified by its order
 
 `POST /openApi/copyTrading/v1/swap/trace/setTPSL`
 
+Rate limit: 10/s per UID; 2/s per IP.
+
 Set or update the take profit (TP) and/or stop loss (SL) prices for an active copy trade USDT-M perpetual order. At least one of `takeProfit` or `stopLoss` must be provided.
 
 **Parameters:**
@@ -187,6 +193,8 @@ Set or update the take profit (TP) and/or stop loss (SL) prices for an active co
 ### Personal Trading Overview
 
 `GET /openApi/copyTrading/v1/PFutures/traderDetail`
+
+Rate limit: 10/s per UID.
 
 Query the current trader's personal copy trade USDT-M perpetual performance overview, including total profit, win rate, follower count, and assets under management (AUM).
 
@@ -239,6 +247,8 @@ Query the current trader's personal copy trade USDT-M perpetual performance over
 
 `GET /openApi/copyTrading/v1/PFutures/profitHistorySummarys`
 
+Rate limit: 10/s per UID.
+
 Query aggregated profit summary for the copy trade USDT-M perpetual account over a specified time range.
 
 **Parameters:**
@@ -283,6 +293,8 @@ Query aggregated profit summary for the copy trade USDT-M perpetual account over
 ### Profit Details (Paginated)
 
 `GET /openApi/copyTrading/v1/PFutures/profitDetail`
+
+Rate limit: 10/s per UID.
 
 Query per-order profit details for copy trade USDT-M perpetual orders, paginated. Returns a profit/loss breakdown for each individual closed copy trade order.
 
@@ -356,6 +368,8 @@ Query per-order profit details for copy trade USDT-M perpetual orders, paginated
 
 `POST /openApi/copyTrading/v1/PFutures/setCommission`
 
+Rate limit: 10/s per UID.
+
 Set the commission rate that followers pay to this trader for copy trading USDT-M perpetual contracts.
 
 **Parameters:**
@@ -390,6 +404,8 @@ Set the commission rate that followers pay to this trader for copy trading USDT-
 ### Trader Gets Copy Trading Pairs
 
 `GET /openApi/copyTrading/v1/PFutures/tradingPairs`
+
+Rate limit: 10/s per UID.
 
 Retrieve the list of USDT-M perpetual trading pairs that are available or configured for this trader's copy trading.
 
@@ -449,20 +465,34 @@ Retrieve the list of USDT-M perpetual trading pairs that are available or config
 
 ---
 
-## Error Codes
+## Common Error Codes
 
-Standard BingX error codes apply. Common errors for Copy Trade endpoints:
+Common gateway error codes applicable to all endpoints:
 
 | Code | Description |
 |------|-------------|
-| `0` | Success |
-| `-1100` | Illegal characters in a parameter |
-| `-1102` | Mandatory parameter was not sent or is empty |
-| `-1121` | Invalid symbol |
-| `-2013` | Order does not exist |
-| `-2014` | API key format invalid |
-| `-2015` | Invalid API key, IP, or permissions |
-| `80001` | Copy trade order not found |
-| `80002` | Order already closed or not eligible for this operation |
-| `80003` | TP/SL price must be greater than zero |
-| `80004` | Commission rate out of allowed range |
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy. Please retry later. |
+
+Copy Trade (Swap) specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `-1100` | Illegal characters in a parameter. |
+| `-1102` | Mandatory parameter was not sent or is empty. |
+| `-1121` | Invalid symbol. |
+| `-2013` | Order does not exist. |
+| `-2014` | API key format invalid. |
+| `-2015` | Invalid API key, IP, or permissions. |
+| `80001` | Copy trade order not found. |
+| `80002` | Order already closed or not eligible for this operation. |
+| `80003` | TP/SL price must be greater than zero. |
+| `80004` | Commission rate out of allowed range. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

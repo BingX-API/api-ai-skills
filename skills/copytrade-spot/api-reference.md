@@ -19,6 +19,8 @@
 
 `POST /openApi/copyTrading/v1/spot/trader/sellOrder`
 
+Rate limit: 10/s per UID; 2/s per IP.
+
 Sell the spot assets acquired from a copy trade buy order. This endpoint allows the trader (signal provider) to close the corresponding spot position by specifying the original buy order ID.
 
 **Parameters:**
@@ -71,6 +73,8 @@ Sell the spot assets acquired from a copy trade buy order. This endpoint allows 
 
 `GET /openApi/copyTrading/v1/spot/traderDetail`
 
+Rate limit: 10/s per UID.
+
 Query the current trader's personal copy trade spot performance overview, including total profit, win rate, and trade statistics.
 
 **Parameters:**
@@ -114,6 +118,8 @@ Query the current trader's personal copy trade spot performance overview, includ
 ### Profit Summary
 
 `GET /openApi/copyTrading/v1/spot/profitHistorySummarys`
+
+Rate limit: 10/s per UID.
 
 Query aggregated profit summary for the copy trade spot account over a specified time range.
 
@@ -159,6 +165,8 @@ Query aggregated profit summary for the copy trade spot account over a specified
 ### Profit Details
 
 `GET /openApi/copyTrading/v1/spot/profitDetail`
+
+Rate limit: 10/s per UID.
 
 Query per-order profit details for copy trade spot orders, paginated. Returns a breakdown of profit/loss for each individual completed copy trade spot order.
 
@@ -227,6 +235,8 @@ Query per-order profit details for copy trade spot orders, paginated. Returns a 
 ### Query Historical Orders
 
 `GET /openApi/copyTrading/v1/spot/historyOrder`
+
+Rate limit: 10/s per UID.
 
 Query historical spot copy trade orders for the current account, paginated. Returns both open and closed orders placed as part of copy trading activity.
 
@@ -297,18 +307,32 @@ Query historical spot copy trade orders for the current account, paginated. Retu
 
 ---
 
-## Error Codes
+## Common Error Codes
 
-Standard BingX error codes apply. Common errors for Copy Trade endpoints:
+Common gateway error codes applicable to all endpoints:
 
 | Code | Description |
 |------|-------------|
-| `0` | Success |
-| `-1100` | Illegal characters in a parameter |
-| `-1102` | Mandatory parameter was not sent or is empty |
-| `-1121` | Invalid symbol |
-| `-2013` | Order does not exist |
-| `-2014` | API key format invalid |
-| `-2015` | Invalid API key, IP, or permissions |
-| `80001` | Copy trade order not found |
-| `80002` | Order already closed or not eligible for sell |
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy. Please retry later. |
+
+Copy Trade (Spot) specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `-1100` | Illegal characters in a parameter. |
+| `-1102` | Mandatory parameter was not sent or is empty. |
+| `-1121` | Invalid symbol. |
+| `-2013` | Order does not exist. |
+| `-2014` | API key format invalid. |
+| `-2015` | Invalid API key, IP, or permissions. |
+| `80001` | Copy trade order not found. |
+| `80002` | Order already closed or not eligible for sell. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

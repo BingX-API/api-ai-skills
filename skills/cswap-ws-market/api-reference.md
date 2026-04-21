@@ -304,3 +304,9 @@ Example: `BTC-USD@ticker`
 | data.v | 24h volume |
 | data.p | Price change |
 | data.P | Price change percent |
+
+---
+
+## Error Codes
+
+WebSocket connections may encounter connection-level errors (network disconnects, heartbeat timeouts). For REST API error codes that may occur when querying market data via REST endpoints, see [Error Code Reference](../references/error-codes.md).

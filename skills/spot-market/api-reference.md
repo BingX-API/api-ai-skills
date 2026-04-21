@@ -15,6 +15,8 @@
 
 `GET /openApi/spot/v1/common/symbols`
 
+Rate limit: 1/s per IP.
+
 Returns specifications for all available spot trading pairs. Optionally filter by symbol.
 
 **Parameters:**
@@ -42,6 +44,8 @@ Returns specifications for all available spot trading pairs. Optionally filter b
 
 `GET /openApi/spot/v1/market/depth`
 
+Rate limit: 1/s per IP.
+
 Returns current order book bids and asks for a trading pair.
 
 **Parameters:**
@@ -64,6 +68,8 @@ Returns current order book bids and asks for a trading pair.
 ## 3. Order Book Aggregation (v2)
 
 `GET /openApi/spot/v2/market/depth`
+
+Rate limit: 1/s per IP.
 
 Returns an aggregated order book with configurable price precision. Note: this endpoint uses underscore symbol format (e.g. `BTC_USDT`).
 
@@ -89,6 +95,8 @@ Returns an aggregated order book with configurable price precision. Note: this e
 
 `GET /openApi/spot/v1/market/trades`
 
+Rate limit: 1/s per IP.
+
 Returns the most recent public trades for a symbol.
 
 **Parameters:**
@@ -113,6 +121,8 @@ Returns the most recent public trades for a symbol.
 ## 5. Kline / Candlestick Data (v2)
 
 `GET /openApi/spot/v2/market/kline`
+
+Rate limit: 1/s per IP.
 
 Returns OHLCV candlestick data for a symbol.
 
@@ -148,6 +158,8 @@ Returns OHLCV candlestick data for a symbol.
 
 `GET /openApi/spot/v1/ticker/24hr`
 
+Rate limit: 1/s per IP.
+
 Returns 24-hour rolling window price statistics. Omit `symbol` to get all trading pairs.
 
 **Parameters:**
@@ -181,6 +193,8 @@ Returns 24-hour rolling window price statistics. Omit `symbol` to get all tradin
 
 `GET /openApi/spot/v2/ticker/price`
 
+Rate limit: 1/s per IP.
+
 Returns the latest price trades for a symbol.
 
 **Parameters:**
@@ -213,6 +227,8 @@ Returns the latest price trades for a symbol.
 
 `GET /openApi/spot/v1/ticker/bookTicker`
 
+Rate limit: 1/s per IP.
+
 Returns the best (top-of-book) bid and ask price and quantity for a symbol.
 
 **Parameters:**
@@ -238,6 +254,8 @@ Returns the best (top-of-book) bid and ask price and quantity for a symbol.
 ## 9. Historical Klines
 
 `GET /openApi/market/his/v1/kline`
+
+Rate limit: 1/s per IP.
 
 Returns historical candlestick data (can go further back than the standard kline endpoint).
 
@@ -270,6 +288,8 @@ Returns historical candlestick data (can go further back than the standard kline
 
 `GET /openApi/market/his/v1/trade`
 
+Rate limit: 1/s per IP.
+
 Returns older historical public trades (further back than Recent Trades endpoint).
 
 **Parameters:**
@@ -290,3 +310,35 @@ Returns older historical public trades (further back than Recent Trades endpoint
 | `s` | string | Trading pair |
 | `p` | float | Trade price |
 | `v` | float | Trade volume |
+
+---
+
+## Common Error Codes
+
+Common gateway error codes applicable to all endpoints:
+
+| Code | Description |
+|------|-------------|
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy or query failed. Please retry later. |
+
+Spot-specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `100202` | Account balance is insufficient. Add funds and retry. |
+| `100204` | Requested data not found — symbol does not exist, no data in queried time range, or time span too wide. |
+| `100400` | Request parameter error or resource not found — missing required parameter, invalid symbol format, invalid interval, or order does not exist. |
+| `100404` | Order does not exist. The order may have been filled or cancelled. |
+| `100440` | Order price deviates too much from market price, triggering price protection. Adjust the price. |
+| `100441` | Account is abnormal or advanced identity verification is required. Complete KYC or contact support. |
+| `100490` | Spot trading pair is offline. Check status via /openApi/spot/v1/common/symbols. |
+| `101402` | This account does not support trading of this pair. Verify account permissions and pair status. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

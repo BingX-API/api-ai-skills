@@ -15,6 +15,8 @@
 
 ### POST /openApi/spot/v1/trade/order — Place Order
 
+Rate limit: 10/s per UID; 3/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -49,6 +51,8 @@
 
 ### POST /openApi/spot/v1/trade/batchOrders — Batch Place Orders (up to 5)
 
+Rate limit: 2/s per UID; 3/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -69,6 +73,8 @@ Each order object fields: `symbol`, `side`, `type`, `quantity`, `quoteOrderQty`,
 ## Cancel Order
 
 ### POST /openApi/spot/v1/trade/cancel — Cancel Single Order
+
+Rate limit: 5/s per UID; 3/s per IP.
 
 **Request Parameters:**
 
@@ -98,6 +104,8 @@ Each order object fields: `symbol`, `side`, `type`, `quantity`, `quoteOrderQty`,
 
 ### POST /openApi/spot/v1/trade/cancelOrders — Batch Cancel Orders
 
+Rate limit: 2/s per UID; 3/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -117,6 +125,8 @@ Each order object fields: `symbol`, `side`, `type`, `quantity`, `quoteOrderQty`,
 
 ### POST /openApi/spot/v1/trade/cancelOpenOrders — Cancel All Open Orders for a Trading Pair
 
+Rate limit: 2/s per UID; 3/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -132,6 +142,8 @@ Each order object fields: `symbol`, `side`, `type`, `quantity`, `quoteOrderQty`,
 ---
 
 ### POST /openApi/spot/v1/trade/cancelAllAfter — Cancel All After (Kill Switch)
+
+Rate limit: 1/s per UID; 2/s per IP.
 
 Automatically cancels all open orders after a specified timeout. Prevents residual positions after program errors by continuously sending heartbeat requests to reset the countdown.
 
@@ -151,6 +163,8 @@ Automatically cancels all open orders after a specified timeout. Prevents residu
 ---
 
 ### POST /openApi/spot/v1/trade/order/cancelReplace — Cancel and Replace Order
+
+Rate limit: 2/s per UID; 3/s per IP.
 
 **Request Parameters:**
 
@@ -183,6 +197,8 @@ Automatically cancels all open orders after a specified timeout. Prevents residu
 ## Query Orders
 
 ### GET /openApi/spot/v1/trade/query — Query Single Order
+
+Rate limit: 10/s per UID; 2/s per IP.
 
 **Request Parameters:**
 
@@ -217,6 +233,8 @@ Automatically cancels all open orders after a specified timeout. Prevents residu
 
 ### GET /openApi/spot/v1/trade/openOrders — Query Current Open Orders
 
+Rate limit: 10/s per UID; 2/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -232,6 +250,8 @@ Automatically cancels all open orders after a specified timeout. Prevents residu
 ---
 
 ### GET /openApi/spot/v1/trade/historyOrders — Query Order History
+
+Rate limit: 10/s per UID; 2/s per IP.
 
 **Request Parameters:**
 
@@ -256,6 +276,8 @@ Automatically cancels all open orders after a specified timeout. Prevents residu
 ---
 
 ### GET /openApi/spot/v1/trade/myTrades — Query Trade Fills
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 **Request Parameters:**
 
@@ -289,6 +311,8 @@ Automatically cancels all open orders after a specified timeout. Prevents residu
 
 ### GET /openApi/spot/v1/user/commissionRate — Query Commission Rate
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -310,6 +334,8 @@ Automatically cancels all open orders after a specified timeout. Prevents residu
 OCO (One-Cancels-the-Other) places a limit order and a stop-limit order simultaneously; when one is filled or triggered, the other is automatically cancelled.
 
 ### POST /openApi/spot/v1/oco/order — Create OCO Order
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 **Request Parameters:**
 
@@ -342,6 +368,8 @@ OCO (One-Cancels-the-Other) places a limit order and a stop-limit order simultan
 
 ### POST /openApi/spot/v1/oco/cancel — Cancel OCO Order
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -365,6 +393,8 @@ OCO (One-Cancels-the-Other) places a limit order and a stop-limit order simultan
 ---
 
 ### GET /openApi/spot/v1/oco/orderList — Query OCO Order Details
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 **Request Parameters:**
 
@@ -390,6 +420,8 @@ OCO (One-Cancels-the-Other) places a limit order and a stop-limit order simultan
 
 ### GET /openApi/spot/v1/oco/openOrderList — Query All Open OCO Orders
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -407,6 +439,8 @@ OCO (One-Cancels-the-Other) places a limit order and a stop-limit order simultan
 
 ### GET /openApi/spot/v1/oco/historyOrderList — Query Historical OCO Orders
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -422,3 +456,38 @@ OCO (One-Cancels-the-Other) places a limit order and a stop-limit order simultan
 |-------|------|-------------|
 | ocoOrders | array | Historical OCO order list; each entry has the same structure as the Query OCO Order Details response |
 | total | int | Total record count |
+
+---
+
+## Common Error Codes
+
+Common gateway error codes applicable to all endpoints:
+
+| Code | Description |
+|------|-------------|
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100500` | System busy or query failed. Please retry later. |
+
+Spot-specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `100202` | Account balance is insufficient. Add funds and retry. |
+| `100204` | Requested data not found — symbol does not exist, no data in queried time range, or time span too wide. |
+| `100400` | Request parameter error or resource not found — missing required parameter, invalid symbol format, invalid interval, or order does not exist. |
+| `100404` | Order does not exist. The order may have been filled or cancelled. |
+| `100421` | Request rejected — LIMIT pending orders reached max (1000) or trading pair not available for API orders. |
+| `100440` | Order price deviates too much from market price, triggering price protection. Adjust the price. |
+| `100441` | Account is abnormal or advanced identity verification is required. Complete KYC or contact support. |
+| `100490` | Spot trading pair is offline. Check status via /openApi/spot/v1/common/symbols. |
+
+Rate limit: 1/s per IP.
+
+| `101402` | This account does not support trading of this pair. Verify account permissions and pair status. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

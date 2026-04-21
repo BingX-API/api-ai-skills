@@ -352,3 +352,9 @@ Example: `BTC-USDT@incrDepth`
 | data.bids | `[[price, qty], ...]` |
 | data.asks | `[[price, qty], ...]` |
 | data.T | Timestamp (ms) |
+
+---
+
+## Error Codes
+
+WebSocket connections may encounter connection-level errors (network disconnects, heartbeat timeouts). For REST API error codes that may occur when querying market data via REST endpoints, see [Error Code Reference](../references/error-codes.md).

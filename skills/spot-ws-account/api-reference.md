@@ -167,3 +167,9 @@ Pushed when account balance changes.
 | a.B[].wb | string | Wallet balance |
 | a.B[].cw | string | Cross wallet balance |
 | a.B[].bc | string | Balance change |
+
+---
+
+## Error Codes
+
+WebSocket connections may encounter connection-level errors (network disconnects, heartbeat timeouts). For REST API error codes that may occur when managing Listen Keys via `/openApi/user/auth/userDataStream`, see [Error Code Reference](../references/error-codes.md).

@@ -8,6 +8,8 @@
 
 `GET /openApi/content/v1/announcement`
 
+Rate limit: see [`references/rate-limits.md`](../references/rate-limits.md) for global policy (per-UID + per-IP throttling, 100410 backoff).
+
 Returns announcements filtered by module type, with pagination support.
 
 **Parameters:**
@@ -76,3 +78,18 @@ Returns announcements filtered by module type, with pagination support.
 Standard BingX error format: `{ "code": <non-zero>, "msg": "<description>" }`.
 
 If `code !== 0`, treat as error and surface `msg`. On network/timeout, retry with the fallback base URL.
+
+Common gateway error codes applicable to all endpoints:
+
+| Code | Description |
+|------|-------------|
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy. Please retry later. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

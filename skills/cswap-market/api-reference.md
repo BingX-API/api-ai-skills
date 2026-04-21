@@ -21,6 +21,8 @@
 
 `GET /openApi/cswap/v1/market/contracts`
 
+Rate limit: 1/s per IP.
+
 Returns specifications for all available Coin-M perpetual contracts.
 
 **Parameters:**
@@ -70,6 +72,8 @@ Returns specifications for all available Coin-M perpetual contracts.
 
 `GET /openApi/cswap/v1/market/depth`
 
+Rate limit: 1/s per IP.
+
 Returns current bids and asks for a symbol.
 
 **Parameters:**
@@ -114,6 +118,8 @@ Returns current bids and asks for a symbol.
 ### Get K-line Data
 
 `GET /openApi/cswap/v1/market/klines`
+
+Rate limit: 1/s per IP.
 
 Returns OHLCV candlestick data for a symbol.
 
@@ -166,6 +172,8 @@ Each element: `[openTime, open, high, low, close, volume, closeTime]`
 
 `GET /openApi/cswap/v1/market/premiumIndex`
 
+Rate limit: 1/s per IP.
+
 Returns the current mark price and funding rate. If `symbol` is omitted, returns data for all contracts.
 
 **Parameters:**
@@ -210,6 +218,8 @@ Returns the current mark price and funding rate. If `symbol` is omitted, returns
 
 `GET /openApi/cswap/v1/market/openInterest`
 
+Rate limit: 1/s per IP.
+
 Returns the total open interest for a symbol.
 
 **Parameters:**
@@ -247,6 +257,8 @@ Returns the total open interest for a symbol.
 ### Get 24h Ticker
 
 `GET /openApi/cswap/v1/market/ticker`
+
+Rate limit: 1/s per IP.
 
 Returns 24-hour rolling price change statistics. If `symbol` is omitted, returns data for all contracts.
 
@@ -294,9 +306,25 @@ Returns 24-hour rolling price change statistics. If `symbol` is omitted, returns
 
 ## Common Error Codes
 
+Common gateway error codes applicable to all endpoints:
+
 | Code | Description |
 |------|-------------|
-| `0` | Success |
-| `100400` | Invalid parameter |
-| `100500` | Internal server error |
-| `100503` | Server busy, retry later |
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy. Please retry later. |
+
+Futures-specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `109400` | Invalid request parameters — symbol format, missing fields, value range, timestamp, or position mode mismatch. |
+| `109425` | The trading pair does not exist or is not supported. Call /openApi/cswap/v1/quote/contracts to verify. |
+| `109500` | Internal server error. If it persists, retry later or contact support. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

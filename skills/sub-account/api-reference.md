@@ -634,3 +634,32 @@ Rate limit: 5/s per UID. API Key permission: **Write**.
 | `0` | In progress |
 | `1` | Completed |
 | `6` | Chain uploaded |
+
+---
+
+## Common Error Codes
+
+Common gateway error codes applicable to all endpoints:
+
+| Code | Description |
+|------|-------------|
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy. Please retry later. |
+
+Account / Wallet error codes:
+
+| Code | Description |
+|------|-------------|
+| `100202` | Insufficient assets. Add funds and retry. |
+| `100400` | Invalid request parameters — amount must be greater than 0, main account does not exist, or missing required parameter. |
+| `100403` | The current account is not the main account. This endpoint is restricted to main accounts only. |
+| `100437` | Coin does not exist or deposit address query failed. Verify the coin name. |
+| `100450` | The current account information is incorrect (e.g. invalid sub-account UID). |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

@@ -17,6 +17,8 @@
 
 `GET /openApi/spot/v1/account/balance`
 
+Rate limit: 5/s per UID; 3/s per IP.
+
 Query spot trading account assets and balances.
 
 **Parameters:**
@@ -45,6 +47,8 @@ Query spot trading account assets and balances.
 
 `GET /openApi/fund/v1/account/balance`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Query main account (fund account) balance.
 
 **Parameters:**
@@ -64,6 +68,8 @@ Query main account (fund account) balance.
 ### 3. Asset Overview (All Accounts)
 
 `GET /openApi/account/v1/allAccountBalance`
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 Query USDT-equivalent asset overview across all account types.
 
@@ -87,6 +93,8 @@ Query USDT-equivalent asset overview across all account types.
 
 `POST /openApi/api/asset/v1/transfer`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Transfer assets between different account types (e.g. spot ↔ perpetual futures).
 
 **Parameters:**
@@ -109,6 +117,8 @@ Transfer assets between different account types (e.g. spot ↔ perpetual futures
 ### 5. Query Asset Transfer Records (v3)
 
 `GET /openApi/api/v3/asset/transfer`
+
+Rate limit: 10/s per UID; 2/s per IP.
 
 Query asset transfer history between accounts.
 
@@ -150,6 +160,8 @@ Query asset transfer history between accounts.
 
 `GET /openApi/api/v3/asset/transferRecord`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Query asset transfer records with enhanced filtering options.
 
 **Parameters:**
@@ -190,6 +202,8 @@ Query asset transfer records with enhanced filtering options.
 
 `GET /openApi/api/asset/v1/transfer/supportCoins`
 
+Rate limit: 2/s per UID; 2/s per IP.
+
 Query the list of assets that support inter-account transfers.
 
 **Parameters:**
@@ -211,6 +225,8 @@ Query the list of assets that support inter-account transfers.
 ### 8. Internal P2P Transfer (Main Account)
 
 `POST /openApi/wallets/v1/capital/innerTransfer/apply`
+
+Rate limit: 2/s per UID; 2/s per IP.
 
 Perform internal P2P transfer between main account and other accounts.
 
@@ -238,6 +254,8 @@ Perform internal P2P transfer between main account and other accounts.
 ### 9. Query Internal Transfer Records
 
 `GET /openApi/wallets/v1/capital/innerTransfer/records`
+
+Rate limit: 10/s per UID; 2/s per IP.
 
 Query main account internal P2P transfer history.
 
@@ -275,3 +293,38 @@ Query main account internal P2P transfer history.
 ---
 
 *For full spot trading operations (place/cancel orders, OCO orders, etc.), see [spot-trade/SKILL.md](../spot-trade/SKILL.md).*
+
+---
+
+## Common Error Codes
+
+Common gateway error codes applicable to all endpoints:
+
+| Code | Description |
+|------|-------------|
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy or query failed. Please retry later. |
+
+Spot-specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `100202` | Account balance is insufficient. Add funds and retry. |
+| `100204` | Requested data not found — symbol does not exist, no data in queried time range, or time span too wide. |
+| `100400` | Request parameter error or resource not found — missing required parameter, invalid symbol format, invalid interval, or order does not exist. |
+| `100404` | Order does not exist. The order may have been filled or cancelled. |
+| `100440` | Order price deviates too much from market price, triggering price protection. Adjust the price. |
+| `100441` | Account is abnormal or advanced identity verification is required. Complete KYC or contact support. |
+| `100490` | Spot trading pair is offline. Check status via /openApi/spot/v1/common/symbols. |
+
+Rate limit: 1/s per IP.
+
+| `101402` | This account does not support trading of this pair. Verify account permissions and pair status. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).

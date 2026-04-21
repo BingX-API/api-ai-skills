@@ -15,6 +15,8 @@
 
 `GET /openApi/swap/v3/user/balance`
 
+Rate limit: 5/s per UID; 3/s per IP.
+
 Returns balance, equity, margin, and PnL summary for the perpetual futures account.
 
 **Request Parameters:**
@@ -63,6 +65,8 @@ Returns balance, equity, margin, and PnL summary for the perpetual futures accou
 ## 2. Query Position Data
 
 `GET /openApi/swap/v2/user/positions`
+
+Rate limit: 10/s per UID; 3/s per IP.
 
 Returns current open positions with PnL, liquidation price, leverage, and margin info.
 
@@ -123,6 +127,8 @@ Returns current open positions with PnL, liquidation price, leverage, and margin
 
 `GET /openApi/swap/v2/user/commissionRate`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 Returns the current user's taker and maker fee rates.
 
 **Request Parameters:**
@@ -157,6 +163,8 @@ Returns the current user's taker and maker fee rates.
 ## 4. Query Fund Flow (Income)
 
 `GET /openApi/swap/v2/user/income`
+
+Rate limit: 5/s per UID; 2/s per IP.
 
 Returns fund flow history for the perpetual futures account.
 
@@ -228,6 +236,8 @@ Returns fund flow history for the perpetual futures account.
 
 `GET /openApi/swap/v2/user/income/export`
 
+Rate limit: 5/s per UID; 2/s per IP.
+
 Exports fund flow records as an **Excel file** (binary response, not JSON).
 
 > This endpoint returns a binary Excel file, not a JSON response. Handle accordingly (e.g. write to a `.xlsx` file).
@@ -251,3 +261,45 @@ const res = await fetch(url, { headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY":
 const buffer = await res.arrayBuffer();
 fs.writeFileSync("fund_flow.xlsx", Buffer.from(buffer));
 ```
+
+---
+
+## Common Error Codes
+
+Common gateway error codes applicable to all endpoints:
+
+| Code | Description |
+|------|-------------|
+| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
+| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
+| `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
+| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
+| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
+| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
+| `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
+| `100500` | System busy. Please retry later. |
+
+Futures-specific error codes:
+
+| Code | Description |
+|------|-------------|
+| `101204` | Insufficient margin to place the order. Add margin, lower leverage, or reduce order size. |
+| `101206` | Account available balance is insufficient. Add funds and retry. |
+| `101211` | Order price exceeds the allowed range (too high or too low). Adjust the price. |
+| `101400` | Order parameter validation failed — amount below minimum, TP/SL price mismatch, duplicate clientOrderID, or pair suspended. |
+| `101415` | This trading pair is suspended from opening positions or trading. Check announcements. |
+| `101419` | Pending orders reached the upper limit. Cancel some pending orders first. |
+| `101481` | The clientOrderID has already been used. Use a unique clientOrderID for each new order. |
+| `104103` | Cannot switch position mode while positions or pending orders exist. Close all first. |
+| `109400` | Invalid request parameters — symbol format, missing fields, value range, timestamp, or position mode mismatch. |
+| `109421` | The specified order does not exist — may have been filled, cancelled, or order ID is incorrect. |
+| `109425` | The trading pair does not exist or is not supported. Call /openApi/swap/v2/quote/contracts to verify. |
+
+Rate limit: 1/s per IP.
+
+| `109500` | Internal server error. If it persists, retry later or contact support. |
+| `110206` | TP/SL orders reached the maximum limit. Cancel some existing TP/SL orders first. |
+| `110400` | The submitted order parameters do not meet the requirements. Verify price, quantity, etc. |
+| `110500` | Order system busy. Please retry later. |
+
+For the complete error code list, see [Error Code Reference](../references/error-codes.md).
