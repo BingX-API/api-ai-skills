@@ -28,6 +28,11 @@ skills:
   - cswap-ws-market
   - cswap-ws-account
   - references
+  - bingx-technical-analysis
+  - bingx-rsi-bottom-hunter
+  - bingx-maker-entry
+  - bingx-trade-review
+  - bingx-dynamic-sl-tp
 
 hooks:
   - SessionStart

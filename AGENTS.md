@@ -28,6 +28,11 @@ This is a **BingX OpenAPI skill collection** providing 22 skills for perpetual c
 | bingx-spot-ws-account | Spot WebSocket account data | User asks for real-time spot account updates, live spot order status streaming, spot balance change notifications, or WebSocket account monitoring for spot trading |
 | bingx-coinm-ws-market | Coin-M WebSocket market data | User asks for real-time coin-margined futures market data, live Coin-M price feeds, streaming inverse futures order books, or WebSocket subscriptions for coin-margined perpetual futures |
 | bingx-coinm-ws-account | Coin-M WebSocket account data | User asks for real-time Coin-M account updates, live coin-margined order status, inverse futures position changes, or WebSocket account monitoring for coin-margined perpetual futures |
+| bingx-technical-analysis | Technical analysis | User asks for technical analysis, indicator values (RSI, MACD, EMA, Bollinger Bands, etc.), candlestick pattern recognition, multi-timeframe scoring, support/resistance levels, or divergence detection |
+| bingx-rsi-bottom-hunter | RSI bottom-fishing strategy | User asks for RSI bottom fishing, oversold buying, RSI strategy, or wants to auto-monitor RSI and execute trades when oversold conditions are met |
+| bingx-maker-entry | Maker limit order entry | User wants to open a position using limit orders, save taker fees, place multi-level limit orders near best price, or dynamically adjust orders as price moves |
+| bingx-trade-review | Trade review and performance analysis | User asks for trade review, PnL summary, win rate, trade journal, custom trade tags, or cross-period performance comparison |
+| bingx-dynamic-sl-tp | Dynamic stop-loss and take-profit | User asks to set, adjust, or optimize stop-loss and take-profit using ATR, volatility, or structure-based strategies; supports trailing stop, partial take-profit, and break-even stop |
 
 ## Skill Discovery
 
