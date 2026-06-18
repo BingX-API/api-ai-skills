@@ -1,6 +1,6 @@
 # BingX OpenAPI Skills
 
-> A BingX Exchange API Skills Library for AI coding assistants — 16 skill modules covering perpetual futures, spot trading, coin-margined contracts, copy trading, and account management.
+> A BingX Exchange API Skills Library for AI coding assistants — 21 skill modules covering perpetual futures, spot trading, coin-margined contracts, copy trading, account management, and trading analysis.
 
 Once installed, you can interact with the AI using natural language to query market data, place trades, and manage accounts — no manual API coding required.
 
@@ -74,6 +74,13 @@ After installation, the AI assistant will automatically recognize the following 
 
 **Announcements**:
 - **bingx-announcement** — Query official announcements (latest announcements, promotions, product updates, maintenance notices, listing/delisting, funding rate, crypto scout, etc.)
+
+**Trading Analysis**:
+- **bingx-technical-analysis** — Technical analysis with 78 indicators + 62 candlestick patterns, multi-timeframe scoring, support/resistance detection, divergence detection
+- **bingx-rsi-bottom-hunter** — Auto-monitors RSI oversold signals and executes entry with stop-loss and take-profit in one step
+- **bingx-maker-entry** — Multi-level limit order entry near best price, dynamically adjusts as price moves to save taker fees
+- **bingx-trade-review** — Trade review and performance analysis (win rate, PnL, drawdown, charts, custom tags)
+- **bingx-dynamic-sl-tp** — Dynamic SL/TP based on ATR, volatility, and market structure; supports trailing stop and partial take-profit
 
 ---
 
@@ -211,6 +218,16 @@ After reading these files, the AI can autonomously handle HMAC SHA256 signing, r
 | Skill | Purpose | Auth Required |
 |-------|---------|---------------|
 | `bingx-announcement` | Official announcements: latest announcements, promotions, product updates, maintenance notices, listing/delisting, etc. | No |
+
+### Trading Analysis
+
+| Skill | Purpose | Auth Required |
+|-------|---------|---------------|
+| `bingx-technical-analysis` | 78 indicators + 62 candlestick patterns, multi-timeframe scoring, support/resistance, divergence detection | Yes |
+| `bingx-rsi-bottom-hunter` | RSI oversold monitoring, auto-entry with SL/TP | Yes |
+| `bingx-maker-entry` | Multi-level limit order entry, dynamic adjustment, fee savings | Yes |
+| `bingx-trade-review` | Trade performance review: win rate, PnL, drawdown, charts, custom tags | Yes |
+| `bingx-dynamic-sl-tp` | ATR/volatility/structure-based dynamic SL/TP, trailing stop, partial TP | Yes |
 
 ---
 
