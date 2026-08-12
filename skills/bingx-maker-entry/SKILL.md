@@ -1,14 +1,6 @@
 ---
 name: bingx-maker-entry
-description: >
-  Use this skill when the user wants to open a position using limit orders
-  instead of market orders, or any request like "limit order entry", "maker entry",
-  "limit order open", "save fees on entry", "help me place limit orders", "auto limit orders",
-  "avoid market order", "iceberg order", "split order entry".
-  Scans orderbook depth, places multi-level limit orders near best price,
-  and dynamically adjusts as price moves. Saves taker fees and reduces
-  market impact.
-  Depends on bingx-swap-market, bingx-swap-trade, bingx-swap-account.
+description: Use when the user wants to open a BingX perpetual futures position with limit orders, maker entry, split entry, iceberg-style entry, or fee-saving execution instead of market orders. It scans order book depth, places multi-level limit orders near best price, and adjusts orders as price moves through bingx-swap-market, bingx-swap-trade, and bingx-swap-account.
 metadata:
   author: BingX
   version: "1.0.0"

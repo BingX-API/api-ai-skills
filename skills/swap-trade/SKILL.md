@@ -81,8 +81,8 @@ Authenticated trading endpoints for BingX perpetual futures. All endpoints requi
 * **reduceOnly**: `true` | `false` — Order can only reduce (never increase) position size
 * **activationPrice**: Activation price for `TRAILING_STOP_MARKET` orders (optional; defaults to current market price when omitted)
 * **priceRate**: Trailing callback rate for `TRAILING_STOP_MARKET` / `TRAILING_TP_SL` orders (e.g., `0.05` = 5%)
-* **stopLoss**: Object — Attach a stop-loss to a `MARKET`/`LIMIT` order (see Stop-Loss/Take-Profit Object)
-* **takeProfit**: Object — Attach a take-profit to a `MARKET`/`LIMIT` order (see Stop-Loss/Take-Profit Object)
+* **stopLoss**: JSON-string query parameter — Attach a stop-loss to a `MARKET`/`LIMIT` order. Build and validate the nested object first, then call `JSON.stringify` exactly once.
+* **takeProfit**: JSON-string query parameter — Attach a take-profit to a `MARKET`/`LIMIT` order. Build and validate the nested object first, then call `JSON.stringify` exactly once.
 
 ### Position Parameters
 
@@ -142,6 +142,8 @@ When attaching `stopLoss` or `takeProfit` to a `MARKET` or `LIMIT` order:
 
 > **Constraint:** `stopLoss`/`takeProfit` objects are **only** supported on `MARKET` or `LIMIT` order types. They cannot be used with `STOP_MARKET`, `STOP`, `TAKE_PROFIT_MARKET`, `TAKE_PROFIT`, `TRAILING_STOP_MARKET`, or `TRAILING_TP_SL`.
 
+The outer `stopLoss` and `takeProfit` values are query parameters containing JSON strings. Inside that JSON, `stopPrice` and optional `price` must be JSON numbers, not quoted numeric strings. Never send `{"stopPrice":"63538.3"}`.
+
 ### Parameter Validation Rules
 
 Before sending a request, validate parameters client-side to avoid unnecessary API errors:
@@ -150,6 +152,9 @@ Before sending a request, validate parameters client-side to avoid unnecessary A
 * **quantity**: Must be a positive number (> 0); max precision depends on the symbol's contract specification
 * **price**: When provided, must be a positive number (> 0)
 * **stopPrice**: When provided, must be a positive number (> 0); must differ from current market price
+* **stopLoss.stopPrice / takeProfit.stopPrice**: Required JSON numbers; convert with `Number(...)`, then require a finite value greater than 0
+* **stopLoss.price / takeProfit.price**: Optional JSON numbers; when provided, convert with `Number(...)`, then require a finite value greater than 0
+* **stopLoss / takeProfit serialization**: Validate the nested object before serializing it. The signed query value must be the exact `JSON.stringify(...)` result
 * **leverage**: Positive integer; range varies per symbol (typically 1–125 for BTC-USDT)
 * **clientOrderId**: Alphanumeric only, 1–40 characters; pattern `^[a-zA-Z0-9]{1,40}$`; no special characters
 * **priceRate**: Trailing callback rate; must satisfy 0 < value ≤ 1 (e.g., `0.05` = 5%)
@@ -183,10 +188,66 @@ function isNetworkOrTimeout(e: unknown): boolean {
   if (e instanceof Error && e.name === "TimeoutError") return true;
   return false;
 }
+function toPositiveNumber(value: unknown, field: string): number {
+  const numberValue = Number(value);
+  if (!Number.isFinite(numberValue) || numberValue <= 0) {
+    throw new Error(`${field} must be a finite positive number`);
+  }
+  return numberValue;
+}
+function normalizeAttachedOrder(
+  key: "stopLoss" | "takeProfit", value: unknown
+): string {
+  let parsed: unknown = value;
+  if (typeof value === "string") {
+    try { parsed = JSON.parse(value); }
+    catch { throw new Error(`${key} must be valid JSON`); }
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error(`${key} must be an object or a JSON object string`);
+  }
+  const nested = { ...(parsed as Record<string, unknown>) };
+  const allowedTypes = key === "stopLoss"
+    ? new Set(["STOP_MARKET", "STOP"])
+    : new Set(["TAKE_PROFIT_MARKET", "TAKE_PROFIT"]);
+  if (typeof nested.type !== "string" || !allowedTypes.has(nested.type)) {
+    throw new Error(`${key}.type is invalid`);
+  }
+  nested.stopPrice = toPositiveNumber(nested.stopPrice, `${key}.stopPrice`);
+  if (nested.price !== undefined) {
+    nested.price = toPositiveNumber(nested.price, `${key}.price`);
+  }
+  if (nested.workingType !== undefined &&
+      nested.workingType !== "MARK_PRICE" &&
+      nested.workingType !== "CONTRACT_PRICE") {
+    throw new Error(`${key}.workingType is invalid`);
+  }
+  if (nested.stopGuaranteed !== undefined &&
+      typeof nested.stopGuaranteed !== "boolean") {
+    throw new Error(`${key}.stopGuaranteed must be a boolean`);
+  }
+  return JSON.stringify(nested);
+}
+function normalizeParams(params: Record<string, unknown>): Record<string, unknown> {
+  const normalized = { ...params };
+  if (normalized.price !== undefined) {
+    normalized.price = toPositiveNumber(normalized.price, "price");
+  }
+  for (const key of ["stopLoss", "takeProfit"] as const) {
+    if (normalized[key] !== undefined) {
+      normalized[key] = normalizeAttachedOrder(key, normalized[key]);
+    }
+  }
+  return normalized;
+}
+function serializeParamValue(value: unknown): string {
+  if (value !== null && typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
 function validateParams(params: Record<string, unknown>): void {
   const FORBIDDEN = /[&=?#\r\n]/;
   for (const [k, v] of Object.entries(params)) {
-    const s = String(v);
+    const s = serializeParamValue(v);
     if (FORBIDDEN.test(s)) throw new Error(`Param "${k}" has forbidden char in: "${s}"`);
   }
 }
@@ -194,9 +255,11 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
   method: "GET" | "POST" | "DELETE", path: string, params: Record<string, unknown> = {}
 ) {
   const urls = BASE[env] ?? BASE["prod-live"];
-  const all = { ...params, timestamp: Date.now() };
+  const normalized = normalizeParams(params);
+  const all = { ...normalized, timestamp: Date.now() };
   validateParams(all);
-  const qs = Object.keys(all).sort().map(k => `${k}=${all[k]}`).join("&");
+  const qs = Object.keys(all).sort()
+    .map(k => `${k}=${serializeParamValue(all[k])}`).join("&");
   const sig = crypto.createHmac("sha256", secretKey).update(qs).digest("hex");
   const signed = `${qs}&signature=${sig}`;
   for (const base of urls) {
@@ -225,6 +288,8 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
 - **MUST** use `json-bigint` (`JSONBigParse.parse`) for response parsing -- not `JSON.parse`
 - **MUST** include `X-SOURCE-KEY: BX-AI-SKILL` header on every request
 - **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check
+- **MUST** normalize and serialize all business parameters before creating the timestamp and signature. If any parameter changes, discard the previous timestamp/signature and sign a new request
+- **MUST NOT** interpolate object values directly with `${params[k]}`; object values must be serialized with `JSON.stringify`, otherwise they become `[object Object]`
 
 ---
 
@@ -244,6 +309,34 @@ const order = await fetchSigned("prod-live", API_KEY, SECRET, "POST",
 );
 // order.orderId, order.status
 ```
+
+**Place a market buy order with attached stop-loss:**
+
+```typescript
+const rawStopPrice = "63538.3";
+const stopPrice = Number(rawStopPrice);
+if (!Number.isFinite(stopPrice) || stopPrice <= 0) {
+  throw new Error("stopLoss.stopPrice must be a finite positive number");
+}
+
+const order = await fetchSigned("prod-live", API_KEY, SECRET, "POST",
+  "/openApi/swap/v2/trade/order", {
+    symbol: "BTC-USDT",
+    side: "BUY",
+    positionSide: "BOTH",
+    type: "MARKET",
+    quantity: 0.0004,
+    recvWindow: 5000,
+    stopLoss: JSON.stringify({
+      type: "STOP_MARKET",
+      stopPrice,
+      workingType: "MARK_PRICE",
+    }),
+  }
+);
+```
+
+> **Important:** `/openApi/swap/v2/trade/order/test` does not enforce every validation performed by the real `/openApi/swap/v2/trade/order` endpoint. A successful test request does not guarantee that the real order will pass. In particular, the real endpoint validates nested `stopLoss`/`takeProfit` field types more strictly.
 
 **Cancel an order:**
 

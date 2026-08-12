@@ -1,6 +1,6 @@
 # BingX OpenAPI Skills
 
-> A BingX Exchange API Skills Library for AI coding assistants — 21 skill modules covering perpetual futures, spot trading, coin-margined contracts, copy trading, account management, and trading analysis.
+> A BingX Exchange API Skills Library for AI coding assistants — 29 skill modules covering perpetual futures, spot trading, coin-margined contracts, copy trading, account management, WebSocket streams, and trading analysis.
 
 Once installed, you can interact with the AI using natural language to query market data, place trades, and manage accounts — no manual API coding required.
 
@@ -81,6 +81,8 @@ After installation, the AI assistant will automatically recognize the following 
 - **bingx-maker-entry** — Multi-level limit order entry near best price, dynamically adjusts as price moves to save taker fees
 - **bingx-trade-review** — Trade review and performance analysis (win rate, PnL, drawdown, charts, custom tags)
 - **bingx-dynamic-sl-tp** — Dynamic SL/TP based on ATR, volatility, and market structure; supports trailing stop and partial take-profit
+- **bingx-sentiment-dashboard** — Market sentiment dashboard with Fear & Greed, funding rate heatmap, OI anomaly detection, and local AHR999
+- **bingx-trading-plan** — Six-dimension trading plan generator with conservative, steady, and aggressive risk plans
 
 ---
 
@@ -228,6 +230,8 @@ After reading these files, the AI can autonomously handle HMAC SHA256 signing, r
 | `bingx-maker-entry` | Multi-level limit order entry, dynamic adjustment, fee savings | Yes |
 | `bingx-trade-review` | Trade performance review: win rate, PnL, drawdown, charts, custom tags | Yes |
 | `bingx-dynamic-sl-tp` | ATR/volatility/structure-based dynamic SL/TP, trailing stop, partial TP | Yes |
+| `bingx-sentiment-dashboard` | Market sentiment dashboard: Fear & Greed, funding heatmap, OI anomalies, local AHR999 | No |
+| `bingx-trading-plan` | Six-dimension trading score and conservative/steady/aggressive trading plans | No |
 
 ---
 

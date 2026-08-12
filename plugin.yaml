@@ -33,6 +33,8 @@ skills:
   - bingx-maker-entry
   - bingx-trade-review
   - bingx-dynamic-sl-tp
+  - bingx-sentiment-dashboard
+  - bingx-trading-plan
 
 hooks:
   - SessionStart

@@ -3,6 +3,8 @@
 ## [0.1.3] - 2026-06-18
 
 - Add: 5 trading analysis skills (bingx-technical-analysis, bingx-rsi-bottom-hunter, bingx-maker-entry, bingx-trade-review, bingx-dynamic-sl-tp)
+- Add: bingx-sentiment-dashboard market sentiment dashboard skill
+- Add: bingx-trading-plan trading plan generator skill
 
 ## [0.1.2] - 2026-03-16
 

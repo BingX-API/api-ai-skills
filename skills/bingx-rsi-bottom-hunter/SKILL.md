@@ -1,14 +1,6 @@
 ---
 name: bingx-rsi-bottom-hunter
-description: >
-  Use this skill when the user asks for RSI bottom fishing, oversold buying,
-  RSI strategy, or any request like "RSI bottom", "buy oversold", "RSI strategy",
-  "bottom hunter", "start RSI trading", "help me bottom fish", "buy when RSI is low".
-  Auto-monitors RSI, buys in oversold zone, executes stop-loss and take-profit.
-  Calls bingx-technical-analysis as a data source for multi-dimension confirmation
-  (MACD, Supertrend, divergence, support/resistance, candlestick patterns) to reduce
-  false signals.
-  Depends on bingx-swap-market, bingx-swap-trade, bingx-swap-account.
+description: Use when the user asks for RSI bottom fishing, oversold buying, RSI strategy, bottom hunter, or buying when RSI is low. It monitors RSI, confirms signals with bingx-technical-analysis, and supports entry, stop-loss, and take-profit planning through bingx-swap-market, bingx-swap-trade, and bingx-swap-account.
 metadata:
   author: BingX
   version: "1.0.0"

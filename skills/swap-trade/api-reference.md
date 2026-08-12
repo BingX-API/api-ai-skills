@@ -39,8 +39,8 @@ Rate limit: 10/s per UID; 3/s per IP.
 | `reduceOnly` | string | No | true, false; Default value is false for single position mode; This parameter is not accepted for both long and short pos|
 | `activationPrice` | float | No | Activation price (for `TRAILING_STOP_MARKET`; defaults to current market price if omitted) |
 | `priceRate` | float | No | Callback rate (required for `TRAILING_STOP_MARKET` and `TRAILING_TP_SL`, e.g. `0.05` = 5%) |
-| `stopLoss` | string | No | Stop-loss attached order (may only be attached to `MARKET` / `LIMIT` orders; see structure below) |
-| `takeProfit` | string | No | Support setting take profit while placing an order. Only supports type: TAKE_PROFIT_MARKET/TAKE_PROFIT |
+| `stopLoss` | string | No | JSON-string query parameter for an attached stop-loss. Its nested `stopPrice` and optional `price` must be JSON numbers |
+| `takeProfit` | string | No | JSON-string query parameter for an attached take-profit. Its nested `stopPrice` and optional `price` must be JSON numbers |
 | `positionId` | int | No | In the Separate Isolated mode, closing a position must be transmitted |
 
 **stopLoss / takeProfit object structure:**
@@ -55,6 +55,10 @@ Rate limit: 10/s per UID; 3/s per IP.
   "stopGuaranteed": false      // Whether to guarantee fill
 }
 ```
+
+Build and validate this object first, then pass `JSON.stringify(object)` as the outer query parameter. For example, use `{"stopPrice":63538.3}` rather than `{"stopPrice":"63538.3"}`. If a generic request helper receives an object value, it must serialize it with `JSON.stringify` before signing and transmitting; direct string interpolation produces `[object Object]`.
+
+After any conversion or serialization change, generate a fresh `timestamp` and recompute the signature. Never alter parameters in an already signed request.
 
 **Response `data`:**
 
@@ -83,7 +87,9 @@ Rate limit: 10/s per UID; 3/s per IP.
 
 Rate limit: 5/s per UID; 2/s per IP.
 
-Parameters are identical to the Place Order endpoint. No actual trade is executed; used to validate signature and parameter correctness. Response structure is the same as Place Order.
+**Response data:** Same order-validation response structure as Place Order; no order is created or filled.
+
+Parameters are identical to the Place Order endpoint. No actual trade is executed. This endpoint does not enforce every validation performed by the real `/openApi/swap/v2/trade/order` endpoint, so success here does not guarantee that a real order will pass. The real endpoint validates nested `stopLoss` and `takeProfit` field types more strictly; always validate numeric fields and serialize nested JSON exactly as required before signing the real request.
 
 **Parameters:**
 

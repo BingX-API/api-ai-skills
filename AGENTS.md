@@ -1,6 +1,6 @@
 # BingX AI Skills — Agent Instructions
 
-This is a **BingX OpenAPI skill collection** providing 22 skills for perpetual contract, spot, coin-margined, copy trading, account operations, announcements, and WebSocket real-time data streams: market data queries, trading operations, account management, wallet operations, copy trading, sub-account management, agent/affiliate management, official announcements, and WebSocket market/account data subscriptions.
+This is a **BingX OpenAPI skill collection** providing 29 skills for perpetual contract, spot, coin-margined, copy trading, account operations, announcements, WebSocket real-time data streams, and trading analysis: market data queries, trading operations, account management, wallet operations, copy trading, sub-account management, agent/affiliate management, official announcements, WebSocket market/account data subscriptions, market sentiment analysis, and trading plan generation.
 
 ## Available Skills
 
@@ -33,6 +33,8 @@ This is a **BingX OpenAPI skill collection** providing 22 skills for perpetual c
 | bingx-maker-entry | Maker limit order entry | User wants to open a position using limit orders, save taker fees, place multi-level limit orders near best price, or dynamically adjust orders as price moves |
 | bingx-trade-review | Trade review and performance analysis | User asks for trade review, PnL summary, win rate, trade journal, custom trade tags, or cross-period performance comparison |
 | bingx-dynamic-sl-tp | Dynamic stop-loss and take-profit | User asks to set, adjust, or optimize stop-loss and take-profit using ATR, volatility, or structure-based strategies; supports trailing stop, partial take-profit, and break-even stop |
+| bingx-sentiment-dashboard | Market sentiment dashboard | User asks about market sentiment, fear and greed index, funding rate heatmap, open interest anomalies, AHR999, DCA zone, or overall market mood |
+| bingx-trading-plan | Trading plan generator | User asks for a BingX perpetual futures trading plan, entry/exit strategy, position sizing, risk management, stop-loss/take-profit levels, or conservative/steady/aggressive plans |
 
 ## Skill Discovery
 

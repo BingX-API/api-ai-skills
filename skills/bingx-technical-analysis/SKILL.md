@@ -1,14 +1,6 @@
 ---
 name: bingx-technical-analysis
-description: >
-  Use this skill when the user asks for technical analysis, indicator values
-  (RSI, MACD, EMA, Bollinger Bands, KDJ, SuperTrend, etc.), candlestick
-  pattern recognition, multi-timeframe scoring, support/resistance levels,
-  divergence detection, or any request like "analyze BTC", "BTC technical",
-  "should I open a position", "bull/bear analysis", "indicator analysis",
-  "candlestick patterns", "trend analysis".
-  Depends on bingx-swap-market for K-line data. Computes 78 indicators +
-  62 candlestick patterns locally via pandas-ta-classic.
+description: Use when the user asks for BingX perpetual futures technical analysis, indicator values, candlestick pattern recognition, multi-timeframe scoring, support/resistance levels, divergence detection, or trend analysis. Depends on bingx-swap-market for K-line data and computes 78 indicators plus 62 candlestick patterns locally via pandas-ta-classic.
 metadata:
   author: BingX
   version: "1.0.0"

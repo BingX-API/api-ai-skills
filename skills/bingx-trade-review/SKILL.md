@@ -1,12 +1,6 @@
 ---
 name: bingx-trade-review
-description: >
-  Use this skill when the user asks for trade review, performance analysis,
-  PnL summary, win rate, trade journal, or any request like "trade review",
-  "trading summary", "recent performance", "what is my win rate", "review my trades",
-  "reflection", "tag trades", "which trades are profitable", "trade journal", "weekly PnL".
-  Fetches trade history from bingx-swap-account, computes statistics,
-  generates local charts, supports custom tags and reflections.
+description: Use when the user asks for BingX perpetual futures trade review, performance analysis, PnL summary, win rate, trade journal, recent trading performance, trade tags, reflections, or weekly PnL. It fetches trade history from bingx-swap-account, computes statistics, generates local charts, and supports custom tags and review notes.
 metadata:
   author: BingX
   version: "1.0.0"

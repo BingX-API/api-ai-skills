@@ -1,14 +1,6 @@
 ---
 name: bingx-dynamic-sl-tp
-description: >
-  Use this skill when the user asks to set, adjust, or optimize stop-loss
-  and take-profit, or any request like "set stop-loss", "set take-profit", "place stop-loss",
-  "dynamic stop-loss", "trailing take-profit", "Trailing Stop", "partial take-profit",
-  "where should I set my stop-loss", "volatility stop-loss", "ATR stop-loss",
-  "break-even stop", "trailing stop".
-  Dynamically calculates SL/TP based on ATR, volatility, and support/resistance.
-  Supports trailing stop, partial take-profit, and break-even stop.
-  Depends on bingx-swap-market and bingx-swap-trade.
+description: Use when the user asks to set, adjust, or optimize stop-loss and take-profit for BingX perpetual futures, including dynamic stop-loss, trailing take-profit, partial take-profit, ATR stop-loss, volatility stop-loss, break-even stop, and trailing stop. It calculates SL/TP based on ATR, volatility, and support/resistance through bingx-swap-market and bingx-swap-trade.
 metadata:
   author: BingX
   version: "1.0.0"
