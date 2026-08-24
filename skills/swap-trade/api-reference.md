@@ -27,7 +27,7 @@ Rate limit: 10/s per UID; 3/s per IP.
 | `side` | string | Yes | buying and selling direction SELL, BUY |
 | `positionSide` | string | No | Position direction, required for single position as BOTH, for both long and short positions only LONG or SHORT can be ch|
 | `type` | string | Yes | Order type: `MARKET`, `LIMIT`, `STOP_MARKET`, `STOP`, `TAKE_PROFIT_MARKET`, `TAKE_PROFIT`, `TRAILING_STOP_MARKET`, `TRAILING_TP_SL` |
-| `quantity` | float | No | Original quantity, only support units by COIN ,Ordering with quantity U is not currently supported. |
+| `quantity` | float | No | Order quantity in contract coin units. Mandatory for `STOP_MARKET` and `TAKE_PROFIT_MARKET` even when `closePosition=true`. |
 | `quoteOrderQty` | float | No | Quote order quantity, e.g., 100USDT,if quantity and quoteOrderQty are input at the same time, quantity will be used firs|
 | `price` | float | No | Price, represents the trailing stop distance in TRAILING_STOP_MARKET and TRAILING_TP_SL |
 | `stopPrice` | float | No | Trigger price (required for `STOP_MARKET`, `STOP`, `TAKE_PROFIT_MARKET`, `TAKE_PROFIT`) |
@@ -35,13 +35,13 @@ Rate limit: 10/s per UID; 3/s per IP.
 | `clientOrderId` | string | No | Custom order ID, 1–40 characters, converted to lowercase by the system; must be unique per order; **supported for `MARKET` and `LIMIT` only** |
 | `workingType` | string | No | Trigger price source: `MARK_PRICE` (mark price, **default**), `CONTRACT_PRICE` (last trade price), or `INDEX_PRICE` (index price); must be `CONTRACT_PRICE` when `stopGuaranteed=true` or `cutfee` |
 | `stopGuaranteed` | string | No | true: Enables the guaranteed stop-loss and take-profit feature; false: Disables the feature; cutfee: Enable the guaranteed stop loss function and enable the VIP guaranteed stop loss fee reduction function. When stopGuaranteed is true or cutfee, the quantity field does not take effect. The guaranteed stop-loss feature is not enabled by default. Supported order types include: STOP_MARKET / TAKE_PROFIT_MARKET / STOP / TAKE_PROFIT / TRIGGER_LIMIT / TRIGGER_MARKET. |
-| `closePosition` | string | No | `true` closes all positions in the specified direction on trigger; cannot be used with `quantity` |
-| `reduceOnly` | string | No | true, false; Default value is false for single position mode; This parameter is not accepted for both long and short pos|
+| `closePosition` | string | No | `true` closes the entire position on trigger. Supported only for `STOP_MARKET` and `TAKE_PROFIT_MARKET`; `quantity` and `stopPrice` remain mandatory. Do not combine with `reduceOnly`. |
+| `reduceOnly` | string | No | `true` or `false`; defaults to `false` in One-way Mode. Do not send this parameter in Hedge Mode. |
 | `activationPrice` | float | No | Activation price (for `TRAILING_STOP_MARKET`; defaults to current market price if omitted) |
 | `priceRate` | float | No | Callback rate (required for `TRAILING_STOP_MARKET` and `TRAILING_TP_SL`, e.g. `0.05` = 5%) |
 | `stopLoss` | string | No | JSON-string query parameter for an attached stop-loss. Its nested `stopPrice` and optional `price` must be JSON numbers |
 | `takeProfit` | string | No | JSON-string query parameter for an attached take-profit. Its nested `stopPrice` and optional `price` must be JSON numbers |
-| `positionId` | int | No | In the Separate Isolated mode, closing a position must be transmitted |
+| `positionId` | int | No | Not required in regular Hedge Mode. Required only when closing a position in Separate Isolated mode. |
 
 **stopLoss / takeProfit object structure:**
 
@@ -99,16 +99,17 @@ Parameters are identical to the Place Order endpoint. No actual trade is execute
 | `side` | string | Yes | buying and selling direction SELL, BUY |
 | `type` | string | Yes | Order type: `MARKET`, `LIMIT`, `STOP_MARKET`, `STOP`, `TAKE_PROFIT_MARKET`, `TAKE_PROFIT`, `TRAILING_STOP_MARKET`, `TRAILING_TP_SL` |
 | `positionSide` | string | No | Position direction, required for single position as BOTH, for both long and short positions only LONG or SHORT can be ch|
-| `reduceOnly` | string | No | true, false; Default value is false for single position mode; This parameter is not accepted for both long and short pos|
+| `reduceOnly` | string | No | `true` or `false`; defaults to `false` in One-way Mode. Do not send this parameter in Hedge Mode. |
 | `price` | float64 | No | Price, represents the trailing stop distance in TRAILING_STOP_MARKET and TRAILING_TP_SL |
-| `quantity` | float64 | No | Original quantity, only support units by COIN ,Ordering with quantity U is not currently supported. |
+| `quantity` | float64 | No | Order quantity in contract coin units. Mandatory for `STOP_MARKET` and `TAKE_PROFIT_MARKET` even when `closePosition=true`. |
 | `stopPrice` | float64 | No | Trigger price (required for stop/take-profit types) |
 | `priceRate` | float64 | No | For type: TRAILING_STOP_MARKET or TRAILING_TP_SL; Maximum: 1 |
 | `stopLoss` | string | No | Support setting stop loss while placing an order. Only supports type: STOP_MARKET/STOP |
 | `takeProfit` | string | No | Support setting take profit while placing an order. Only supports type: TAKE_PROFIT_MARKET/TAKE_PROFIT |
 | `clientOrderId` | string | No | Customized order ID for users, with a limit of characters from 1 to 40. Different orders cannot use the same clientOrder|
 | `timeInForce` | string | No | Time in force: `GTC`, `IOC`, `FOK`, `PostOnly` |
-| `closePosition` | string | No | true, false; all position squaring after triggering, only support STOP_MARKET and TAKE_PROFIT_MARKET; not used with quan|
+| `closePosition` | string | No | `true` closes the entire position on trigger. Supported only for `STOP_MARKET` and `TAKE_PROFIT_MARKET`; `quantity` and `stopPrice` remain mandatory. Do not combine with `reduceOnly`. |
+| `positionId` | int64 | No | Not required in regular Hedge Mode. Required only when closing a position in Separate Isolated mode. |
 | `activationPrice` | float64 | No | Used with TRAILING_STOP_MARKET or TRAILING_TP_SL orders, default as the latest price(supporting different workingType) |
 | `stopGuaranteed` | string | No | true: Enables the guaranteed stop-loss and take-profit feature; false: Disables the feature; cutfee: Enable the guaranteed stop loss function and enable the VIP guaranteed stop loss fee reduction function. When stopGuaranteed is true or cutfee, the quantity field does not take effect. The guaranteed stop-loss feature is not enabled by default. Supported order types include: STOP_MARKET: Market stop-loss order / TAKE_PROFIT_MARKET: Market take-profit order / STOP: Limit stop-loss order / TAKE_PROFIT: Limit take-profit order / TRIGGER_LIMIT: Stop-limit order with trigger / TRIGGER_MARKET: Market order with trigger for stop-loss. |
 
@@ -632,22 +633,22 @@ Atomic operation: cancels an existing open order and immediately submits a new o
 | `side` | string | Yes | buying and selling direction SELL, BUY |
 | `positionSide` | string | Yes | Position direction, required for single position as BOTH, for both long and short positions only LONG or SHORT can be ch|
 | `type` | string | Yes | LIMIT: Limit Order / MARKET: Market Order / STOP_MARKET: Stop Market Order / TAKE_PROFIT_MARKET: Take Profit Market Orde|
-| `quantity` | float | No | Original quantity, only support units by COIN ,Ordering with quantity U is not currently supported. |
+| `quantity` | float | No | Order quantity in contract coin units. Mandatory for `STOP_MARKET` and `TAKE_PROFIT_MARKET` even when `closePosition=true`. |
 | `price` | float | No | Price, represents the trailing stop distance in TRAILING_STOP_MARKET and TRAILING_TP_SL |
 | `cancelReplaceMode` | string | Yes | STOP_ON_FAILURE: If the order cancellation fails, the replacement order will not continue. ALLOW_FAILURE: Regardless of whether the cancellation succeeds or not, a new order is placed. |
 | `cancelRestrictions` | string | No | ONLY_NEW: If the order status is NEW, the cancellation will succeed. ONLY_PENDING: If the order status is PENDING, the cancellation will succeed. ONLY_PARTIALLY_FILLED: If the order status is PARTIALLY_FILLED, the cancellation will succeed. |
-| `reduceOnly` | string | No | true, false; Default value is false for single position mode; This parameter is not accepted for both long and short position mode. |
+| `reduceOnly` | string | No | `true` or `false`; defaults to `false` in One-way Mode. Do not send this parameter in Hedge Mode. |
 | `stopPrice` | float64 | No | Trigger price (for stop/take-profit types) |
 | `priceRate` | float64 | No | For type: TRAILING_STOP_MARKET or TRAILING_TP_SL ; Maximum: 1 |
 | `workingType` | string | No | StopPrice trigger price types: MARK_PRICE, CONTRACT_PRICE,  default MARK_PRICE. When the type is STOP or STOP_MARKET, an|
 | `stopLoss` | string | No | Support setting stop loss while placing an order. Only supports type: STOP_MARKET/STOP |
 | `takeProfit` | string | No | Support setting take profit while placing an order. Only supports type: TAKE_PROFIT_MARKET/TAKE_PROFIT |
 | `clientOrderId` | string | No | Customized order ID for users, with a limit of characters from 1 to 40. The system will convert this field to lowercase.|
-| `closePosition` | string | No | true, false; all position squaring after triggering, only support STOP_MARKET and TAKE_PROFIT_MARKET; not used with quan|
+| `closePosition` | string | No | `true` closes the entire position on trigger. Supported only for `STOP_MARKET` and `TAKE_PROFIT_MARKET`; `quantity` and `stopPrice` remain mandatory. Do not combine with `reduceOnly`. |
 | `activationPrice` | float64 | No | Used with TRAILING_STOP_MARKET or TRAILING_TP_SL  orders, default as the latest price(supporting different workingType) |
 | `stopGuaranteed` | string | No | true: Enables the guaranteed stop-loss and take-profit feature; false: Disables the feature. The guaranteed stop-loss fe|
 | `timeInForce` | string | No | Time in force: `GTC`, `IOC`, `FOK`, `PostOnly` |
-| `positionId` | int64 | No | In the Separate Isolated mode, closing a position must be transmitted |
+| `positionId` | int64 | No | Not required in regular Hedge Mode. Required only when closing a position in Separate Isolated mode. |
 
 > Other new order parameters follow the same rules as Place Order (§1).
 

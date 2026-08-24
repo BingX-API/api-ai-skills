@@ -30,8 +30,8 @@ Rate limit: 5/s per UID; 2/s per IP.
 | `timeInForce` | string | No | Effective method, currently supports GTC, IOC, FOK and PostOnly |
 | `clientOrderId` | string | No | Custom order ID, 1–40 chars |
 | `workingType` | string | No | Trigger price source: `MARK_PRICE` or `CONTRACT_PRICE` (default) |
-| `takeProfit` | string | No | Attached take-profit (see TP/SL Object, only on `MARKET`/`LIMIT`) |
-| `stopLoss` | string | No | Attached stop-loss (see TP/SL Object, only on `MARKET`/`LIMIT`) |
+| `takeProfit` | string | No | JSON-string query parameter for attached take-profit (only on `MARKET`/`LIMIT`); nested `stopPrice` and optional `price` must be JSON numbers |
+| `stopLoss` | string | No | JSON-string query parameter for attached stop-loss (only on `MARKET`/`LIMIT`); nested `stopPrice` and optional `price` must be JSON numbers |
 
 **TP/SL Object structure:**
 
@@ -41,6 +41,8 @@ Rate limit: 5/s per UID; 2/s per IP.
 | `stopPrice` | float | Yes | Trigger price |
 | `price` | float | Conditional | Limit execution price (required for `TAKE_PROFIT` / `STOP` types) |
 | `workingType` | string | No | `MARK_PRICE` or `CONTRACT_PRICE` |
+
+Build and validate the nested object first, convert `stopPrice` and optional `price` with `Number(...)`, then call `JSON.stringify` exactly once. Object values must never be interpolated directly into the signed query because they would become `[object Object]`. After changing any parameter, generate a fresh timestamp and signature.
 
 **Response `data`:**
 

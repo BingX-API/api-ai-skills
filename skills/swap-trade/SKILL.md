@@ -68,7 +68,7 @@ Authenticated trading endpoints for BingX perpetual futures. All endpoints requi
 * **side**: Order direction — `BUY` or `SELL`
 * **positionSide**: Position direction — `LONG` or `SHORT` (hedge mode) / `BOTH` (one-way mode)
 * **type**: Order type (see Enums)
-* **quantity**: Order quantity in **coins** (e.g., `0.01` for BTC-USDT); can be omitted when `closePosition: true`
+* **quantity**: Order quantity in **coins** (e.g., `0.01` for BTC-USDT); still mandatory for `STOP_MARKET` and `TAKE_PROFIT_MARKET` when `closePosition: true`
 * **price**: Limit price (required for `LIMIT`, `STOP`, `TAKE_PROFIT` types)
 * **stopPrice**: Trigger price (required for `STOP_MARKET`, `STOP`, `TAKE_PROFIT_MARKET`, `TAKE_PROFIT`)
 * **timeInForce**: `GTC` | `IOC` | `FOK` | `PostOnly` — default `GTC`; required for `LIMIT` type
@@ -77,8 +77,8 @@ Authenticated trading endpoints for BingX perpetual futures. All endpoints requi
 * **orderId**: System order ID (for cancel/query operations)
 * **workingType**: Price source used to trigger conditional orders — `MARK_PRICE` (mark price) or `CONTRACT_PRICE` (last traded price, default)
 * **stopGuaranteed**: `true` | `false` — Whether stop-loss execution is guaranteed; guaranteed stops may incur an additional fee
-* **closePosition**: `true` | `false` — When the trigger fires, close the **entire** position quantity; cannot be used with `quantity`
-* **reduceOnly**: `true` | `false` — Order can only reduce (never increase) position size
+* **closePosition**: `true` | `false` — When the trigger fires, close the **entire** position quantity. Supported only for `STOP_MARKET` and `TAKE_PROFIT_MARKET`; `quantity` and `stopPrice` remain mandatory. Do not combine it with `reduceOnly`.
+* **reduceOnly**: `true` | `false` — Order can only reduce (never increase) position size. Do not send this parameter in Hedge Mode.
 * **activationPrice**: Activation price for `TRAILING_STOP_MARKET` orders (optional; defaults to current market price when omitted)
 * **priceRate**: Trailing callback rate for `TRAILING_STOP_MARKET` / `TRAILING_TP_SL` orders (e.g., `0.05` = 5%)
 * **stopLoss**: JSON-string query parameter — Attach a stop-loss to a `MARKET`/`LIMIT` order. Build and validate the nested object first, then call `JSON.stringify` exactly once.
@@ -89,7 +89,7 @@ Authenticated trading endpoints for BingX perpetual futures. All endpoints requi
 * **leverage**: Integer leverage multiplier (e.g., `10`, `20`, `50`)
 * **marginType**: `ISOLATED` or `CROSSED`
 * **dualSidePosition**: `"true"` (hedge mode) or `"false"` (one-way mode)
-* **positionId**: Position ID string (used by `closePosition` and `positionMargin` endpoints)
+* **positionId**: Position ID string. Not required for regular Hedge Mode orders; required when closing a position in Separate Isolated mode and by endpoints that explicitly identify a position.
 * **amount**: Margin adjustment amount in USDT (used by `positionMargin` endpoint)
 * **direction_type**: `1` (add margin) or `2` (reduce margin) (used by `positionMargin` endpoint)
 
@@ -449,7 +449,7 @@ If the user's intent is unclear, present options:
 
 ### Step 6 — Collect quantity and price
 
-- Ask for quantity in **coins** (e.g., 0.01 BTC for BTC-USDT). Omit if using `closePosition: true`.
+- Ask for quantity in **coins** (e.g., 0.01 BTC for BTC-USDT). For `STOP_MARKET` and `TAKE_PROFIT_MARKET`, quantity remains mandatory when using `closePosition: true`.
 - If type is `LIMIT`, `STOP`, or `TAKE_PROFIT`: also ask for `price`.
 - If type is `STOP_MARKET`, `STOP`, `TAKE_PROFIT_MARKET`, or `TAKE_PROFIT`: also ask for `stopPrice`.
 - If type is `TRAILING_STOP_MARKET` or `TRAILING_TP_SL`: ask for `priceRate` (e.g., 0.05 = 5%) and optionally `activationPrice`.
@@ -457,8 +457,8 @@ If the user's intent is unclear, present options:
 
 **Optional advanced parameters** (ask only if relevant or user mentions them):
 - `workingType`: trigger price source — `MARK_PRICE` or `CONTRACT_PRICE` (default)
-- `reduceOnly`: `true` to ensure the order only reduces position size
-- `closePosition`: `true` to close the entire position when triggered (cannot use with `quantity`)
+- `reduceOnly`: `true` to ensure the order only reduces position size; do not send it in Hedge Mode
+- `closePosition`: `true` to close the entire position when triggered; only for `STOP_MARKET` and `TAKE_PROFIT_MARKET`, with both `quantity` and `stopPrice` still required
 - `stopGuaranteed`: `true` for guaranteed stop execution (extra fee may apply)
 
 ### Step 7 — Confirm (prod-live only)
