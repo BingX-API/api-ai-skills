@@ -17,7 +17,7 @@
 
 `GET /openApi/spot/v1/account/balance`
 
-Rate limit: 5/s per UID; 3/s per IP.
+Rate limit: 5/s per UID.
 
 Query spot trading account assets and balances.
 
@@ -47,7 +47,7 @@ Query spot trading account assets and balances.
 
 `GET /openApi/fund/v1/account/balance`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Query main account (fund account) balance.
 
@@ -69,7 +69,7 @@ Query main account (fund account) balance.
 
 `GET /openApi/account/v1/allAccountBalance`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query USDT-equivalent asset overview across all account types.
 
@@ -93,7 +93,7 @@ Query USDT-equivalent asset overview across all account types.
 
 `POST /openApi/api/asset/v1/transfer`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Transfer assets between different account types (e.g. spot ↔ perpetual futures).
 
@@ -118,7 +118,7 @@ Transfer assets between different account types (e.g. spot ↔ perpetual futures
 
 `GET /openApi/api/v3/asset/transfer`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Query asset transfer history between accounts.
 
@@ -160,7 +160,7 @@ Query asset transfer history between accounts.
 
 `GET /openApi/api/v3/asset/transferRecord`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Query asset transfer records with enhanced filtering options.
 
@@ -202,7 +202,7 @@ Query asset transfer records with enhanced filtering options.
 
 `GET /openApi/api/asset/v1/transfer/supportCoins`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Query the list of assets that support inter-account transfers.
 
@@ -226,7 +226,7 @@ Query the list of assets that support inter-account transfers.
 
 `POST /openApi/wallets/v1/capital/innerTransfer/apply`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Perform internal P2P transfer between main account and other accounts.
 
@@ -255,7 +255,7 @@ Perform internal P2P transfer between main account and other accounts.
 
 `GET /openApi/wallets/v1/capital/innerTransfer/records`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Query main account internal P2P transfer history.
 

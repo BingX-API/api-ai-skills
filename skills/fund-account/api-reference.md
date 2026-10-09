@@ -17,7 +17,7 @@
 
 `GET /openApi/spot/v1/account/balance`
 
-Rate limit: 5/s per UID; 3/s per IP.
+Rate limit: 5/s per UID.
 
 Returns all coin balances in the fund (spot) account.
 
@@ -55,7 +55,7 @@ Returns all coin balances in the fund (spot) account.
 
 `GET /openApi/account/v1/allAccountBalance`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Returns the USDT-equivalent balance for each account type held by the user.
 
@@ -107,7 +107,7 @@ Array of account balance objects:
 
 `POST /openApi/api/asset/v1/transfer`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Transfers an asset between the user's own accounts (e.g., Fund → Spot, Fund → Perpetual Futures).
 
@@ -156,7 +156,7 @@ Transfers an asset between the user's own accounts (e.g., Fund → Spot, Fund �
 
 `GET /openApi/api/v3/asset/transfer`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Returns historical asset transfer records. Query by `type` or `tranId` (at least one required).
 
@@ -213,7 +213,7 @@ Returns historical asset transfer records. Query by `type` or `tranId` (at least
 
 `POST /openApi/wallets/v1/capital/innerTransfer/apply`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Transfers assets from the current account to another BingX user identified by UID, phone, or email.
 
@@ -254,7 +254,7 @@ Transfers assets from the current account to another BingX user identified by UI
 
 `GET /openApi/wallets/v1/capital/innerTransfer/records`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Returns the internal transfer history for a specific coin.
 

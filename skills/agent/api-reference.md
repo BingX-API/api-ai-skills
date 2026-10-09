@@ -17,7 +17,7 @@
 
 `GET /openApi/agent/v1/account/inviteAccountList`
 
-Rate limit: 20/s per UID; 2/s per IP.
+Rate limit: 20/s per UID.
 
 Returns a paginated list of users invited by the current agent, with KYC, deposit, trade, and welfare status for each invitee.
 
@@ -67,7 +67,7 @@ Returns a paginated list of users invited by the current agent, with KYC, deposi
 
 `GET /openApi/agent/v2/reward/commissionDataList`
 
-Rate limit: 20/s per UID; 2/s per IP.
+Rate limit: 20/s per UID.
 
 Returns daily commission data per invited user broken down by business line (spot, perpetual swap, standard contract, copy trading, MT5).
 
@@ -118,7 +118,7 @@ Returns daily commission data per invited user broken down by business line (spo
 
 `GET /openApi/agent/v1/account/inviteRelationCheck`
 
-Rate limit: 20/s per UID; 2/s per IP.
+Rate limit: 20/s per UID.
 
 Looks up invitation relationship and account status for a specific user UID. Returns KYC, deposit, trade, welfare, and commission details.
 
@@ -157,7 +157,7 @@ Looks up invitation relationship and account status for a specific user UID. Ret
 
 `GET /openApi/agent/v1/reward/third/commissionDataList`
 
-Rate limit: 20/s per UID; 2/s per IP.
+Rate limit: 20/s per UID.
 
 Returns API trading commission data for users who are not under an invitation relationship with the agent. Only supports data after December 1, 2023.
 
@@ -197,7 +197,7 @@ Returns API trading commission data for users who are not under an invitation re
 
 `GET /openApi/agent/v1/asset/partnerData`
 
-Rate limit: 20/s per UID; 2/s per IP.
+Rate limit: 20/s per UID.
 
 Returns partner (sub-agent/broker) data including new referrals, first-time traders, deposit amounts, and commission ratios. Only supports querying the last 3 months.
 
@@ -289,7 +289,7 @@ Query deposit details for users invited by the agent.
 
 `GET /openApi/agent/v1/commissionDataList/referralCode`
 
-Rate limit: 20/s per UID; 2/s per IP.
+Rate limit: 20/s per UID.
 
 Query commission data grouped by invitation/referral code.
 
@@ -336,7 +336,7 @@ Query commission data grouped by invitation/referral code.
 
 `GET /openApi/agent/v1/account/superiorCheck`
 
-Rate limit: 20/s per UID; 2/s per IP.
+Rate limit: 20/s per UID.
 
 Verify whether a specified UID has an invitation (superior) relationship with the current agent.
 

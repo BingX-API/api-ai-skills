@@ -15,7 +15,7 @@
 
 ### POST /openApi/spot/v1/trade/order — Place Order
 
-Rate limit: 10/s per UID; 3/s per IP.
+Rate limit: 10/s per UID.
 
 **Request Parameters:**
 
@@ -51,7 +51,7 @@ Rate limit: 10/s per UID; 3/s per IP.
 
 ### POST /openApi/spot/v1/trade/batchOrders — Batch Place Orders (up to 5)
 
-Rate limit: 2/s per UID; 3/s per IP.
+Rate limit: 2/s per UID.
 
 **Request Parameters:**
 
@@ -74,7 +74,7 @@ Each order object fields: `symbol`, `side`, `type`, `quantity`, `quoteOrderQty`,
 
 ### POST /openApi/spot/v1/trade/cancel — Cancel Single Order
 
-Rate limit: 5/s per UID; 3/s per IP.
+Rate limit: 5/s per UID.
 
 **Request Parameters:**
 
@@ -104,7 +104,7 @@ Rate limit: 5/s per UID; 3/s per IP.
 
 ### POST /openApi/spot/v1/trade/cancelOrders — Batch Cancel Orders
 
-Rate limit: 2/s per UID; 3/s per IP.
+Rate limit: 2/s per UID.
 
 **Request Parameters:**
 
@@ -125,7 +125,7 @@ Rate limit: 2/s per UID; 3/s per IP.
 
 ### POST /openApi/spot/v1/trade/cancelOpenOrders — Cancel All Open Orders for a Trading Pair
 
-Rate limit: 2/s per UID; 3/s per IP.
+Rate limit: 2/s per UID.
 
 **Request Parameters:**
 
@@ -143,7 +143,7 @@ Rate limit: 2/s per UID; 3/s per IP.
 
 ### POST /openApi/spot/v1/trade/cancelAllAfter — Cancel All After (Kill Switch)
 
-Rate limit: 1/s per UID; 2/s per IP.
+Rate limit: 1/s per UID.
 
 Automatically cancels all open orders after a specified timeout. Prevents residual positions after program errors by continuously sending heartbeat requests to reset the countdown.
 
@@ -164,7 +164,7 @@ Automatically cancels all open orders after a specified timeout. Prevents residu
 
 ### POST /openApi/spot/v1/trade/order/cancelReplace — Cancel and Replace Order
 
-Rate limit: 2/s per UID; 3/s per IP.
+Rate limit: 2/s per UID.
 
 **Request Parameters:**
 
@@ -198,7 +198,7 @@ Rate limit: 2/s per UID; 3/s per IP.
 
 ### GET /openApi/spot/v1/trade/query — Query Single Order
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 **Request Parameters:**
 
@@ -233,7 +233,7 @@ Rate limit: 10/s per UID; 2/s per IP.
 
 ### GET /openApi/spot/v1/trade/openOrders — Query Current Open Orders
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 **Request Parameters:**
 
@@ -251,7 +251,7 @@ Rate limit: 10/s per UID; 2/s per IP.
 
 ### GET /openApi/spot/v1/trade/historyOrders — Query Order History
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 **Request Parameters:**
 
@@ -277,7 +277,7 @@ Rate limit: 10/s per UID; 2/s per IP.
 
 ### GET /openApi/spot/v1/trade/myTrades — Query Trade Fills
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Request Parameters:**
 
@@ -311,7 +311,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 ### GET /openApi/spot/v1/user/commissionRate — Query Commission Rate
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 **Request Parameters:**
 
@@ -335,7 +335,7 @@ OCO (One-Cancels-the-Other) places a limit order and a stop-limit order simultan
 
 ### POST /openApi/spot/v1/oco/order — Create OCO Order
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 **Request Parameters:**
 
@@ -368,7 +368,7 @@ Rate limit: 2/s per UID; 2/s per IP.
 
 ### POST /openApi/spot/v1/oco/cancel — Cancel OCO Order
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 **Request Parameters:**
 
@@ -394,7 +394,7 @@ Rate limit: 2/s per UID; 2/s per IP.
 
 ### GET /openApi/spot/v1/oco/orderList — Query OCO Order Details
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Request Parameters:**
 
@@ -420,7 +420,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 ### GET /openApi/spot/v1/oco/openOrderList — Query All Open OCO Orders
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Request Parameters:**
 
@@ -439,7 +439,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 ### GET /openApi/spot/v1/oco/historyOrderList — Query Historical OCO Orders
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Request Parameters:**
 

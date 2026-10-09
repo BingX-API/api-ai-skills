@@ -19,7 +19,7 @@
 
 `POST /openApi/copyTrading/v1/spot/trader/sellOrder`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Sell the spot assets acquired from a copy trade buy order. This endpoint allows the trader (signal provider) to close the corresponding spot position by specifying the original buy order ID.
 

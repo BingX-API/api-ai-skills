@@ -14,7 +14,7 @@
 
 `POST /openApi/cswap/v1/trade/order`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -88,7 +88,7 @@ Build and validate the nested object first, convert `stopPrice` and optional `pr
 
 `DELETE /openApi/cswap/v1/trade/cancelOrder`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Cancel an order that is currently in a pending state.
 
@@ -125,7 +125,7 @@ Cancel an order that is currently in a pending state.
 
 `POST /openApi/cswap/v1/trade/allOpenOrders`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -175,7 +175,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `POST /openApi/cswap/v1/trade/closeAllPositions`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Closes all currently open positions using market orders.
 
@@ -195,7 +195,7 @@ Closes all currently open positions using market orders.
 
 `GET /openApi/cswap/v1/trade/openOrders`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -239,7 +239,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `GET /openApi/cswap/v1/trade/orderDetail`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -309,7 +309,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `GET /openApi/cswap/v1/trade/orderHistory`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -363,7 +363,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `GET /openApi/cswap/v1/trade/allFillOrders`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 > **Note:** `orderId` is required for Coin-M futures. Provide the order ID to retrieve its fill records.
 
@@ -432,7 +432,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `GET /openApi/cswap/v1/trade/forceOrders`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -475,7 +475,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `GET /openApi/cswap/v1/trade/leverage`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -524,7 +524,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `POST /openApi/cswap/v1/trade/leverage`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -552,7 +552,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `GET /openApi/cswap/v1/trade/marginType`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -589,7 +589,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `POST /openApi/cswap/v1/trade/marginType`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -610,7 +610,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `POST /openApi/cswap/v1/trade/positionMargin`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Adjusts the margin amount for an isolated position. Only applicable when margin type is `ISOLATED`.
 
@@ -633,7 +633,7 @@ Adjusts the margin amount for an isolated position. Only applicable when margin 
 
 `GET /openApi/cswap/v1/user/commissionRate`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -666,7 +666,7 @@ No endpoint-specific parameters.
 
 `GET /openApi/cswap/v1/user/balance`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query coin-margined account asset balances.
 
@@ -695,7 +695,7 @@ Query coin-margined account asset balances.
 
 `GET /openApi/cswap/v1/user/positions`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query current open positions for coin-margined contracts.
 

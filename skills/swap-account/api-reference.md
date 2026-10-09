@@ -15,7 +15,7 @@
 
 `GET /openApi/swap/v3/user/balance`
 
-Rate limit: 5/s per UID; 3/s per IP.
+Rate limit: 5/s per UID.
 
 Returns balance, equity, margin, and PnL summary for the perpetual futures account.
 
@@ -66,7 +66,7 @@ Returns balance, equity, margin, and PnL summary for the perpetual futures accou
 
 `GET /openApi/swap/v2/user/positions`
 
-Rate limit: 10/s per UID; 3/s per IP.
+Rate limit: 10/s per UID.
 
 Returns current open positions with PnL, liquidation price, leverage, and margin info.
 
@@ -127,7 +127,7 @@ Returns current open positions with PnL, liquidation price, leverage, and margin
 
 `GET /openApi/swap/v2/user/commissionRate`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Returns the current user's taker and maker fee rates.
 
@@ -164,7 +164,7 @@ Returns the current user's taker and maker fee rates.
 
 `GET /openApi/swap/v2/user/income`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Returns fund flow history for the perpetual futures account.
 
@@ -236,7 +236,7 @@ Returns fund flow history for the perpetual futures account.
 
 `GET /openApi/swap/v2/user/income/export`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Exports fund flow records as an **Excel file** (binary response, not JSON).
 

@@ -19,7 +19,7 @@
 
 `GET /openApi/copyTrading/v1/swap/trace/currentTrack`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Query the trader's currently open (active) copy trade USDT-M perpetual orders.
 
@@ -94,7 +94,7 @@ Query the trader's currently open (active) copy trade USDT-M perpetual orders.
 
 `POST /openApi/copyTrading/v1/swap/trace/closeTrackOrder`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Close (liquidate) a copy trade USDT-M perpetual position identified by its order number. This triggers a market close of the position associated with the given copy trade order.
 
@@ -149,7 +149,7 @@ Close (liquidate) a copy trade USDT-M perpetual position identified by its order
 
 `POST /openApi/copyTrading/v1/swap/trace/setTPSL`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Set or update the take profit (TP) and/or stop loss (SL) prices for an active copy trade USDT-M perpetual order. At least one of `takeProfit` or `stopLoss` must be provided.
 

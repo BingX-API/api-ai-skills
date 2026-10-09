@@ -17,7 +17,7 @@
 
 `POST /openApi/swap/v2/trade/order`
 
-Rate limit: 10/s per UID; 3/s per IP.
+Rate limit: 10/s per UID.
 
 **Parameters:**
 
@@ -85,7 +85,7 @@ After any conversion or serialization change, generate a fresh `timestamp` and r
 
 `POST /openApi/swap/v2/trade/order/test`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Response data:** Same order-validation response structure as Place Order; no order is created or filled.
 
@@ -131,7 +131,7 @@ Parameters are identical to the Place Order endpoint. No actual trade is execute
 
 `POST /openApi/swap/v2/trade/batchOrders`
 
-Rate limit: 5/s per UID; 3/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -156,7 +156,7 @@ Rate limit: 5/s per UID; 3/s per IP.
 
 `DELETE /openApi/swap/v2/trade/order`
 
-Rate limit: 10/s per UID; 3/s per IP.
+Rate limit: 10/s per UID.
 
 **Parameters:**
 
@@ -174,7 +174,7 @@ Rate limit: 10/s per UID; 3/s per IP.
 
 `DELETE /openApi/swap/v2/trade/batchOrders`
 
-Rate limit: 5/s per UID; 3/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -197,7 +197,7 @@ Rate limit: 5/s per UID; 3/s per IP.
 
 `DELETE /openApi/swap/v2/trade/allOpenOrders`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -219,7 +219,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `POST /openApi/swap/v2/trade/cancelAllAfter`
 
-Rate limit: 1/s per UID; 2/s per IP.
+Rate limit: 1/s per UID.
 
 Starts or stops a countdown timer. When the timer expires, all open orders are automatically cancelled. Useful to prevent orders from lingering after a network disconnection.
 
@@ -246,7 +246,7 @@ Starts or stops a countdown timer. When the timer expires, all open orders are a
 
 `GET /openApi/swap/v2/trade/openOrder`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -279,7 +279,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `GET /openApi/swap/v2/trade/order`
 
-Rate limit: 30/s per UID; 2/s per IP.
+Rate limit: 30/s per UID.
 
 Query an order by orderId or clientOrderId. Can retrieve orders in any status (including filled or cancelled).
 
@@ -299,7 +299,9 @@ Query an order by orderId or clientOrderId. Can retrieve orders in any status (i
 
 `GET /openApi/swap/v2/trade/openOrders`
 
-Rate limit: 5/s per UID; 3/s per IP.
+Rate limit: 5/s per UID.
+
+The former IP limits for account endpoint group 3 were removed on 2025-12-16. The source field `ip-rate-limitation: "3"` identifies a group, not requests per second. This does not imply unlimited requests or exemption from other service protections.
 
 **Parameters:**
 
@@ -316,7 +318,7 @@ Rate limit: 5/s per UID; 3/s per IP.
 
 `GET /openApi/swap/v2/trade/allOrders`
 
-Rate limit: 5/s per UID; 3/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -339,7 +341,7 @@ Rate limit: 5/s per UID; 3/s per IP.
 
 `GET /openApi/swap/v2/trade/forceOrders`
 
-Rate limit: 10/s per UID; 2/s per IP.
+Rate limit: 10/s per UID.
 
 Query forced liquidation orders triggered by liquidation (LIQUIDATION) or auto-deleveraging (ADL).
 
@@ -362,7 +364,7 @@ Query forced liquidation orders triggered by liquidation (LIQUIDATION) or auto-d
 
 `GET /openApi/swap/v2/trade/allFillOrders`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query individual trade fills for the account, returning detailed information for each actual execution (including fees and realized PnL).
 
@@ -398,7 +400,7 @@ Query individual trade fills for the account, returning detailed information for
 
 `POST /openApi/swap/v2/trade/closeAllPositions`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -419,7 +421,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `POST /openApi/swap/v1/trade/closePosition`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -440,7 +442,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `POST /openApi/swap/v2/trade/positionMargin`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 **Parameters:**
 
@@ -468,7 +470,7 @@ Rate limit: 2/s per UID; 2/s per IP.
 
 `GET /openApi/swap/v2/trade/marginType`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 **Parameters:**
 
@@ -488,7 +490,7 @@ Rate limit: 2/s per UID; 2/s per IP.
 
 `POST /openApi/swap/v2/trade/marginType`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 **Parameters:**
 
@@ -505,7 +507,7 @@ Rate limit: 2/s per UID; 2/s per IP.
 
 `GET /openApi/swap/v2/trade/leverage`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -530,7 +532,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `POST /openApi/swap/v2/trade/leverage`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 **Parameters:**
 
@@ -555,7 +557,7 @@ Rate limit: 5/s per UID; 2/s per IP.
 
 `GET /openApi/swap/v1/positionSide/dual`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 **Parameters:** No additional parameters beyond [common parameters](#common-parameters).
 
@@ -571,7 +573,7 @@ Rate limit: 2/s per UID; 2/s per IP.
 
 `POST /openApi/swap/v1/positionSide/dual`
 
-Rate limit: 4/s per UID; 2/s per IP.
+Rate limit: 4/s per UID.
 
 **Parameters:**
 
@@ -619,7 +621,7 @@ Modifies the quantity of an existing open order. The order must still be open (`
 
 `POST /openApi/swap/v1/trade/cancelReplace`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Atomic operation: cancels an existing open order and immediately submits a new order, eliminating the time-window risk between cancel and re-submit.
 
@@ -667,7 +669,7 @@ Atomic operation: cancels an existing open order and immediately submits a new o
 
 `POST /openApi/swap/v1/trade/batchCancelReplace`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Batch atomic operation: simultaneously cancels multiple open orders and submits multiple new orders. Each operation executes independently; partial failures do not affect other orders.
 
@@ -691,7 +693,7 @@ Batch atomic operation: simultaneously cancels multiple open orders and submits 
 
 `POST /openApi/swap/v1/twap/order`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Place a Time-Weighted Average Price (TWAP) order that splits a large order into smaller child orders executed at regular intervals.
 
@@ -721,7 +723,7 @@ Place a Time-Weighted Average Price (TWAP) order that splits a large order into 
 
 `POST /openApi/swap/v1/twap/cancelOrder`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Cancel an active TWAP order.
 
@@ -743,7 +745,7 @@ Cancel an active TWAP order.
 
 `GET /openApi/swap/v1/twap/openOrders`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Query currently active TWAP orders.
 
@@ -776,7 +778,7 @@ Query currently active TWAP orders.
 
 `GET /openApi/swap/v1/twap/historyOrders`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Query historical (completed/cancelled) TWAP orders.
 
@@ -803,7 +805,7 @@ Query historical (completed/cancelled) TWAP orders.
 
 `GET /openApi/swap/v1/twap/orderDetail`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Query detailed information about a specific TWAP order, including child order execution records.
 
@@ -834,7 +836,7 @@ Query detailed information about a specific TWAP order, including child order ex
 
 `GET /openApi/swap/v1/trade/assetMode`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Query the current multi-assets mode setting.
 
@@ -852,7 +854,7 @@ Query the current multi-assets mode setting.
 
 `POST /openApi/swap/v1/trade/assetMode`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Switch between single-asset mode and multi-assets mode. Cannot switch when there are open positions or orders.
 
@@ -874,7 +876,7 @@ Switch between single-asset mode and multi-assets mode. Cannot switch when there
 
 `GET /openApi/swap/v1/trade/multiAssetsRules`
 
-Rate limit: 2/s per IP.
+Rate limit: Not verified; do not infer a request rate from an IP group identifier.
 
 Query multi-assets mode rules including supported margin assets and their discount rates.
 
@@ -892,7 +894,7 @@ Query multi-assets mode rules including supported margin assets and their discou
 
 `GET /openApi/swap/v1/user/marginAssets`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Query margin assets and their valuations under multi-assets mode.
 
@@ -912,7 +914,7 @@ Query margin assets and their valuations under multi-assets mode.
 
 `GET /openApi/swap/v1/trade/fullOrder`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query all orders (open, filled, cancelled) with extended filter options. Supports pagination.
 
@@ -938,7 +940,7 @@ Query all orders (open, filled, cancelled) with extended filter options. Support
 
 `GET /openApi/swap/v2/trade/fillHistory`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query historical fill/transaction details with pagination support.
 
@@ -967,7 +969,7 @@ Query historical fill/transaction details with pagination support.
 
 `GET /openApi/swap/v1/trade/positionHistory`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query closed position history with pagination.
 
@@ -996,7 +998,7 @@ Query closed position history with pagination.
 
 `GET /openApi/swap/v1/positionMargin/history`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query the margin adjustment history for isolated-margin positions.
 
@@ -1024,7 +1026,7 @@ Query the margin adjustment history for isolated-margin positions.
 
 `GET /openApi/swap/v1/maintMarginRatio`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Query the maintenance margin ratio tiers for a trading pair.
 
@@ -1046,7 +1048,7 @@ Query the maintenance margin ratio tiers for a trading pair.
 
 `POST /openApi/swap/v1/trade/autoAddMargin`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Enable or disable automatic margin addition for a position in hedge mode.
 
@@ -1071,7 +1073,7 @@ Enable or disable automatic margin addition for a position in hedge mode.
 
 `POST /openApi/swap/v1/trade/reverse`
 
-Rate limit: 2/s per UID; 2/s per IP.
+Rate limit: 2/s per UID.
 
 Reverse a position direction with one click. Supports immediate or trigger-based reversal.
 
@@ -1096,7 +1098,7 @@ Reverse a position direction with one click. Supports immediate or trigger-based
 
 `POST /openApi/swap/v2/trade/getVst`
 
-Rate limit: 5/s per UID; 2/s per IP.
+Rate limit: 5/s per UID.
 
 Apply for or adjust Virtual Simulated Trading (VST) balance.
 
