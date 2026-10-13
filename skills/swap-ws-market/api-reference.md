@@ -42,12 +42,49 @@ BTC-USDT and ETH-USDT support 200ms push interval; other contracts use 500ms.
 
 ### Response Fields
 
-| Field | Description |
-|-------|-------------|
-| dataType | Subscription channel identifier |
-| data.bids | Bid side: `[[price, qty], ...]` sorted descending by price |
-| data.asks | Ask side: `[[price, qty], ...]` sorted ascending by price |
-| data.T | Timestamp (ms) |
+| Field | Type | Description |
+|-------|------|-------------|
+| code | integer | Status code; `0` indicates success |
+| dataType | string | Subscription channel identifier |
+| ts | integer (int64) | Top-level Unix timestamp in milliseconds, assigned when the server constructs the message |
+| data | object | Limited-depth payload containing only `asks` and `bids`; no `T` field |
+| data.bids | array of string pairs | Bid side: `[[price, qty], ...]` sorted descending by price |
+| data.asks | array of string pairs | Ask side: `[[price, qty], ...]` sorted ascending by price |
+
+### Response Example
+
+Illustrative message after GZIP decompression:
+
+```json
+{
+  "code": 0,
+  "dataType": "BTC-USDT@depth5@500ms",
+  "ts": 1791849600123,
+  "data": {
+    "asks": [
+      ["65001.0", "0.50"],
+      ["65002.0", "0.80"],
+      ["65003.0", "1.20"],
+      ["65004.0", "0.60"],
+      ["65005.0", "0.90"]
+    ],
+    "bids": [
+      ["65000.0", "0.40"],
+      ["64999.0", "0.70"],
+      ["64998.0", "1.10"],
+      ["64997.0", "0.30"],
+      ["64996.0", "0.80"]
+    ]
+  }
+}
+```
+
+### Timestamp Semantics
+
+- `ts` is the server's Unix time in milliseconds when constructing the message. It is not the matching-engine time, the source order book's last-update time, or the exact network send time.
+- Queuing, caching, and sending an already constructed message do not refresh `ts`.
+- `client receive time - ts` alone cannot determine the age of the source order book data. The source data may already be old when the message is constructed; the difference also includes subsequent processing, queuing, caching, transport delays, and any client/server clock offset.
+- These timestamp semantics apply only to this limited-depth channel, not to the `T` fields documented for other channels.
 
 ---
 
