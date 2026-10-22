@@ -139,7 +139,7 @@ N/A — Auto-pushed after connecting with listenKey. No explicit subscription ne
 
 ---
 
-## Order Update (ORDER_TRADE_UPDATE)
+## Order Update (TRADE_UPDATE)
 
 Pushed when an order is created, filled, or changes status.
 
@@ -186,7 +186,7 @@ N/A — Auto-pushed after connecting with listenKey. No explicit subscription ne
 
 | Field | Type | Description |
 |-------|------|-------------|
-| e | string | `ORDER_TRADE_UPDATE` |
+| e | string | `TRADE_UPDATE` |
 | E | number | Event time (ms) |
 | T | number | Order update time (ms) |
 | o.s | string | Symbol |
@@ -199,6 +199,7 @@ N/A — Auto-pushed after connecting with listenKey. No explicit subscription ne
 | o.x | string | Execution type |
 | o.X | string | Order status |
 | o.i | number | Order ID |
+| o.li | string (optional) | Parent order ID for a take-profit or stop-loss order; returned only when a related parent order exists. Preserve as a string |
 | o.l | string | Last filled quantity |
 | o.z | string | Cumulative filled quantity |
 | o.L | string | Last fill price |
@@ -207,6 +208,26 @@ N/A — Auto-pushed after connecting with listenKey. No explicit subscription ne
 | o.T | number | Order trade time (ms) |
 | o.ps | string | Position side |
 | o.rp | string | Realized profit |
+
+### Parent Order Link Example
+
+Illustrative subset of a TP/SL order update with a parent link:
+
+```json
+{
+  "e": "TRADE_UPDATE",
+  "E": 1758608899350,
+  "T": 1758608899316,
+  "o": {
+    "s": "BTC-USDT",
+    "o": "STOP_MARKET",
+    "X": "NEW",
+    "li": "2106395788706476032"
+  }
+}
+```
+
+The link is `o.li`, not a top-level field. Messages without a related parent omit it; absence is valid and must not cause a parse failure. Do not infer the link from `o.i` or convert `o.li` to a JavaScript number.
 
 ---
 

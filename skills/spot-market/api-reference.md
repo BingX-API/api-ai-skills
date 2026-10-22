@@ -2,12 +2,7 @@
 
 **Base URLs:** see [`references/base-urls.md`](../references/base-urls.md) | **Auth:** None (public endpoints) | **Response:** `{ "code": 0, "msg": "", "data": ... }`
 
-**Common parameters** (apply to all endpoints below):
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| timestamp | int64 | Yes | Request timestamp in milliseconds |
-| recvWindow | int64 | No | Request validity window in ms, max 5000 |
+No API key or signature is required for public spot market data. The current public API documentation requires no request `timestamp`: trading symbols (section 1) and order book depth v1 (section 2) list optional `timestamp` (Unix milliseconds) and `recvWindow`. Do not inject them globally. Private APIs retain their authentication requirements. The legacy paths in sections 3-10 still require a separate mapping review against the current API documentation.
 
 ---
 
@@ -315,16 +310,11 @@ Returns older historical public trades (further back than Recent Trades endpoint
 
 ## Common Error Codes
 
-Common gateway error codes applicable to all endpoints:
+Common gateway errors for public market requests. Authentication errors belong to private APIs; if a public request receives one, verify the endpoint and routing instead of adding credentials or a signature.
 
 | Code | Description |
 |------|-------------|
-| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
-| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
 | `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
-| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
-| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
-| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
 | `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
 | `100500` | System busy or query failed. Please retry later. |
 

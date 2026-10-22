@@ -1,15 +1,10 @@
 # BingX Swap Market Data — API Reference
 
-**Base URLs:** see [`references/base-urls.md`](../references/base-urls.md) | **Auth:** HMAC-SHA256 — see [`references/authentication.md`](../references/authentication.md) | **Response:** `{ "code": 0, "msg": "", "data": ... }`
+**Base URLs:** see [`references/base-urls.md`](../references/base-urls.md) | **Auth:** None (no API key or signature) | **Response:** `{ "code": 0, "msg": "", "data": ... }`
 
-**Common parameters** (apply to all endpoints below):
+**Timestamp policy:** Public does not mean timestamp-free. Trading rules and historical trades require a current Unix millisecond `timestamp`, without an API key or signature. Contract information and server time do not list a request timestamp. Other endpoints below accept optional `timestamp` and `recvWindow`; do not inject them globally.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| timestamp | int64 | Yes | Request timestamp in milliseconds |
-| recvWindow | int64 | No | Request validity window in ms, max 5000 |
-
-Market data endpoints do not require special API key permissions.
+Private trading and account APIs retain their authentication requirements.
 
 ---
 
@@ -303,7 +298,9 @@ Query historical transaction records for a trading pair.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `symbol` | string | Yes | Trading pair, e.g. BTC-USDT |
+| `symbol` | string | No | Trading pair, e.g. BTC-USDT |
+| `timestamp` | int64 | Yes | Current Unix time in milliseconds; no signature required |
+| `recvWindow` | int64 | No | Request validity window in milliseconds |
 | `fromId` | int64 | No | Starting trade ID. Default returns most recent records |
 | `limit` | int | No | Number of results, default 50, max 100 |
 
@@ -388,6 +385,8 @@ Query trading rules and limits for a contract.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `symbol` | string | Yes | Trading pair, e.g. BTC-USDT. Please use uppercase letters. If not provided, information for all trading pairs will be returned |
+| `timestamp` | int64 | Yes | Current Unix time in milliseconds; no signature required |
+| `recvWindow` | int64 | No | Request validity window in milliseconds |
 
 **Response `data`:**
 
@@ -428,16 +427,11 @@ Get the server timestamp.
 
 ## Common Error Codes
 
-Common gateway error codes applicable to all endpoints:
+Common gateway errors for public market requests. Authentication errors belong to private APIs; if a public request receives one, verify the endpoint and routing instead of adding credentials or a signature.
 
 | Code | Description |
 |------|-------------|
-| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
-| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
 | `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
-| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
-| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
-| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
 | `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
 | `100500` | System busy. Please retry later. |
 

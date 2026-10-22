@@ -5,7 +5,7 @@ description: Query BingX Coin-M (inverse/coin-margined) perpetual futures market
 
 # BingX Coin-M (CSwap) Market Data
 
-Public market data for BingX Coin-M inverse perpetual futures. No HMAC signature required, but a `timestamp` query parameter is required for all endpoints.
+Public market data for BingX Coin-M inverse perpetual futures. No API key or HMAC signature is required. Only contract information requires a current `timestamp`; it is optional for the other endpoints.
 
 Coin-M contracts are **coin-margined** (settled in the base asset, e.g., BTC). Symbol format is `BASE-USD` (e.g., `BTC-USD`, `ETH-USD`).
 
@@ -13,7 +13,7 @@ Coin-M contracts are **coin-margined** (settled in the base asset, e.g., BTC). S
 
 | Endpoint | Method | Description | Required | Optional | Authentication |
 |----------|--------|-------------|----------|----------|----------------|
-| `/openApi/cswap/v1/market/contracts` | GET | Contract specifications | None | None | No |
+| `/openApi/cswap/v1/market/contracts` | GET | Contract specifications | timestamp | symbol, recvWindow | No |
 | `/openApi/cswap/v1/market/depth` | GET | Order book bids & asks | symbol | None | No |
 | `/openApi/cswap/v1/market/klines` | GET | OHLCV candlestick data | symbol, interval | startTime, endTime, limit | No |
 | `/openApi/cswap/v1/market/premiumIndex` | GET | Mark price & current funding rate | None | symbol | No |
@@ -26,6 +26,7 @@ Coin-M contracts are **coin-margined** (settled in the base asset, e.g., BTC). S
 
 ### Common Parameters
 
+* **timestamp**: Current Unix time in milliseconds. Required for contract information and generated dynamically by the helper; optional for the other endpoints. `recvWindow` is optional.
 * **symbol**: Trading pair in `BASE-USD` format (e.g., `BTC-USD`, `ETH-USD`). Note: Coin-M uses `USD`, not `USDT`.
 * **limit**: Number of results to return. Default and max vary per endpoint.
 * **startTime**: Start timestamp in milliseconds (e.g., `1735693200000`)
@@ -74,8 +75,10 @@ async function coinmMarket(
   path: string,
   params: Record<string, string | number> = {}
 ): Promise<unknown> {
+  const all = path === "/openApi/cswap/v1/market/contracts"
+    ? { ...params, timestamp: Date.now() } : { ...params };
   const query = new URLSearchParams(
-    Object.entries(params).map(([k, v]) => [k, String(v)])
+    Object.entries(all).map(([k, v]) => [k, String(v)])
   ).toString();
   for (const base of BASE_URLS) {
     try {
@@ -167,7 +170,7 @@ For complete parameter descriptions, optional fields, and full response schemas,
 
 **Parameter security.** Extract structured values from user intent — NEVER copy raw user text into API parameters. Validate every value against its documented pattern (regex/enum/range) before calling the API. Reject any value containing `&`, `=`, `?`, `#`, or newline characters.
 
-cswap-market provides public read-only market data. No HMAC signature required (only `timestamp` parameter needed), **no CONFIRM needed**. The interaction goal is to collect query parameters.
+cswap-market provides public read-only market data. No API key or HMAC signature is required; only contract information requires a dynamic `timestamp`. **No CONFIRM needed.** The interaction goal is to collect query parameters.
 
 > **Note**: Coin-M contract trading pair format is `BASE-USD` (e.g. `BTC-USD`), not `BASE-USDT`.
 

@@ -19,7 +19,7 @@ After connecting with a valid listenKey, all event types are pushed automaticall
 |------------|-------------|----------------|
 | `listenKeyExpired` | Listen key has expired | On expiry |
 | `ACCOUNT_UPDATE` | Account balance and position changes | On change |
-| `ORDER_TRADE_UPDATE` | Order creation, fills, status changes | On change |
+| `TRADE_UPDATE` | Order creation, fills, status changes | On change |
 | `ACCOUNT_CONFIG_UPDATE` | Leverage/margin mode changes | On connect (full) + every 5s |
 
 ### Listen Key REST APIs
@@ -149,8 +149,12 @@ const listenKey = await generateListenKey(API_KEY, SECRET_KEY);
 connectSwapWsAccount(listenKey, (event) => {
   if (event.e === "ACCOUNT_UPDATE") {
     // event.a.B: balance updates, event.a.P: position updates
-  } else if (event.e === "ORDER_TRADE_UPDATE") {
+  } else if (event.e === "TRADE_UPDATE") {
     // event.o: order details (symbol, side, type, status, price, qty, etc.)
+    // o.li is present only for a TP/SL order with a related parent order.
+    if (typeof event.o?.li === "string") {
+      console.log("Parent order ID:", event.o.li); // Preserve the string ID.
+    }
   } else if (event.e === "ACCOUNT_CONFIG_UPDATE") {
     // event.ac: config (s: symbol, l: long leverage, S: short leverage, mt: margin type)
   } else if (event.e === "listenKeyExpired") {
@@ -181,7 +185,7 @@ When the user's request is vague (e.g. "monitor my swap account"), clarify what 
 
 > Please select the account data stream type:
 > - Account balance & position updates — ACCOUNT_UPDATE
-> - Order status updates — ORDER_TRADE_UPDATE
+> - Order status updates — TRADE_UPDATE
 > - Leverage & margin config changes — ACCOUNT_CONFIG_UPDATE
 > - Listen Key management (generate/extend/delete)
 > - All events (connect with listenKey, receive all automatically)

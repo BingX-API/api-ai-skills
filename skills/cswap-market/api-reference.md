@@ -1,15 +1,15 @@
 # BingX Coin-M (CSwap) Market Data — API Reference
 
-**Base URLs:** see [`references/base-urls.md`](../references/base-urls.md) | **Auth:** HMAC-SHA256 — see [`references/authentication.md`](../references/authentication.md) | **Response:** `{ "code": 0, "msg": "", "data": ... }`
+**Base URLs:** see [`references/base-urls.md`](../references/base-urls.md) | **Auth:** None (no API key or signature) | **Response:** `{ "code": 0, "msg": "", "data": ... }`
 
 **Common parameters** (apply to all endpoints below):
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| timestamp | int64 | Yes | Request timestamp in milliseconds |
+| timestamp | int64 | Endpoint-specific | Current Unix time in milliseconds; required only for contract information, optional for the other endpoints |
 | recvWindow | int64 | No | Request validity window in ms, max 5000 |
 
-**Note:** Market data endpoints do not require HMAC; a `timestamp` query parameter is required for all endpoints.
+**Note:** Contract information still requires a dynamic `timestamp` without authentication. Do not add it to every public request. Private trading and account APIs retain their signing requirements.
 
 **Symbol format:** `BASE-USD` (e.g., `BTC-USD`, `ETH-USD`) — coin-margined, **not** USDT-margined.
 
@@ -30,6 +30,7 @@ Returns specifications for all available Coin-M perpetual contracts.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `symbol` | string | No | Trading pair, e.g. `BTC-USD`; omit for all |
+| `timestamp` | int64 | Yes | Current Unix time in milliseconds; no signature required |
 
 **Response `data`:** Array of contract objects.
 
@@ -306,16 +307,11 @@ Returns 24-hour rolling price change statistics. If `symbol` is omitted, returns
 
 ## Common Error Codes
 
-Common gateway error codes applicable to all endpoints:
+Common gateway errors for public market requests. Authentication errors belong to private APIs; if a public request receives one, verify the endpoint and routing instead of adding credentials or a signature.
 
 | Code | Description |
 |------|-------------|
-| `100001` | Request signature verification failed. Verify the signature algorithm, parameter order, and API secret. |
-| `100004` | The API key does not have the required trading permission. Enable it in the API Key management page. |
 | `100410` | Request rate limit exceeded. Reduce request frequency and retry after the cooldown period. |
-| `100412` | Request is missing the signature parameter. Include a valid signature in your request. |
-| `100413` | API Key is incorrect or missing. Ensure `X-BX-APIKEY` is set in the HTTP request header. |
-| `100419` | The request IP is not in the API Key IP whitelist. Check IP whitelist settings. |
 | `100421` | Null timestamp or timestamp mismatch with server time. Ensure your local clock is synchronized. |
 | `100500` | System busy. Please retry later. |
 

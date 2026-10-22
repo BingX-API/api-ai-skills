@@ -27,6 +27,14 @@ See [`base-urls.md`](base-urls.md) for the full environment table and TypeScript
 
 ## Overview
 
+REST endpoints in `swap-market`, `spot-market`, and `cswap-market` are public: no API key or HMAC signature is required. Do not use the signed helper below for those endpoints. Public endpoints still requiring a current Unix millisecond `timestamp` are:
+
+- `GET /openApi/swap/v1/tradingRules`
+- `GET /openApi/swap/v1/market/historicalTrades`
+- `GET /openApi/cswap/v1/market/contracts`
+
+For other public endpoints, follow the individual parameter tables; do not globally add or remove `timestamp`. Use each market skill's unsigned helper. These exceptions do not change private trading or account authentication.
+
 All authenticated endpoints require:
 
 1. `X-BX-APIKEY` request header with your API key

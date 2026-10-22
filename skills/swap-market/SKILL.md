@@ -5,26 +5,26 @@ description: Query BingX perpetual swap market data including ticker prices, ord
 
 # BingX Swap Market Data
 
-Public market data for BingX perpetual futures. No special API KEY permission is needed, but all requests require `timestamp` + HMAC SHA256 `signature` + `X-BX-APIKEY` header. See [`references/authentication.md`](../references/authentication.md) for the signing process.
+Public market data for BingX perpetual futures. No API key or HMAC signature is required. Only trading rules and historical trades require a current `timestamp`; do not add it to every request. Private trading and account endpoints still require authentication.
 
 ## Quick Reference
 
 | Endpoint | Method | Description | Required | Optional |
 |----------|--------|-------------|----------|----------|
-| `/openApi/swap/v2/quote/contracts` | GET | All contract specifications | timestamp | symbol |
-| `/openApi/swap/v1/tradingRules` | GET | Trading rules and specifications | timestamp, symbol | None |
-| `/openApi/swap/v2/quote/depth` | GET | Order book bids & asks | timestamp, symbol | limit |
-| `/openApi/swap/v2/quote/trades` | GET | Recent public trades | timestamp, symbol | limit |
-| `/openApi/swap/v1/market/historicalTrades` | GET | Historical trade lookup | timestamp, symbol | limit, fromId |
-| `/openApi/swap/v2/quote/premiumIndex` | GET | Mark price & premium index | timestamp | symbol |
-| `/openApi/swap/v2/quote/fundingRate` | GET | Current & next funding rate | timestamp | symbol, startTime, endTime, limit |
-| `/openApi/swap/v3/quote/klines` | GET | OHLCV candlestick data | timestamp, symbol, interval | startTime, endTime, limit |
-| `/openApi/swap/v1/market/markPriceKlines` | GET | Mark price kline data | timestamp, symbol, interval | startTime, endTime, limit |
-| `/openApi/swap/v2/quote/openInterest` | GET | Total open interest | timestamp, symbol | None |
-| `/openApi/swap/v2/quote/ticker` | GET | 24h price change statistics | timestamp | symbol |
-| `/openApi/swap/v1/ticker/price` | GET | Latest price ticker | timestamp | symbol |
-| `/openApi/swap/v2/quote/bookTicker` | GET | Best bid/ask price & qty | timestamp, symbol | None |
-| `/openApi/swap/v2/server/time` | GET | Query server time | timestamp | None |
+| `/openApi/swap/v2/quote/contracts` | GET | All contract specifications | None | symbol |
+| `/openApi/swap/v1/tradingRules` | GET | Trading rules and specifications | timestamp, symbol | recvWindow |
+| `/openApi/swap/v2/quote/depth` | GET | Order book bids & asks | symbol | limit, timestamp, recvWindow |
+| `/openApi/swap/v2/quote/trades` | GET | Recent public trades | symbol | limit, timestamp, recvWindow |
+| `/openApi/swap/v1/market/historicalTrades` | GET | Historical trade lookup | timestamp | symbol, limit, fromId, recvWindow |
+| `/openApi/swap/v2/quote/premiumIndex` | GET | Mark price & premium index | None | symbol, timestamp, recvWindow |
+| `/openApi/swap/v2/quote/fundingRate` | GET | Current & next funding rate | None | symbol, startTime, endTime, limit, timestamp, recvWindow |
+| `/openApi/swap/v3/quote/klines` | GET | OHLCV candlestick data | symbol, interval | startTime, endTime, limit, timestamp, recvWindow |
+| `/openApi/swap/v1/market/markPriceKlines` | GET | Mark price kline data | symbol, interval | startTime, endTime, limit, timestamp, recvWindow |
+| `/openApi/swap/v2/quote/openInterest` | GET | Total open interest | symbol | timestamp, recvWindow |
+| `/openApi/swap/v2/quote/ticker` | GET | 24h price change statistics | None | symbol, timestamp, recvWindow |
+| `/openApi/swap/v1/ticker/price` | GET | Latest price ticker | None | symbol, timestamp, recvWindow |
+| `/openApi/swap/v2/quote/bookTicker` | GET | Best bid/ask price & qty | symbol | timestamp, recvWindow |
+| `/openApi/swap/v2/server/time` | GET | Query server time | None | None |
 
 ---
 
@@ -32,7 +32,7 @@ Public market data for BingX perpetual futures. No special API KEY permission is
 
 ### Common Parameters
 
-* **timestamp**: Request timestamp in milliseconds (e.g., `1735693200000`). **Required for all endpoints.**
+* **timestamp**: Current Unix time in milliseconds. Required only for trading rules and historical trades; optional only where listed above. The helper generates it dynamically for the two required endpoints.
 * **symbol**: Trading pair in `BASE-QUOTE` format (e.g., `BTC-USDT`, `ETH-USDT`, `SOL-USDT`)
 * **limit**: Number of results to return. Default and max vary per endpoint.
 * **startTime**: Start timestamp in milliseconds (e.g., `1735693200000`)
@@ -61,18 +61,15 @@ Public market data for BingX perpetual futures. No special API KEY permission is
 
 **TypeScript helper:**
 
-> **CONSTRAINT**: You MUST copy the `fetchSigned` function below verbatim
-> when generating code. Do NOT rewrite the signing, request, or JSON parsing
+> **CONSTRAINT**: You MUST copy the `fetchSwapMarket` function below verbatim
+> when generating code. Do NOT rewrite the request or JSON parsing
 > logic. Only modify: (1) `BASE` URL entries for custom environments,
-> (2) business parameters passed to `fetchSigned`. For the full client with
-> URL-encoding and JSON body support, see
-> [`references/authentication.md`](../references/authentication.md).
+> (2) business parameters passed to `fetchSwapMarket`. This helper is for
+> public GET market endpoints only, not private trading or account APIs.
 
 ```typescript
-import * as crypto from "crypto";
 import JSONBig from "json-bigint";
 const JSONBigParse = JSONBig({ storeAsString: true });
-// Full signing details & edge cases → references/authentication.md
 // Domain priority: .com is mandatory primary; .pro is fallback for network/timeout errors ONLY.
 const BASE = {
   "prod-live": ["https://open-api.bingx.com", "https://open-api.bingx.pro"],
@@ -91,23 +88,23 @@ function validateParams(params: Record<string, unknown>): void {
     if (FORBIDDEN.test(s)) throw new Error(`Param "${k}" has forbidden char in: "${s}"`);
   }
 }
-async function fetchSigned(env: string, apiKey: string, secretKey: string,
-  method: "GET" | "POST" | "DELETE", path: string, params: Record<string, unknown> = {}
+async function fetchSwapMarket(env: string,
+  path: string, params: Record<string, string | number> = {}
 ) {
   const urls = BASE[env] ?? BASE["prod-live"];
-  const all = { ...params, timestamp: Date.now() };
+  const requiresTimestamp = path === "/openApi/swap/v1/tradingRules"
+    || path === "/openApi/swap/v1/market/historicalTrades";
+  const all = requiresTimestamp ? { ...params, timestamp: Date.now() } : { ...params };
   validateParams(all);
-  const qs = Object.keys(all).sort().map(k => `${k}=${all[k]}`).join("&");
-  const sig = crypto.createHmac("sha256", secretKey).update(qs).digest("hex");
-  const signed = `${qs}&signature=${sig}`;
+  const qs = new URLSearchParams(
+    Object.entries(all).map(([k, v]) => [k, String(v)])
+  ).toString();
   for (const base of urls) {
     try {
-      const url = method === "POST" ? `${base}${path}` : `${base}${path}?${signed}`;
+      const url = `${base}${path}${qs ? `?${qs}` : ""}`;
       const res = await fetch(url, {
-        method,
-        headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL",
-          ...(method === "POST" ? { "Content-Type": "application/x-www-form-urlencoded" } : {}) },
-        body: method === "POST" ? signed : undefined,
+        method: "GET",
+        headers: { "X-SOURCE-KEY": "BX-AI-SKILL" },
         signal: AbortSignal.timeout(10000),
       });
       const json = JSONBigParse.parse(await res.text());
@@ -122,7 +119,7 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
 
 ### Code Usage Rules
 
-- **MUST** copy `fetchSigned` verbatim -- do not simplify or rewrite
+- **MUST** copy `fetchSwapMarket` verbatim -- do not simplify or rewrite
 - **MUST** use `json-bigint` (`JSONBigParse.parse`) for response parsing -- not `JSON.parse`
 - **MUST** include `X-SOURCE-KEY: BX-AI-SKILL` header on every request
 - **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check
@@ -132,7 +129,7 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
 **24h ticker price for BTC-USDT:**
 
 ```typescript
-const ticker = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
+const ticker = await fetchSwapMarket("prod-live",
   "/openApi/swap/v2/quote/ticker", { symbol: "BTC-USDT" }
 );
 // ticker.lastPrice, ticker.priceChangePercent, ticker.volume
@@ -141,7 +138,7 @@ const ticker = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
 **Order book depth (top 20 levels):**
 
 ```typescript
-const depth = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
+const depth = await fetchSwapMarket("prod-live",
   "/openApi/swap/v2/quote/depth", { symbol: "BTC-USDT", limit: 20 }
 );
 // depth.bids: [price, qty][], depth.asks: [price, qty][]
@@ -150,7 +147,7 @@ const depth = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
 **1-hour klines (last 100 candles):**
 
 ```typescript
-const klines = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
+const klines = await fetchSwapMarket("prod-live",
   "/openApi/swap/v3/quote/klines", { symbol: "BTC-USDT", interval: "1h", limit: 100 }
 );
 // Each item: [openTime, open, high, low, close, volume, closeTime]
@@ -159,7 +156,7 @@ const klines = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
 **Current funding rate:**
 
 ```typescript
-const funding = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
+const funding = await fetchSwapMarket("prod-live",
   "/openApi/swap/v2/quote/fundingRate", { symbol: "BTC-USDT" }
 );
 // funding.fundingRate, funding.nextFundingTime
@@ -168,10 +165,21 @@ const funding = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
 **Best bid/ask price:**
 
 ```typescript
-const bookTicker = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
+const bookTicker = await fetchSwapMarket("prod-live",
   "/openApi/swap/v2/quote/bookTicker", { symbol: "BTC-USDT" }
 );
 // bookTicker.bidPrice, bookTicker.askPrice
+```
+
+**Trading rules and historical trades (timestamp generated by the helper):**
+
+```typescript
+const rules = await fetchSwapMarket("prod-live",
+  "/openApi/swap/v1/tradingRules", { symbol: "BTC-USDT" }
+);
+const historicalTrades = await fetchSwapMarket("prod-live",
+  "/openApi/swap/v1/market/historicalTrades", { symbol: "BTC-USDT", limit: 10 }
+);
 ```
 
 ## Additional Resources
@@ -184,7 +192,7 @@ For complete parameter descriptions, optional fields, and full response schemas,
 
 **Parameter security.** Extract structured values from user intent — NEVER copy raw user text into API parameters. Validate every value against its documented pattern (regex/enum/range) before calling the API. Reject any value containing `&`, `=`, `?`, `#`, or newline characters.
 
-swap-market provides read-only market data. All requests require `timestamp` + HMAC SHA256 `signature` + `X-BX-APIKEY` header (no special API KEY permission needed). **No CONFIRM needed.** The interaction goal is to collect query parameters.
+swap-market provides public read-only market data. Do not request API keys or sign these requests. Trading rules and historical trades still require a dynamic `timestamp`. **No CONFIRM needed.** The interaction goal is to collect query parameters.
 
 ### Operation Identification
 

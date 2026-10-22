@@ -113,7 +113,16 @@ function connectSwapWsMarket(
 
 ```typescript
 connectSwapWsMarket(["BTC-USDT@trade"], (data) => {
-  // data.s (symbol), data.p (price), data.q (quantity), data.T (time)
+  const message = data as {
+    dataType?: string;
+    data?: Array<{ t: string; T: number; s: string; p: string; q: string; m: boolean }>;
+  };
+  if (message.dataType === "BTC-USDT@trade" && Array.isArray(message.data)) {
+    for (const trade of message.data) {
+      // t is a string trade ID; T is the trade timestamp in milliseconds.
+      console.log(trade.t, trade.T, trade.s, trade.p, trade.q);
+    }
+  }
 });
 ```
 
@@ -121,7 +130,8 @@ connectSwapWsMarket(["BTC-USDT@trade"], (data) => {
 
 ```typescript
 connectSwapWsMarket(["BTC-USDT@depth20@500ms"], (data) => {
-  // data.bids: [[price, qty], ...], data.asks: [[price, qty], ...]
+  // The full message has top-level ts and data: { bids, asks } (string pairs).
+  // data has no T. ts is message construction time, not source book age.
 });
 ```
 

@@ -27,6 +27,7 @@
     ".claude-plugin/"
   ],
   "scripts": {
+    "test:api-doc-sync": "node --test tests/api-doc-sync.test.cjs",
     "test:codegen": "tsx tests/codegen/run-codegen-test.ts --mode=deterministic --all",
     "test:codegen:changed": "tsx tests/codegen/run-codegen-test.ts --mode=deterministic --changed",
     "test:codegen:llm": "tsx tests/codegen/run-codegen-test.ts --mode=llm --all"

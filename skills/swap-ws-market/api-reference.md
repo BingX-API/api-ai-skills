@@ -83,7 +83,9 @@ Illustrative message after GZIP decompression:
 
 - `ts` is the server's Unix time in milliseconds when constructing the message. It is not the matching-engine time, the source order book's last-update time, or the exact network send time.
 - Queuing, caching, and sending an already constructed message do not refresh `ts`.
+- A newly constructed message gets a new `ts` even if the order book contents have not changed; a newer `ts` does not prove that the source order book changed.
 - `client receive time - ts` alone cannot determine the age of the source order book data. The source data may already be old when the message is constructed; the difference also includes subsequent processing, queuing, caching, transport delays, and any client/server clock offset.
+- With synchronized clocks, the difference measures only message construction to reception, not upstream delay before construction. There is no separate exact network-send timestamp in this message.
 - These timestamp semantics apply only to this limited-depth channel, not to the `T` fields documented for other channels.
 
 ---
@@ -118,14 +120,40 @@ Example: `BTC-USDT@trade`
 
 ### Response Fields
 
-| Field | Description |
-|-------|-------------|
-| dataType | `BTC-USDT@trade` |
-| data.T | Trade timestamp (ms) |
-| data.s | Symbol |
-| data.p | Trade price |
-| data.q | Trade quantity |
-| data.m | Is buyer the market maker |
+| Field | Type | Description |
+|-------|------|-------------|
+| code | integer | `0` indicates success |
+| dataType | string | `BTC-USDT@trade` |
+| data | array of objects | Trade records; process every array element |
+| data[].t | string | Trade ID, not a timestamp; preserve the full string without numeric conversion |
+| data[].T | integer (int64) | Trade timestamp in milliseconds, distinct from `t` |
+| data[].s | string | Symbol |
+| data[].p | string | Trade price |
+| data[].q | string | Trade quantity |
+| data[].m | boolean | Is buyer the market maker |
+
+### Response Example
+
+Illustrative message after GZIP decompression:
+
+```json
+{
+  "code": 0,
+  "dataType": "BTC-USDT@trade",
+  "data": [
+    {
+      "t": "2106395788706476032",
+      "q": "0.0162",
+      "p": "121934.9",
+      "T": 1759994162450,
+      "m": false,
+      "s": "BTC-USDT"
+    }
+  ]
+}
+```
+
+Trade IDs can exceed JavaScript's safe integer range. `JSON.parse` preserves the quoted `t` value; do not convert it with `Number` or `parseInt`.
 
 ---
 
