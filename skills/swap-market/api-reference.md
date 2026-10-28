@@ -190,7 +190,7 @@ Returns OHLCV candlestick data.
 | `low` | string | Decimal lowest price. |
 | `close` | string | Decimal closing price. |
 | `volume` | string | Decimal traded quantity. The endpoint schema does not specify the unit; confirm it with the API owner before treating it as base-asset quantity, quote-asset quantity, or contracts. |
-| `time` | integer | Unix timestamp in milliseconds. Observed as the candle opening timestamp for `BTC-USDT` / `1m` in production on 2026-10-28. |
+| `time` | integer | Kline timestamp in Unix milliseconds. The endpoint reference does not explicitly define whether it labels the opening or closing boundary; obtain API-owner confirmation before assigning that meaning. |
 
 Illustrative response (prices and volume are examples):
 
@@ -213,9 +213,9 @@ Illustrative response (prices and volume are examples):
 
 Read fields by name, not by array position. OHLC prices and `volume` are decimal strings; `time` is a JSON number. No `closeTime`, quote-asset volume, trade count, or taker-volume fields are returned in this six-field schema.
 
-**Observed bounds and ordering:** Five successful production queries for `BTC-USDT` / `1m` on 2026-10-28 verified `startTime <= time < endTime`. In particular, `startTime=1792368000000`, `endTime=1792454400000`, `limit=1440` returned every minute opening from 2026-10-19 00:00 through 23:59 UTC, excluding 2026-10-20 00:00 UTC. These are observations for that symbol and interval, not a guarantee for every symbol or interval. The samples were newest first; consumers should explicitly sort a copy by `time` rather than rely on response order.
+**Observed bounds and ordering:** Five successful production queries for `BTC-USDT` / `1m` on 2026-10-28 verified `startTime <= time < endTime` for the returned `time` labels. In particular, `startTime=1792368000000`, `endTime=1792454400000`, `limit=1440` returned all 1,440 minute-aligned timestamps from 2026-10-19 00:00 through 23:59 UTC, excluding 2026-10-20 00:00 UTC. This verifies timestamp selection, not whether those labels denote candle openings or closings or which trades belong to each interval. These are observations for that symbol and interval, not a guarantee for every symbol or interval. The samples were newest first; consumers should explicitly sort a copy by `time` rather than rely on response order.
 
-**Client-derived end boundaries:** For an observed `1m` candle, the next minute boundary is `time + 60000`; its preceding millisecond is `time + 60000 - 1` if needed by the client. These are calculated values, not a server-returned `closeTime`, and they do not establish when data becomes final. For historical series, the next observed candle opening can identify the next observed boundary. Do not assume a fixed millisecond duration for every interval and historical segment: `1M` follows calendar months, and historical `3d` alignment can vary.
+**Interpreting interval boundaries:** Do not derive a candle closing time from `time` until its opening/closing semantics are confirmed. If the API owner confirms that `time` is the opening timestamp, a `1m` candle's exclusive end can be calculated as `time + 60000`, or its final millisecond as `time + 60000 - 1`. These remain client-calculated values, not a server-returned `closeTime`, and they do not establish when data becomes final. Other periods also require their calendar and alignment rules: `1M` follows calendar months, and historical `3d` alignment can vary.
 
 ---
 

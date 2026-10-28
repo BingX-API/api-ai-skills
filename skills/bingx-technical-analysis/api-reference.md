@@ -28,11 +28,11 @@ Rate limit: 1/s per IP.
 | low | string | Decimal lowest price. |
 | close | string | Decimal closing price. |
 | volume | string | Decimal traded quantity; the endpoint schema does not specify its unit. Confirm it with the API owner before assuming base-asset quantity, quote-asset quantity, or contracts. |
-| time | integer | Unix timestamp in milliseconds; observed as the candle opening timestamp for `BTC-USDT` / `1m` in production on 2026-10-28. |
+| time | integer | Kline timestamp in Unix milliseconds; the reference does not explicitly define opening versus closing semantics. Confirm that meaning with the API owner. |
 
-Use named fields and sort a copy by `time` before chronological analysis, for example `[...candles].sort((a, b) => a.time - b.time)`. Newest-first ordering was observed in the production samples; it is not an ordering guarantee. The response has no `closeTime`. For the observed `1m` candles, `time + 60000` is a client-calculated next boundary, not a server-provided timestamp or a data-finality signal. Calendar months and historical `3d` alignment must not be reduced to an assumed fixed duration.
+Use named fields and sort a copy by `time` before chronological analysis, for example `[...candles].sort((a, b) => a.time - b.time)`. Newest-first ordering was observed in the production samples; it is not an ordering guarantee. The response has no `closeTime`. Only if `time` is confirmed to denote the candle opening can a `1m` exclusive end be derived as `time + 60000`; this is not a server-provided timestamp or a data-finality signal. Calendar months and historical `3d` alignment must not be reduced to an assumed fixed duration.
 
-The same production samples verified `startTime <= time < endTime` for `BTC-USDT` / `1m`; do not treat this as a guarantee for every symbol or interval. See the [Kline reference](../swap-market/api-reference.md#6-kline--candlestick-data) for the full six-field example, verified UTC-day query, and end-boundary notes.
+The same production samples verified `startTime <= time < endTime` for `BTC-USDT` / `1m`; this describes selection of the timestamp labels, not proof of opening versus closing semantics. Do not treat this as a guarantee for every symbol or interval. See the [Kline reference](../swap-market/api-reference.md#6-kline--candlestick-data) for the full six-field example, verified UTC-day timestamp query, and end-boundary notes.
 
 ---
 

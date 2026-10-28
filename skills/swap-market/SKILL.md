@@ -165,7 +165,7 @@ const ascendingKlines = [...klines].sort((a, b) => a.time - b.time);
 // ascendingKlines[0]?.open, .high, .low, .close, .volume, .time
 ```
 
-There is no server-returned `closeTime` in this six-field schema. The `volume` unit is not specified by the schema and must be confirmed with the API owner before conversion. Opening-time semantics and inclusive-start/exclusive-end bounds were observed for `BTC-USDT` / `1m` in production on 2026-10-28; see [the Kline reference](api-reference.md#6-kline--candlestick-data) for that evidence and client-derived end boundaries. Do not extend the observation to every symbol or interval.
+There is no server-returned `closeTime` in this six-field schema. The `volume` unit and whether `time` denotes the candle opening or closing boundary require API-owner confirmation. Production tests on 2026-10-28 verified inclusive-start/exclusive-end selection of the `time` labels for `BTC-USDT` / `1m`; they did not establish opening-time semantics. See [the Kline reference](api-reference.md#6-kline--candlestick-data) for that evidence and the conditions required to derive an end boundary. Do not extend the observation to every symbol or interval.
 
 **Current funding rate:**
 
