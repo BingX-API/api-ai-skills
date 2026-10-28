@@ -165,7 +165,7 @@ const ascendingKlines = [...klines].sort((a, b) => a.time - b.time);
 // ascendingKlines[0]?.open, .high, .low, .close, .volume, .time
 ```
 
-The `time` field is the candle opening timestamp in Unix milliseconds. There is no server-returned `closeTime` in this six-field schema. The `volume` unit still requires API-owner confirmation. Production tests on 2026-10-28 verified inclusive-start/exclusive-end selection of the opening timestamps for `BTC-USDT` / `1m`. See [the Kline reference](api-reference.md#6-kline--candlestick-data) for that evidence and client-derived interval ends. Do not extend the query-boundary observation to every symbol or interval.
+The `time` field is the candle opening timestamp in Unix milliseconds. There is no server-returned `closeTime` in this six-field schema. The `volume` field is the traded quantity of the base asset, e.g. BTC for BTC-USDT or ETH for ETH-USDT. Production tests on 2026-10-28 verified inclusive-start/exclusive-end selection of the opening timestamps for `BTC-USDT` / `1m`. See [the Kline reference](api-reference.md#6-kline--candlestick-data) for that evidence and client-derived interval ends. Do not extend the query-boundary observation to every symbol or interval.
 
 **Current funding rate:**
 

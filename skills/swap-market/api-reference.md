@@ -189,7 +189,7 @@ Returns OHLCV candlestick data.
 | `high` | string | Decimal highest price. |
 | `low` | string | Decimal lowest price. |
 | `close` | string | Decimal closing price. |
-| `volume` | string | Decimal traded quantity. The endpoint schema does not specify the unit; confirm it with the API owner before treating it as base-asset quantity, quote-asset quantity, or contracts. |
+| `volume` | string | Decimal traded quantity of the base asset, e.g. BTC for BTC-USDT or ETH for ETH-USDT. |
 | `time` | integer | Candle opening timestamp in Unix milliseconds. |
 
 Illustrative response (prices and volume are examples):

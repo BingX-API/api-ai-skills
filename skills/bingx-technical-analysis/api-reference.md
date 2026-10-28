@@ -27,7 +27,7 @@ Rate limit: 1/s per IP.
 | high | string | Decimal highest price. |
 | low | string | Decimal lowest price. |
 | close | string | Decimal closing price. |
-| volume | string | Decimal traded quantity; the endpoint schema does not specify its unit. Confirm it with the API owner before assuming base-asset quantity, quote-asset quantity, or contracts. |
+| volume | string | Decimal traded quantity of the base asset, e.g. BTC for BTC-USDT or ETH for ETH-USDT. |
 | time | integer | Candle opening timestamp in Unix milliseconds. |
 
 Use named fields and sort a copy by `time` before chronological analysis, for example `[...candles].sort((a, b) => a.time - b.time)`. Newest-first ordering was observed in the production samples; it is not an ordering guarantee. The response has no `closeTime`. Since `time` denotes the candle opening, a `1m` exclusive end can be derived as `time + 60000`; this is not a server-provided timestamp or a data-finality signal. Calendar months and historical `3d` alignment must not be reduced to an assumed fixed duration.
