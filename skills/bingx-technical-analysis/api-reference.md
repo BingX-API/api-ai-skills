@@ -14,9 +14,25 @@ Rate limit: 1/s per IP.
 |-----------|------|----------|-------------|
 | symbol | string | Yes | Trading pair, e.g. BTC-USDT |
 | interval | string | Yes | Kline interval (1m/5m/15m/1h/4h/1d etc.) |
+| startTime | integer | No | Start Unix timestamp in milliseconds. |
+| endTime | integer | No | End Unix timestamp in milliseconds. |
 | limit | int | No | Number of candles, default 500, max 1440 |
+| timeZone | `0` or `8` | No | Supported values: `0`, `8`; see the [official endpoint documentation](https://bingx-api.github.io/docs-v3/#/en/Swap/Market%20Data/Kline%2FCandlestick%20Data). No default is asserted here. |
 
-**Response data:** Array of `[openTime, open, high, low, close, volume, closeTime]`
+**Response `data`:** Array of six-field candle objects, not positional arrays.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| open | string | Decimal opening price. |
+| high | string | Decimal highest price. |
+| low | string | Decimal lowest price. |
+| close | string | Decimal closing price. |
+| volume | string | Decimal traded quantity; the endpoint schema does not specify its unit. Confirm it with the API owner before assuming base-asset quantity, quote-asset quantity, or contracts. |
+| time | integer | Unix timestamp in milliseconds; observed as the candle opening timestamp for `BTC-USDT` / `1m` in production on 2026-10-28. |
+
+Use named fields and sort a copy by `time` before chronological analysis, for example `[...candles].sort((a, b) => a.time - b.time)`. Newest-first ordering was observed in the production samples; it is not an ordering guarantee. The response has no `closeTime`. For the observed `1m` candles, `time + 60000` is a client-calculated next boundary, not a server-provided timestamp or a data-finality signal. Calendar months and historical `3d` alignment must not be reduced to an assumed fixed duration.
+
+The same production samples verified `startTime <= time < endTime` for `BTC-USDT` / `1m`; do not treat this as a guarantee for every symbol or interval. See the [Kline reference](../swap-market/api-reference.md#6-kline--candlestick-data) for the full six-field example, verified UTC-day query, and end-boundary notes.
 
 ---
 

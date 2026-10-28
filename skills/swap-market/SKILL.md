@@ -18,7 +18,7 @@ Public market data for BingX perpetual futures. No API key or HMAC signature is 
 | `/openApi/swap/v1/market/historicalTrades` | GET | Historical trade lookup | timestamp | symbol, limit, fromId, recvWindow |
 | `/openApi/swap/v2/quote/premiumIndex` | GET | Mark price & premium index | None | symbol, timestamp, recvWindow |
 | `/openApi/swap/v2/quote/fundingRate` | GET | Current & next funding rate | None | symbol, startTime, endTime, limit, timestamp, recvWindow |
-| `/openApi/swap/v3/quote/klines` | GET | OHLCV candlestick data | symbol, interval | startTime, endTime, limit, timestamp, recvWindow |
+| `/openApi/swap/v3/quote/klines` | GET | OHLCV candlestick data | symbol, interval | startTime, endTime, limit, timeZone, timestamp, recvWindow |
 | `/openApi/swap/v1/market/markPriceKlines` | GET | Mark price kline data | symbol, interval | startTime, endTime, limit, timestamp, recvWindow |
 | `/openApi/swap/v2/quote/openInterest` | GET | Total open interest | symbol | timestamp, recvWindow |
 | `/openApi/swap/v2/quote/ticker` | GET | 24h price change statistics | None | symbol, timestamp, recvWindow |
@@ -38,6 +38,7 @@ Public market data for BingX perpetual futures. No API key or HMAC signature is 
 * **startTime**: Start timestamp in milliseconds (e.g., `1735693200000`)
 * **endTime**: End timestamp in milliseconds (e.g., `1735693200000`)
 * **interval**: Kline/candlestick interval (see Enums below)
+* **timeZone** (klines only): Optional `0` or `8`; see the [official endpoint documentation](https://bingx-api.github.io/docs-v3/#/en/Swap/Market%20Data/Kline%2FCandlestick%20Data). Do not assume a default.
 * **recvWindow**: Request validity window in milliseconds (optional, default `5000`, max `60000`)
 
 ### Enums
@@ -147,11 +148,24 @@ const depth = await fetchSwapMarket("prod-live",
 **1-hour klines (last 100 candles):**
 
 ```typescript
-const klines = await fetchSwapMarket("prod-live",
+type SwapCandle = {
+  open: string;
+  high: string;
+  low: string;
+  close: string;
+  volume: string;
+  time: number;
+};
+const klines: SwapCandle[] = await fetchSwapMarket("prod-live",
   "/openApi/swap/v3/quote/klines", { symbol: "BTC-USDT", interval: "1h", limit: 100 }
 );
-// Each item: [openTime, open, high, low, close, volume, closeTime]
+// Each item is an object; OHLC/volume are decimal strings, time is Unix ms.
+// Sort a copy for chronological analysis; do not mutate the response or assume its order.
+const ascendingKlines = [...klines].sort((a, b) => a.time - b.time);
+// ascendingKlines[0]?.open, .high, .low, .close, .volume, .time
 ```
+
+There is no server-returned `closeTime` in this six-field schema. The `volume` unit is not specified by the schema and must be confirmed with the API owner before conversion. Opening-time semantics and inclusive-start/exclusive-end bounds were observed for `BTC-USDT` / `1m` in production on 2026-10-28; see [the Kline reference](api-reference.md#6-kline--candlestick-data) for that evidence and client-derived end boundaries. Do not extend the observation to every symbol or interval.
 
 **Current funding rate:**
 
@@ -234,7 +248,7 @@ If the trading pair can be inferred from context (e.g. "BTC market today" or "Et
 
 ### limit handling
 
-- klines: default 100, no need to ask — inform the user "returning the most recent 100 K-lines by default"
+- klines: explicitly request `limit: 100` when the user has no preference; inform the user "returning the most recent 100 K-lines". This is the agent's selected limit; the endpoint's omitted-`limit` default is `500`, with maximum `1440`.
 - depth: default 20, no need to ask
 
 ### Endpoints where symbol is optional
