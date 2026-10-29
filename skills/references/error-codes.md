@@ -93,7 +93,7 @@ Errors related to USDT-M and Coin-M perpetual futures (swap and cswap endpoints)
 | `109500` | Internal server error. If it persists, please retry later or contact support. |
 | `109701` | Network request exception. Check your network connection and retry. |
 | `110203` | Available amount for closing is insufficient. Reduce closing quantity or wait for pending orders to fill. |
-| `110206` | TP/SL orders reached the maximum limit. Cancel some existing TP/SL orders first. |
+| `110206` | TP/SL order count has reached the limit. Cancel open orders that are no longer needed before submitting new orders, subject to user confirmation. For USDT-M only, check `maxNumOrder` in [Trading Rules](../swap-market/api-reference.md#13-trading-rules); do not apply the USDT-M limit to Coin-M. |
 | `110280` | This trading pair is suspended from opening positions. Check announcements for resumption. |
 | `110284` | The Guaranteed Stop Loss feature is not available for this trading pair or account. |
 | `110287` | The maximum position value for the current leverage has been reached. Lower leverage or reduce order size. |

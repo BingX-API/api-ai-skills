@@ -394,7 +394,7 @@ Query trading rules and limits for a contract.
 |-------|------|-------------|
 | `minSizeCoin` | string | Minimum order quantity in coin |
 | `minSizeUsd` | string | Minimum order amount in USDT |
-| `maxNumOrder` | string | Maximum open orders for this contract |
+| `maxNumOrder` | string | Maximum open order count for this USDT-M contract, currently `"200"`; includes limit, market, trigger, trailing, take-profit, stop-loss, and trailing TP/SL orders. `STOP_MARKET` and `TAKE_PROFIT_MARKET` also count toward this limit. Use the returned value rather than hard-coding the limit. |
 | `protectionThreshold` | string | Spread protection threshold |
 | `buyMaxPrice` | string | Upper limit ratio for limit buy price |
 | `buyMinPrice` | string | Lower limit ratio for limit buy price |
@@ -451,7 +451,7 @@ Futures-specific error codes:
 | `109421` | The specified order does not exist — may have been filled, cancelled, or order ID is incorrect. |
 | `109425` | The trading pair does not exist or is not supported. Call /openApi/swap/v2/quote/contracts to verify. |
 | `109500` | Internal server error. If it persists, retry later or contact support. |
-| `110206` | TP/SL orders reached the maximum limit. Cancel some existing TP/SL orders first. |
+| `110206` | TP/SL order count has reached the limit. Cancel open orders that are no longer needed before submitting new orders, subject to user confirmation. For USDT-M, check `maxNumOrder` in [Trading Rules](#13-trading-rules). |
 | `110400` | The submitted order parameters do not meet the requirements. Verify price, quantity, etc. |
 | `110500` | Order system busy. Please retry later. |
 

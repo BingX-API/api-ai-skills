@@ -19,6 +19,12 @@
 
 Rate limit: 10/s per UID.
 
+**Open order count (USDT-M):** The current limit is 200 orders, including `STOP_MARKET` and `TAKE_PROFIT_MARKET`. Query the corresponding contract's `maxNumOrder` (string) in [Trading Rules](../swap-market/api-reference.md#13-trading-rules) for the current limit. This is an order count, not the asset amount in `quantity`, and must not be interpreted as "20 TP/SL settings".
+
+Do not assume a separate allowance of 200 for each side, position, or TP/SL order type. This API rule does not establish that frontend TP/SL setting limits have changed, and must not be applied to Coin-M contracts.
+
+On `110206`, stop resubmitting the rejected order. Ask the user which open orders are no longer needed; obtain the required cancellation confirmation before cancelling them, then submit a new order only when authorized. Do not automatically remove protective TP/SL orders to free capacity.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -1151,7 +1157,7 @@ Futures-specific error codes:
 Rate limit: 1/s per IP.
 
 | `109500` | Internal server error. If it persists, retry later or contact support. |
-| `110206` | TP/SL orders reached the maximum limit. Cancel some existing TP/SL orders first. |
+| `110206` | TP/SL order count has reached the limit. Cancel open orders that are no longer needed before submitting new orders, subject to user confirmation. For USDT-M, check `maxNumOrder` in [Trading Rules](../swap-market/api-reference.md#13-trading-rules). |
 | `110400` | The submitted order parameters do not meet the requirements. Verify price, quantity, etc. |
 | `110500` | Order system busy. Please retry later. |
 
