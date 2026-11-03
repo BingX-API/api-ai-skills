@@ -25,6 +25,8 @@ Do not assume a separate allowance of 200 for each side, position, or TP/SL orde
 
 On `110206`, stop resubmitting the rejected order. Ask the user which open orders are no longer needed; obtain the required cancellation confirmation before cancelling them, then submit a new order only when authorized. Do not automatically remove protective TP/SL orders to free capacity.
 
+**One-way reduce-only orders:** For the Place Order endpoint above, use `positionSide=BOTH` with `reduceOnly=true` to reduce, never increase, a position. When a contract is restricted from opening positions (`status=25`), this reduce-only closing order is not rejected with `109415` solely because of that status. Opening orders remain restricted. Other trading validations still apply; execution is not guaranteed. This exception does not imply that closing is allowed during every market closure or trading suspension, and must not be extrapolated to other endpoint versions. Do not send `reduceOnly` in Hedge Mode.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -42,7 +44,7 @@ On `110206`, stop resubmitting the rejected order. Ask the user which open order
 | `workingType` | string | No | Trigger price source: `MARK_PRICE` (mark price, **default**), `CONTRACT_PRICE` (last trade price), or `INDEX_PRICE` (index price); must be `CONTRACT_PRICE` when `stopGuaranteed=true` or `cutfee` |
 | `stopGuaranteed` | string | No | true: Enables the guaranteed stop-loss and take-profit feature; false: Disables the feature; cutfee: Enable the guaranteed stop loss function and enable the VIP guaranteed stop loss fee reduction function. When stopGuaranteed is true or cutfee, the quantity field does not take effect. The guaranteed stop-loss feature is not enabled by default. Supported order types include: STOP_MARKET / TAKE_PROFIT_MARKET / STOP / TAKE_PROFIT / TRIGGER_LIMIT / TRIGGER_MARKET. |
 | `closePosition` | string | No | `true` closes the entire position on trigger. Supported only for `STOP_MARKET` and `TAKE_PROFIT_MARKET`; `quantity` and `stopPrice` remain mandatory. Do not combine with `reduceOnly`. |
-| `reduceOnly` | string | No | `true` or `false`; defaults to `false` in One-way Mode. Do not send this parameter in Hedge Mode. |
+| `reduceOnly` | string | No | `true` or `false`; defaults to `false` in One-way Mode. Use `true` with `positionSide=BOTH` to reduce, never increase, a position. Do not send this parameter in Hedge Mode. |
 | `activationPrice` | float | No | Activation price (for `TRAILING_STOP_MARKET`; defaults to current market price if omitted) |
 | `priceRate` | float | No | Callback rate (required for `TRAILING_STOP_MARKET` and `TRAILING_TP_SL`, e.g. `0.05` = 5%) |
 | `stopLoss` | string | No | JSON-string query parameter for an attached stop-loss. Its nested `stopPrice` and optional `price` must be JSON numbers |
@@ -950,6 +952,10 @@ Rate limit: 5/s per UID.
 
 Query historical fill/transaction details with pagination support.
 
+Use `pageIndex` and `pageSize`, starting with `pageIndex=1`. For subsequent pages, keep the time range and other filters unchanged and increment `pageIndex`.
+
+Do not send `lastFillId`, even with an empty value or `0`: its presence returns `100400`. Remove the parameter entirely and use page-number pagination instead.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -957,7 +963,6 @@ Query historical fill/transaction details with pagination support.
 | `symbol` | string | Yes | Trading pair, e.g. BTC-USDT |
 | `currency` | string | No | `USDC` or `USDT` |
 | `orderId` | int64 | No | If orderId is provided, only the filled orders of that orderId are returned |
-| `lastFillId` | int64 | No | Last tradeId from previous query, default 0 |
 | `startTs` | int64 | Yes | Start timestamp in milliseconds |
 | `endTs` | int64 | Yes | End timestamp in milliseconds |
 | `pageIndex` | int64 | No | Page number, default 1 |

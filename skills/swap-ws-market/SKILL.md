@@ -159,6 +159,8 @@ connectSwapWsMarket([
 
 For complete subscription parameters, response field descriptions, and full response schemas, see [api-reference.md](api-reference.md).
 
+For `{symbol}@incrDepth`, follow the [local book initialization and recovery rules](api-reference.md#how-to-maintain-incremental-depth-locally). The helper only forwards messages; it does not maintain or verify an order book. Initialize only from an actual `action=all` snapshot on the connection carrying the active subscription. For recovery, prefer a new connection and wait for its snapshot; snapshot delivery is not guaranteed. Old-connection snapshots, unsubscribe-phase snapshots, and acknowledgements do not establish recovery. Do not use `lastUpdateId` alone as a completeness check.
+
 ---
 
 ## Agent Interaction Rules

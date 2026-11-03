@@ -114,20 +114,11 @@ ws.onmessage = (event) => {
 
 ---
 
-## 增量深度维护指南
+## USDT-M Incremental Depth
 
-订阅 `@incrDepth` 频道后，客户端需要本地维护完整深度：
+For USDT-M `{symbol}@incrDepth`, follow the [channel-specific initialization and recovery rules](../swap-ws-market/api-reference.md#how-to-maintain-incremental-depth-locally). Initialize only from an actual `action=all` snapshot on the connection carrying the active subscription. For recovery, prefer a new connection and wait for its snapshot; snapshot delivery is not guaranteed. Old-connection snapshots, unsubscribe-phase snapshots, and acknowledgements do not establish recovery. `lastUpdateId` alone cannot verify completeness; a fixed-size buffer cannot guarantee recovery.
 
-1. 订阅成功后首次推送 `action: "all"` 的全量深度快照，包含 `lastUpdateId`
-2. 后续推送 `action: "update"` 的增量深度，第 N 次增量的 `lastUpdateId` 应等于第 N-1 次的 `lastUpdateId + 1`
-3. 若 `lastUpdateId` 不连续，可选择重新连接，或缓存最近 3 次增量尝试合并
-4. 遍历增量数据与本地深度逐一对比：
-   - 价格不存在 → 新增该档位
-   - 数量为 0 → 删除该档位
-   - 数量不同 → 更新为增量返回的数量
-5. 更新完成后刷新本地深度缓存和 `lastUpdateId`
-
-建议使用有序 Map（如 TreeMap）存储深度数据，并注意线程安全。
+These rules are not a shared sequencing contract for Spot or Coin-M. Consult each product's reference separately; do not extrapolate USDT-M behavior to other channels.
 
 ---
 

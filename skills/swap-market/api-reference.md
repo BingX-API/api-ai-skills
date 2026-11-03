@@ -2,7 +2,7 @@
 
 **Base URLs:** see [`references/base-urls.md`](../references/base-urls.md) | **Auth:** None (no API key or signature) | **Response:** `{ "code": 0, "msg": "", "data": ... }`
 
-**Timestamp policy:** Public does not mean timestamp-free. Trading rules and historical trades require a current Unix millisecond `timestamp`, without an API key or signature. Contract information and server time do not list a request timestamp. Other endpoints below accept optional `timestamp` and `recvWindow`; do not inject them globally.
+**Timestamp policy:** Public does not mean timestamp-free. Trading rules and historical trades require a current Unix millisecond `timestamp`, without an API key or signature. Contract information and server time do not list a request timestamp. Trading Schedule accepts only an optional `symbol`, with no `timestamp` or `recvWindow`. Other endpoints below accept optional `timestamp` and `recvWindow`; do not inject them globally.
 
 Private trading and account APIs retain their authentication requirements.
 
@@ -422,6 +422,78 @@ Get the server timestamp.
 | Field | Type | Description |
 |-------|------|-------------|
 | `serverTime` | int64 | Server time in milliseconds |
+
+---
+
+## 15. Trading Schedule
+
+`GET /openApi/swap/v1/quote/tradingSchedule`
+
+Rate limit: 500/10s per IP.
+
+Query scheduled trading intervals and current market status for non-crypto (TradFi) perpetual contracts. The limit is IP-based, not UID-based; whether the allowance is shared across endpoints is not confirmed. Do not assume an exclusive quota for this endpoint.
+
+**Environment and authentication:** PROD only at `https://open-api.bingx.com`; VST is unsupported (HTTP 404). This public GET needs no API key, `timestamp`, `recvWindow`, or `signature`. Pass the optional parameter in the URL query string.
+
+**Eligibility:** Only online or paused non-crypto contracts supported by Open API are included. Omit `symbol` to query all eligible contracts. Specifying a pre-listing, delisted, cryptocurrency, or otherwise unsupported contract returns `109419`.
+
+**Fixed window:** 7 complete calendar days starting at 00:00 today in UTC+08:00, not 168 hours from the request time. No custom range is supported. Sending `startTime` or `endTime`, including an empty value or `0`, returns `109400`; remove the parameter entirely.
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | string | No | Eligible non-crypto contract, e.g. `NCSKMSFT2USD-USDT`; omit for all eligible contracts |
+
+**Response `data` - always an array, including for a single symbol:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data[].symbol` | string | Contract symbol |
+| `data[].contractType` | string | `nonCryptoForex`, `nonCryptoCommodity`, `nonCryptoStock`, or `nonCryptoStockIndex` |
+| `data[].marketStatus` | string | `open`: market open; `close`: market closed or in a Rebase halt, pre-open, or recovery phase; `pause`: manually paused by the platform |
+| `data[].timeZone` | string | Fixed trading calendar time zone: `UTC+08:00` |
+| `data[].updateTime` | int64 | Contract configuration update time in Unix milliseconds, not the request time; `0` if no update time is available |
+| `data[].sessions` | array | Scheduled trading and non-trading intervals across the fixed 7-day window |
+| `data[].sessions[].startTime` | int64 | Unix milliseconds, inclusive start |
+| `data[].sessions[].endTime` | int64 | Unix milliseconds, exclusive end |
+| `data[].sessions[].type` | string | `REGULAR`: scheduled trading; `NO_TRADING`: scheduled non-trading |
+
+Intervals are half-open `[startTime, endTime)` and returned in chronological order. Adjacent intervals of the same type may be merged; there is not necessarily one entry per day. All timestamps are Unix milliseconds, while `timeZone` defines the calendar used for the window.
+
+`REGULAR` does not guarantee current tradability: also check `marketStatus` and other restrictions. An already-listed contract in a Rebase pre-open phase has `marketStatus=close`; this is not a pre-listing contract, which is excluded from this endpoint. `updateTime` is not a request timestamp or a guarantee that the market is currently open.
+
+**Response example (structure only; current values must come from the actual response):**
+
+```json
+{
+  "code": 0,
+  "msg": "",
+  "data": [
+    {
+      "symbol": "NCSKMSFT2USD-USDT",
+      "contractType": "nonCryptoStock",
+      "marketStatus": "open",
+      "timeZone": "UTC+08:00",
+      "updateTime": 1792045615000,
+      "sessions": [
+        {
+          "startTime": 1793548800000,
+          "endTime": 1794153600000,
+          "type": "REGULAR"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Endpoint-specific errors:**
+
+| Code | Action |
+|------|--------|
+| `109400` | Remove `startTime` and `endTime`; use the fixed calendar window |
+| `109419` | Check that the symbol is an eligible online or paused non-crypto contract supported by Open API |
 
 ---
 

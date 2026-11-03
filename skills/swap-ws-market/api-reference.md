@@ -398,25 +398,67 @@ Example: `BTC-USDT@incrDepth`
 
 ### How to Maintain Incremental Depth Locally
 
-1. After subscribing, first message has `action: "all"` — full depth snapshot with `lastUpdateId`
-2. Subsequent messages have `action: "update"` — incremental updates. The Nth update's `lastUpdateId` should equal `(N-1)th lastUpdateId + 1`
-3. If `lastUpdateId` is not continuous, reconnect or cache last 3 incremental updates and try to merge
-4. For each incremental update, compare with local depth:
-   - Price not in local depth → Add
-   - Quantity is 0 → Remove
-   - Quantity differs → Update
-5. After traversal, update local depth cache and `lastUpdateId`
+These rules apply only to USDT-M `{symbol}@incrDepth`, not to limited-depth, Spot, or Coin-M channels.
+
+1. After subscribing or resubscribing, wait until an `action=all` full snapshot is actually received on the connection carrying the active subscription before initializing the local order book. A successful subscription acknowledgement is not a snapshot; do not initialize from `action=update`.
+2. For `action=all` received during an active subscription on that connection, replace the entire local bid and ask sides with the levels in that message, removing any stale levels.
+3. For `action=update`, apply messages in reception order. Delete a price level when its quantity is zero; otherwise add the level or replace its quantity. Quantities are updated absolute quantities, not deltas to add.
+4. If the connection is interrupted, a message cannot be parsed, the client drops messages, or the local order book state becomes untrustworthy, stop using that state. Prefer establishing a new connection and subscribing; rebuild only after an `action=all` full snapshot is actually received on that new connection during its active subscription. Snapshot delivery is not guaranteed; without that snapshot, do not treat the book as synchronized. Do not reuse the old book while waiting for the new snapshot.
+5. An `action=all` message may also arrive after an unsubscribe operation. Snapshots received during the unsubscribe phase, snapshots from an old connection, and unsubscribe/subscribe acknowledgements do not establish recovery on the new connection. Do not treat any of them as successful recovery.
+
+### Update ID and Recovery Limits
+
+- `lastUpdateId` is not guaranteed to be consecutive within a single connection. An ID gap alone does not prove missing data; increasing IDs alone do not prove data completeness.
+- The protocol provides no previous update ID, update ID range, or order book checksum. `lastUpdateId` alone cannot reliably distinguish ID gaps from missing messages.
+- Buffering a fixed number of incremental messages cannot guarantee recovery of missing data. Do not infer synchronization from an ID check or a fixed-size buffer.
+- These are documentation corrections, not new protocol capabilities for detecting missing messages. The connection helper only forwards messages; the consumer is responsible for book state, invalidation, and rebuilding.
 
 ### Response Fields
 
 | Field | Description |
 |-------|-------------|
+| code | `0` indicates success |
 | dataType | `BTC-USDT@incrDepth` |
+| data | Depth message payload; a subscription acknowledgement may instead have `data: null` |
 | data.action | `all` (full snapshot) or `update` (incremental) |
-| data.lastUpdateId | Sequence ID for continuity check |
-| data.bids | `[[price, qty], ...]` |
-| data.asks | `[[price, qty], ...]` |
-| data.T | Timestamp (ms) |
+| data.lastUpdateId | Server-generated depth message ID (int64); not guaranteed consecutive within a single connection and cannot alone verify completeness |
+| data.bids | Bid levels as string pairs `[[price, qty], ...]`; absolute quantities, with zero deleting a level in an update |
+| data.asks | Ask levels as string pairs `[[price, qty], ...]`; absolute quantities, with zero deleting a level in an update |
+| data.time | Unix timestamp in milliseconds when the server constructs the message, not the matching event time |
+
+### Response Examples
+
+Illustrative full snapshot after GZIP decompression (not a subscription acknowledgement). Use it for initialization only on the connection carrying the active subscription; the payload alone does not identify a valid recovery:
+
+```json
+{
+  "code": 0,
+  "dataType": "BTC-USDT@incrDepth",
+  "data": {
+    "action": "all",
+    "lastUpdateId": 393592630,
+    "time": 1760002514779,
+    "bids": [["121706.6", "16.8741"], ["121706.5", "1.1466"]],
+    "asks": [["121706.8", "4.7697"]]
+  }
+}
+```
+
+Illustrative subsequent update. The ID gap alone neither proves data loss nor proves completeness. Replace the quantity at bid `121706.6`, delete bid `121706.5`, and add ask `121706.9`:
+
+```json
+{
+  "code": 0,
+  "dataType": "BTC-USDT@incrDepth",
+  "data": {
+    "action": "update",
+    "lastUpdateId": 393592635,
+    "time": 1760002514979,
+    "bids": [["121706.6", "12.5000"], ["121706.5", "0.0000"]],
+    "asks": [["121706.9", "0.0042"]]
+  }
+}
+```
 
 ---
 

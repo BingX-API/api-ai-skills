@@ -1,6 +1,6 @@
 ---
 name: bingx-swap-market
-description: Query BingX perpetual swap market data including ticker prices, order book depth, recent trades, funding rates, klines/candlesticks, open interest, mark price, and contract info. Use when the user asks about BingX swap or perpetual futures prices, order books, candlestick charts, funding rates, or market statistics.
+description: Query BingX perpetual swap market data including ticker prices, order book depth, recent trades, funding rates, klines/candlesticks, open interest, mark price, contract info, and TradFi trading schedules. Use when the user asks about BingX swap or perpetual futures prices, order books, candlestick charts, funding rates, trading sessions, or market statistics.
 ---
 
 # BingX Swap Market Data
@@ -25,6 +25,9 @@ Public market data for BingX perpetual futures. No API key or HMAC signature is 
 | `/openApi/swap/v1/ticker/price` | GET | Latest price ticker | None | symbol, timestamp, recvWindow |
 | `/openApi/swap/v2/quote/bookTicker` | GET | Best bid/ask price & qty | symbol | timestamp, recvWindow |
 | `/openApi/swap/v2/server/time` | GET | Query server time | None | None |
+| `/openApi/swap/v1/quote/tradingSchedule` | GET | TradFi trading schedule (PROD only) | None | symbol |
+
+Trading Schedule uses only `https://open-api.bingx.com`, with no API key, `timestamp`, `recvWindow`, or `signature`. Do not route it to VST or infer support on an alternate host. Only an optional non-crypto contract `symbol` is accepted; omit it for all eligible contracts. See [Trading Schedule](api-reference.md#15-trading-schedule) for the fixed window, eligibility, and response semantics.
 
 ---
 
@@ -53,6 +56,8 @@ Public market data for BingX perpetual futures. No API key or HMAC signature is 
 * **recvWindow**: Integer, 1–5000 ms (see [Replay Protection](../references/authentication.md#replay-protection))
 * **timestamp**: Unix time in milliseconds; must be within `recvWindow` of server time
 
+Trading Schedule is an exception to the common time parameters: never send `startTime` or `endTime`, even as an empty value or `0` (server error `109400`). It always covers 7 complete calendar days from today's 00:00 in UTC+08:00, not a rolling window from request time.
+
 ---
 
 ## Quick Start
@@ -70,7 +75,7 @@ Public market data for BingX perpetual futures. No API key or HMAC signature is 
 ```typescript
 import JSONBig from "json-bigint";
 const JSONBigParse = JSONBig({ storeAsString: true });
-// Domain priority: .com is mandatory primary; .pro is fallback for network/timeout errors ONLY.
+// Trading Schedule is PROD .com only; other endpoints retain network/timeout fallback.
 const BASE = {
   "prod-live": ["https://open-api.bingx.com", "https://open-api.bingx.pro"],
   "prod-vst":  ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"],
@@ -91,7 +96,14 @@ function validateParams(params: Record<string, unknown>): void {
 async function fetchSwapMarket(env: string,
   path: string, params: Record<string, string | number> = {}
 ) {
-  const urls = BASE[env] ?? BASE["prod-live"];
+  const isTradingSchedule = path === "/openApi/swap/v1/quote/tradingSchedule";
+  if (isTradingSchedule) {
+    if (env !== "prod-live") throw new Error("Trading Schedule is available in prod-live only");
+    if (Object.keys(params).some((key) => key !== "symbol")) {
+      throw new Error("Trading Schedule accepts only the optional symbol parameter; omit time and authentication parameters");
+    }
+  }
+  const urls = isTradingSchedule ? [BASE["prod-live"][0]] : (BASE[env] ?? BASE["prod-live"]);
   const requiresTimestamp = path === "/openApi/swap/v1/tradingRules"
     || path === "/openApi/swap/v1/market/historicalTrades";
   const all = requiresTimestamp ? { ...params, timestamp: Date.now() } : { ...params };
@@ -122,7 +134,7 @@ async function fetchSwapMarket(env: string,
 - **MUST** copy `fetchSwapMarket` verbatim -- do not simplify or rewrite
 - **MUST** use `json-bigint` (`JSONBigParse.parse`) for response parsing -- not `JSON.parse`
 - **MUST** include `X-SOURCE-KEY: BX-AI-SKILL` header on every request
-- **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check
+- **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check for other endpoints. Trading Schedule uses PROD `.com` only; do not fall back to VST or an unverified host.
 
 ## Common Calls
 
@@ -182,6 +194,16 @@ const historicalTrades = await fetchSwapMarket("prod-live",
 );
 ```
 
+**TradFi trading schedule (PROD only, fixed UTC+08:00 calendar window):**
+
+```typescript
+const schedules = await fetchSwapMarket("prod-live",
+  "/openApi/swap/v1/quote/tradingSchedule", { symbol: "NCSKMSFT2USD-USDT" }
+);
+// data is always an array, including for one symbol. Omit symbol to query all eligible contracts.
+// REGULAR alone does not prove tradability; check marketStatus and other restrictions.
+```
+
 ## Additional Resources
 
 For complete parameter descriptions, optional fields, and full response schemas, see [api-reference.md](api-reference.md).
@@ -207,6 +229,7 @@ When the user's request is vague (e.g. "check the market" or "look at BTC"), fir
 > - Mark price / Premium index — premiumIndex
 > - Open interest — openInterest
 > - Contract specification list — contracts
+> - TradFi trading sessions and market status — tradingSchedule (PROD only)
 
 ### When symbol is missing
 
@@ -240,3 +263,5 @@ If the trading pair can be inferred from context (e.g. "BTC market today" or "Et
 ### Endpoints where symbol is optional
 
 symbol is optional for ticker and premiumIndex (returns all contracts if omitted). bookTicker requires symbol. If the user does not specify a trading pair for ticker/premiumIndex, query all contracts and inform the user; if a trading pair is specified, query only that pair.
+
+For tradingSchedule, omit symbol to query all eligible online or paused non-crypto contracts supported by Open API. Do not default to BTC-USDT: cryptocurrency, pre-listing, and delisted contracts are unsupported (`109419`). A listed contract in a Rebase pre-open phase is different from a pre-listing contract. Do not request a custom time range or switch to VST.

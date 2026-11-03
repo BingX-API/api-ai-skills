@@ -359,6 +359,25 @@ const orders = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
 );
 ```
 
+**Query historical fill details by page:**
+
+Use `pageIndex` and `pageSize`; never send `lastFillId`, including an empty value or `0` (returns `100400`). Keep the same time range and filters when requesting later pages.
+
+```typescript
+const endTs = Date.now();
+const fillQuery = {
+  symbol: "BTC-USDT",
+  startTs: endTs - 24 * 60 * 60 * 1000,
+  endTs,
+  pageIndex: 1,
+  pageSize: 50,
+};
+const fills = await fetchSigned("prod-live", API_KEY, SECRET, "GET",
+  "/openApi/swap/v2/trade/fillHistory", fillQuery
+);
+// For the next page, reuse fillQuery with pageIndex incremented; sign a fresh request.
+```
+
 **Set leverage:**
 
 ```typescript
