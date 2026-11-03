@@ -176,25 +176,46 @@ Returns OHLCV candlestick data.
 | `startTime` | integer | No | Start timestamp (ms). |
 | `endTime` | integer | No | End timestamp (ms). |
 | `limit` | integer | No | Number of candles. Default `500`. Max `1440`. |
+| `timeZone` | `0` or `8` | No | Supported values: `0`, `8`. See the [official endpoint documentation](https://bingx-api.github.io/docs-v3/#/en/Swap/Market%20Data/Kline%2FCandlestick%20Data); no default is asserted here. |
 
 **Valid `interval` values:**
 `1m` `3m` `5m` `15m` `30m` `1h` `2h` `4h` `6h` `8h` `12h` `1d` `3d` `1w` `1M`
 
-**Response `data` — array of candles (each candle is an array):**
+**Response `data` — array of six-field candle objects:**
 
-| Index | Description |
-|-------|-------------|
-| `[0]` | Open time (ms) |
-| `[1]` | Open price |
-| `[2]` | High price |
-| `[3]` | Low price |
-| `[4]` | Close price |
-| `[5]` | Volume (base asset) |
-| `[6]` | Close time (ms) |
-| `[7]` | Quote asset volume |
-| `[8]` | Number of trades |
-| `[9]` | Taker buy base asset volume |
-| `[10]` | Taker buy quote asset volume |
+| Field | Type | Description |
+|-------|------|-------------|
+| `open` | string | Decimal opening price. |
+| `high` | string | Decimal highest price. |
+| `low` | string | Decimal lowest price. |
+| `close` | string | Decimal closing price. |
+| `volume` | string | Decimal traded quantity of the base asset, e.g. BTC for BTC-USDT or ETH for ETH-USDT. |
+| `time` | integer | Candle opening timestamp in Unix milliseconds. |
+
+Illustrative response (prices and volume are examples):
+
+```json
+{
+  "code": 0,
+  "msg": "",
+  "data": [
+    {
+      "open": "105000.0",
+      "high": "105020.0",
+      "low": "104990.0",
+      "close": "105010.0",
+      "volume": "12.3456",
+      "time": 1792368000000
+    }
+  ]
+}
+```
+
+Read fields by name, not by array position. OHLC prices and `volume` are decimal strings; `time` is a JSON number. No `closeTime`, quote-asset volume, trade count, or taker-volume fields are returned in this six-field schema.
+
+**Observed bounds and ordering:** Five successful production queries for `BTC-USDT` / `1m` on 2026-10-28 verified `startTime <= time < endTime` for the returned opening timestamps. In particular, `startTime=1792368000000`, `endTime=1792454400000`, `limit=1440` returned all 1,440 minute openings from 2026-10-19 00:00 through 23:59 UTC, excluding 2026-10-20 00:00 UTC. These tests verify timestamp selection and completeness; they do not separately audit the underlying trades in each candle. The query-boundary behavior is an observation for that symbol and interval, not a guarantee for every symbol or interval. The samples were newest first; consumers should explicitly sort a copy by `time` rather than rely on response order.
+
+**Interpreting interval boundaries:** Since `time` is the opening timestamp, a `1m` candle's exclusive end can be calculated as `time + 60000`, or its final millisecond as `time + 60000 - 1`. These remain client-calculated values, not a server-returned `closeTime`, and they do not establish when data becomes final. Other periods also require their calendar and alignment rules: `1M` follows calendar months, and historical `3d` alignment can vary.
 
 ---
 
