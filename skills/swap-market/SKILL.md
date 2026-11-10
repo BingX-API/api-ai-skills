@@ -16,7 +16,7 @@ Public market data for BingX perpetual futures. No API key or HMAC signature is 
 | `/openApi/swap/v2/quote/depth` | GET | Order book bids & asks | symbol | limit, timestamp, recvWindow |
 | `/openApi/swap/v2/quote/trades` | GET | Recent public trades | symbol | limit, timestamp, recvWindow |
 | `/openApi/swap/v1/market/historicalTrades` | GET | Historical trade lookup | timestamp | symbol, limit, fromId, recvWindow |
-| `/openApi/swap/v2/quote/premiumIndex` | GET | Mark price & premium index | None | symbol, timestamp, recvWindow |
+| `/openApi/swap/v2/quote/premiumIndex` | GET | Mark price and funding rate | None | symbol, timestamp, recvWindow |
 | `/openApi/swap/v2/quote/fundingRate` | GET | Current & next funding rate | None | symbol, startTime, endTime, limit, timestamp, recvWindow |
 | `/openApi/swap/v3/quote/klines` | GET | OHLCV candlestick data | symbol, interval | startTime, endTime, limit, timestamp, recvWindow |
 | `/openApi/swap/v1/market/markPriceKlines` | GET | Mark price kline data | symbol, interval | startTime, endTime, limit, timestamp, recvWindow |
@@ -226,7 +226,7 @@ When the user's request is vague (e.g. "check the market" or "look at BTC"), fir
 > - Order book depth — depth
 > - K-lines / Candlesticks — klines
 > - Funding rate — fundingRate
-> - Mark price / Premium index — premiumIndex
+> - Mark price / Index price / Funding rate — premiumIndex
 > - Open interest — openInterest
 > - Contract specification list — contracts
 > - TradFi trading sessions and market status — tradingSchedule (PROD only)

@@ -104,13 +104,15 @@ Returns the most recent public trades.
 
 ---
 
-## 4. Mark Price & Premium Index
+## 4. Mark Price and Funding Rate
 
 `GET /openApi/swap/v2/quote/premiumIndex`
 
-Rate limit: 1/s per IP.
+Rate limit: 500/10s per IP.
 
-Returns mark price, index price, and premium index. Omit `symbol` to get all contracts.
+Returns mark price, index price, and funding rate information, not a separate `premiumIndex` response field. Omit `symbol` to get all contracts.
+
+This is the documented IP limit, not a guarantee of an exclusive per-endpoint quota.
 
 **Parameters:**
 
@@ -118,16 +120,39 @@ Returns mark price, index price, and premium index. Omit `symbol` to get all con
 |------|------|----------|-------------|
 | `symbol` | string | No | There must be a hyphen/ "-" in the trading pair symbol. eg: BTC-USDT |
 
-**Response `data` (single or array):**
+**Response `data` (single object with `symbol`, or array when omitted):**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `symbol` | string | Trading pair |
 | `markPrice` | string | Current mark price |
 | `indexPrice` | string | Current index price |
-| `lastFundingRate` | string | Last funding rate |
-| `nextFundingTime` | integer | Next funding time (ms) |
-| `time` | integer | Timestamp (ms) |
+| `lastFundingRate` | string | Latest updated funding rate, as a decimal |
+| `nextFundingTime` | int64 | Next funding settlement time as a Unix millisecond timestamp, not a countdown |
+| `fundingIntervalHours` | int64 | Funding settlement cycle in hours: `1`, `2`, `4`, or `8` |
+| `minFundingRate` | string | Lower funding rate limit as a decimal; `0.025` means 2.5% |
+| `maxFundingRate` | string | Upper funding rate limit as a decimal; `0.025` means 2.5% |
+| `updateTime` | int64 | Data update time as a Unix millisecond timestamp |
+
+**Response example (illustrative, not current market data):**
+
+```json
+{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "symbol": "BTC-USDT",
+    "markPrice": "69836.0",
+    "indexPrice": "69888.9",
+    "lastFundingRate": "0.00010000",
+    "nextFundingTime": 1773907200000,
+    "fundingIntervalHours": 8,
+    "minFundingRate": "-0.003000",
+    "maxFundingRate": "0.003000",
+    "updateTime": 1773878400000
+  }
+}
+```
 
 ---
 
@@ -321,9 +346,11 @@ Query historical transaction records for a trading pair.
 
 `GET /openApi/swap/v1/market/markPriceKlines`
 
-Rate limit: 1/s per IP.
+Rate limit: 500/10s per IP.
 
 Query mark price kline/candlestick data.
+
+This is the documented IP limit, not a guarantee of an exclusive per-endpoint quota.
 
 **Parameters:**
 
@@ -335,16 +362,39 @@ Query mark price kline/candlestick data.
 | `endTime` | int64 | No | End time in milliseconds |
 | `limit` | int64 | No | Default 500, max 1440 |
 
-**Response `data` (array):**
+**Response `data` (array of candle objects, not positional arrays):**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `open` | float64 | Open price |
-| `close` | float64 | Close price |
-| `high` | float64 | High price |
-| `low` | float64 | Low price |
-| `volume` | float64 | Transaction volume |
-| `time` | int64 | K-line timestamp (ms) |
+| `open` | string | Open mark price (decimal string on the wire) |
+| `close` | string | Close mark price (decimal string on the wire) |
+| `high` | string | High mark price (decimal string on the wire) |
+| `low` | string | Low mark price (decimal string on the wire) |
+| `volume` | string | Volume (decimal string on the wire) |
+| `openTime` | int64 | Opening timestamp, unit milliseconds |
+| `closeTime` | int64 | K-line timestamp, unit milliseconds |
+
+The time fields are `openTime` and `closeTime`; this response does not contain `time`.
+
+**Response example (illustrative structure, not current market data):**
+
+```json
+{
+  "code": 0,
+  "msg": "",
+  "data": [
+    {
+      "open": "0.7034",
+      "close": "0.7065",
+      "high": "0.7081",
+      "low": "0.7033",
+      "volume": "635494.00",
+      "openTime": 1705820520000,
+      "closeTime": 1705820520000
+    }
+  ]
+}
+```
 
 ---
 
