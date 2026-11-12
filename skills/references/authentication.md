@@ -203,8 +203,7 @@ BingX API uses `timestamp` + `recvWindow` to guard against replay attacks. The s
 > copy the `fetchSigned` function below verbatim. Do NOT reimplement the
 > signing logic, request construction, or JSON parsing. The only permitted
 > modifications are:
-> 1. Adding entries to `ENV_URLS` when the user provides a custom base URL
-> 2. Changing the business parameters passed to `fetchSigned`
+> Changing the business parameters passed to `fetchSigned`. Keep the official destination registry fixed.
 
 ```typescript
 import * as crypto from "crypto";
@@ -213,7 +212,7 @@ const JSONBigParse = JSONBig({ storeAsString: true });
 
 // Base URLs — see references/base-urls.md for all environments
 // Each env maps to [primary (.com), fallback (.pro)].
-// Fallback is used ONLY when primary is unreachable or times out.
+// GET fallback is used only on network/timeout errors. Writes are never replayed.
 const ENV_URLS: Record<string, string[]> = {
   "prod-live": ["https://open-api.bingx.com", "https://open-api.bingx.pro"],
   "prod-vst":  ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"],
@@ -286,7 +285,16 @@ async function fetchSigned(
   params: Record<string, unknown> = {},
   jsonBody = false
 ): Promise<unknown> {
-  const baseUrls = ENV_URLS[env] ?? ENV_URLS["prod-live"];
+  const baseUrls = Object.prototype.hasOwnProperty.call(ENV_URLS, env) ? ENV_URLS[env] : undefined;
+  if (env !== "prod-live" && env !== "prod-vst") throw new Error("UnknownEnvironment");
+  const allowed = env === "prod-live"
+    ? ["https://open-api.bingx.com", "https://open-api.bingx.pro"]
+    : ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"];
+  if (!Array.isArray(baseUrls) || baseUrls.length !== 2 || baseUrls.some((url, i) => url !== allowed[i])) {
+    throw new Error("Invalid authenticated destination");
+  }
+  if (!/^\/openApi\/[A-Za-z0-9/_-]+$/.test(path)) throw new Error("Invalid API path");
+  if (!["GET", "POST", "DELETE"].includes(method)) throw new Error("Invalid HTTP method");
   const timestamp = Date.now();
   const allParams = { ...params, timestamp };
 
@@ -301,7 +309,7 @@ async function fetchSigned(
 
   const needsValueEncoding = canonical.includes("[") || canonical.includes("{");
 
-  for (const baseUrl of baseUrls) {
+  for (const baseUrl of (method === "GET" ? baseUrls : baseUrls.slice(0, 1))) {
     try {
       let url: string;
       let body: string | undefined;
@@ -330,13 +338,21 @@ async function fetchSigned(
           ...(contentType ? { "Content-Type": contentType } : {}),
         },
         body,
+        redirect: "error",
         signal: AbortSignal.timeout(10000),
       });
+
+      if (!res.ok) {
+        throw new Error(method === "GET" ? `BingX HTTP ${res.status}` : "OUTCOME_UNKNOWN: check operation status before any new write");
+      }
 
       const json = JSONBigParse.parse(await res.text());
       if (json.code !== 0) throw new Error(`BingX error ${json.code}: ${json.msg}`);
       return json.data;
     } catch (e) {
+      if (method !== "GET" && (isNetworkOrTimeout(e) || (e instanceof SyntaxError || (e as { name?: string })?.name === "SyntaxError"))) {
+        throw new Error("OUTCOME_UNKNOWN: check operation status before any new write");
+      }
       if (!isNetworkOrTimeout(e) || baseUrl === baseUrls[baseUrls.length - 1]) throw e;
     }
   }
@@ -345,8 +361,9 @@ async function fetchSigned(
 
 ### Code Usage Rules
 
+- A write response confirms API acceptance, not settlement or a fill. Query operation status before reporting execution. For `OUTCOME_UNKNOWN`, reconcile by the operation identifier; do not automatically submit again.
 - **MUST** use `json-bigint` with `storeAsString: true` for all response parsing -- order/position IDs exceed `Number.MAX_SAFE_INTEGER`; native `JSON.parse` causes silent precision loss
-- **MUST** use the `isNetworkOrTimeout` + domain fallback loop for every request
+- **MUST** retry only GET requests on network/timeout errors. Never automatically retry writes
 - **MUST** include `X-BX-APIKEY` and `X-SOURCE-KEY: BX-AI-SKILL` headers
 - **MUST NOT** use native `JSON.parse` to parse API responses
 - **MUST NOT** rewrite the HMAC signing logic -- use `buildCanonical` + `crypto.createHmac` exactly as provided

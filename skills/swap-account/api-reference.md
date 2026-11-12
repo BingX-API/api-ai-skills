@@ -257,7 +257,14 @@ Exports fund flow records as an **Excel file** (binary response, not JSON).
 **Example (download to file):**
 
 ```typescript
-const res = await fetch(url, { headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL" } });
+// Build the signed URL from the fixed official environment registry; never accept a caller-provided URL.
+const target = new URL(url);
+if (!["https://open-api.bingx.com", "https://open-api-vst.bingx.com"].includes(target.origin)
+  || target.username || target.password || target.pathname !== "/openApi/swap/v2/user/income/export") {
+  throw new Error("Invalid authenticated destination");
+}
+const res = await fetch(target, { redirect: "error", headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL" } });
+if (!res.ok) throw new Error(`BingX HTTP ${res.status}`);
 const buffer = await res.arrayBuffer();
 fs.writeFileSync("fund_flow.xlsx", Buffer.from(buffer));
 ```

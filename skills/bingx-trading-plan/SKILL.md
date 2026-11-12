@@ -152,12 +152,25 @@ For liquidation heatmap, current available data is coin-level aggregated data. C
 
 ### Step 3 - Build 6-Dimension Score
 
-```bash
-python3 scripts/scoring.py \
-  --symbol {symbol} \
-  --ta-result '{technical_analysis_json}' \
-  --market-data '{market_data_json}' \
-  --sentiment-data '{lindorm_sentiment_json}'
+```typescript
+import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// Use serialized JSON strings from the preceding data steps as individual arguments.
+// Run from this skill directory; this child receives no API credentials.
+const output = execFileSync("python3", [
+  "scripts/scoring.py",
+  "--symbol",
+  String(symbol),
+  "--ta-result",
+  technical_analysis_json,
+  "--market-data",
+  market_data_json,
+  "--sentiment-data",
+  sentiment_json
+], { shell: false, encoding: "utf8", maxBuffer: 16 * 1024 * 1024,
+  env: { PATH: process.env.PATH, HOME: homedir(), LANG: "en_US.UTF-8" } });
 ```
 
 Expected `sentiment-data` can include:
@@ -175,14 +188,29 @@ Expected `sentiment-data` can include:
 
 ### Step 4 - Generate Risk Plans
 
-```bash
-python3 scripts/plan.py \
-  --symbol {symbol} \
-  --direction {direction} \
-  --risk-tier {risk_tier} \
-  --score-result '{score_json}' \
-  --current-price {price} \
-  --support-resistance '{support_resistance_json}'
+```typescript
+import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// Use serialized JSON strings from the preceding data steps as individual arguments.
+// Run from this skill directory; this child receives no API credentials.
+const output = execFileSync("python3", [
+  "scripts/plan.py",
+  "--symbol",
+  String(symbol),
+  "--direction",
+  String(direction),
+  "--risk-tier",
+  String(risk_tier),
+  "--score-result",
+  score_json,
+  "--current-price",
+  String(price),
+  "--support-resistance",
+  support_resistance_json
+], { shell: false, encoding: "utf8", maxBuffer: 16 * 1024 * 1024,
+  env: { PATH: process.env.PATH, HOME: homedir(), LANG: "en_US.UTF-8" } });
 ```
 
 ### Step 5 - Present Output

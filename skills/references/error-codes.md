@@ -1,5 +1,7 @@
 # API Error Code Reference
 
+Retry guidance below does not authorize replaying state-changing requests. After an ambiguous write outcome, query operation status using its identifier before considering another submission. Treat network errors, unreadable responses and HTTP errors as `OUTCOME_UNKNOWN` for writes.
+
 All BingX OpenAPI responses use `{ "code": <int>, "msg": "<string>", "data": ... }`. A `code` of `0` means success; any non-zero code indicates an error. This document lists all known error codes by category.
 
 ---

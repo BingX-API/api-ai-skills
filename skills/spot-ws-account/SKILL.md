@@ -90,6 +90,7 @@ async function generateListenKey(apiKey: string, secretKey: string): Promise<str
   const signature = crypto.createHmac("sha256", secretKey).update(paramStr).digest("hex");
   const url = `https://open-api.bingx.com/openApi/user/auth/userDataStream?${paramStr}&signature=${signature}`;
   const res = await fetch(url, {
+    redirect: "error",
     method: "POST",
     headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL" },
   });

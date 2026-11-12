@@ -29,7 +29,7 @@ metadata:
 
 **TypeScript helper:**
 
-> **CONSTRAINT**: You MUST copy the `fetchSigned` function below verbatim when generating code. Do NOT rewrite the signing, request, or JSON parsing logic. Only modify: (1) `BASE` URL entries for custom environments, (2) business parameters passed to `fetchSigned`.
+> **CONSTRAINT**: You MUST copy the `fetchSigned` function below verbatim when generating code. Do NOT rewrite the signing, request, or JSON parsing logic. Only modify: business parameters passed to `fetchSigned`.
 
 ```typescript
 import * as crypto from "crypto";
@@ -55,13 +55,22 @@ function validateParams(params: Record<string, unknown>): void {
 async function fetchSigned(env: string, apiKey: string, secretKey: string,
   method: "GET" | "POST" | "DELETE", path: string, params: Record<string, unknown> = {}
 ) {
-  const urls = BASE[env] ?? BASE["prod-live"];
+  const urls = Object.prototype.hasOwnProperty.call(BASE, env) ? BASE[env] : undefined;
+  if (env !== "prod-live" && env !== "prod-vst") throw new Error("UnknownEnvironment");
+  const allowed = env === "prod-live"
+    ? ["https://open-api.bingx.com", "https://open-api.bingx.pro"]
+    : ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"];
+  if (!Array.isArray(urls) || urls.length !== 2 || urls.some((url, i) => url !== allowed[i])) {
+    throw new Error("Invalid authenticated destination");
+  }
+  if (!/^\/openApi\/[A-Za-z0-9/_-]+$/.test(path)) throw new Error("Invalid API path");
+  if (!["GET", "POST", "DELETE"].includes(method)) throw new Error("Invalid HTTP method");
   const all = { ...params, timestamp: Date.now() };
   validateParams(all);
   const qs = Object.keys(all).sort().map(k => `${k}=${all[k]}`).join("&");
   const sig = crypto.createHmac("sha256", secretKey).update(qs).digest("hex");
   const signed = `${qs}&signature=${sig}`;
-  for (const base of urls) {
+  for (const base of (method === "GET" ? urls : urls.slice(0, 1))) {
     try {
       const url = method === "POST" ? `${base}${path}` : `${base}${path}?${signed}`;
       const res = await fetch(url, {
@@ -69,17 +78,26 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
         headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL",
           ...(method === "POST" ? { "Content-Type": "application/x-www-form-urlencoded" } : {}) },
         body: method === "POST" ? signed : undefined,
+        redirect: "error",
         signal: AbortSignal.timeout(10000),
       });
+      if (!res.ok) {
+        throw new Error(method === "GET" ? `BingX HTTP ${res.status}` : "OUTCOME_UNKNOWN: check operation status before any new write");
+      }
       const json = JSONBigParse.parse(await res.text());
       if (json.code !== 0) throw new Error(`BingX error ${json.code}: ${json.msg}`);
       return json.data;
     } catch (e) {
+      if (method !== "GET" && (isNetworkOrTimeout(e) || (e instanceof SyntaxError || (e as { name?: string })?.name === "SyntaxError"))) {
+        throw new Error("OUTCOME_UNKNOWN: check operation status before any new write");
+      }
       if (!isNetworkOrTimeout(e) || base === urls[urls.length - 1]) throw e;
     }
   }
 }
 ```
+
+A write response confirms API acceptance only. Query order status and fills before reporting an execution. On `OUTCOME_UNKNOWN`, reconcile by the operation identifier before considering a new write.
 
 ## Common Calls
 
@@ -152,14 +170,29 @@ Analyze best bid/ask prices, bid-ask spread, and liquidity distribution across l
 
 ### Step 4 — Calculate Order Plan
 
-```bash
-python3 scripts/maker.py \
-  --mode plan \
-  --symbol {symbol} \
-  --direction {direction} \
-  --amount {amount} \
-  --levels {levels} \
-  --orderbook '{orderbook_json}'
+```typescript
+import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// Use serialized JSON strings from the preceding data steps as individual arguments.
+// Run from this skill directory; this child receives no API credentials.
+const output = execFileSync("python3", [
+  "scripts/maker.py",
+  "--mode",
+  "plan",
+  "--symbol",
+  String(symbol),
+  "--direction",
+  String(direction),
+  "--amount",
+  String(amount),
+  "--levels",
+  String(levels),
+  "--orderbook",
+  orderbook_json
+], { shell: false, encoding: "utf8", maxBuffer: 16 * 1024 * 1024,
+  env: { PATH: process.env.PATH, HOME: homedir(), LANG: "en_US.UTF-8" } });
 ```
 
 Outputs an order plan JSON (prices, amounts, estimated avg price, estimated fee savings).

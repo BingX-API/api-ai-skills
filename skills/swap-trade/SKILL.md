@@ -167,8 +167,7 @@ Before sending a request, validate parameters client-side to avoid unnecessary A
 
 > **CONSTRAINT**: You MUST copy the `fetchSigned` function below verbatim
 > when generating code. Do NOT rewrite the signing, request, or JSON parsing
-> logic. Only modify: (1) `BASE` URL entries for custom environments,
-> (2) business parameters passed to `fetchSigned`. For the full client with
+> logic. Only modify: business parameters passed to `fetchSigned`. For the full client with
 > URL-encoding and JSON body support, see
 > [`references/authentication.md`](../references/authentication.md).
 
@@ -177,7 +176,7 @@ import * as crypto from "crypto";
 import JSONBig from "json-bigint";
 const JSONBigParse = JSONBig({ storeAsString: true });
 // Full signing details & edge cases → references/authentication.md
-// Domain priority: .com is mandatory primary; .pro is fallback for network/timeout errors ONLY.
+// Domain priority: .com is mandatory primary; .pro is fallback for GET network/timeout errors ONLY. Writes use the primary once.
 const BASE = {
   "prod-live": ["https://open-api.bingx.com", "https://open-api.bingx.pro"],
   "prod-vst":  ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"],
@@ -254,7 +253,16 @@ function validateParams(params: Record<string, unknown>): void {
 async function fetchSigned(env: string, apiKey: string, secretKey: string,
   method: "GET" | "POST" | "DELETE", path: string, params: Record<string, unknown> = {}
 ) {
-  const urls = BASE[env] ?? BASE["prod-live"];
+  const urls = Object.prototype.hasOwnProperty.call(BASE, env) ? BASE[env] : undefined;
+  if (env !== "prod-live" && env !== "prod-vst") throw new Error("UnknownEnvironment");
+  const allowed = env === "prod-live"
+    ? ["https://open-api.bingx.com", "https://open-api.bingx.pro"]
+    : ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"];
+  if (!Array.isArray(urls) || urls.length !== 2 || urls.some((url, i) => url !== allowed[i])) {
+    throw new Error("Invalid authenticated destination");
+  }
+  if (!/^\/openApi\/[A-Za-z0-9/_-]+$/.test(path)) throw new Error("Invalid API path");
+  if (!["GET", "POST", "DELETE"].includes(method)) throw new Error("Invalid HTTP method");
   const normalized = normalizeParams(params);
   const all = { ...normalized, timestamp: Date.now() };
   validateParams(all);
@@ -262,7 +270,7 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
     .map(k => `${k}=${serializeParamValue(all[k])}`).join("&");
   const sig = crypto.createHmac("sha256", secretKey).update(qs).digest("hex");
   const signed = `${qs}&signature=${sig}`;
-  for (const base of urls) {
+  for (const base of (method === "GET" ? urls : urls.slice(0, 1))) {
     try {
       const url = method === "POST" ? `${base}${path}` : `${base}${path}?${signed}`;
       const res = await fetch(url, {
@@ -270,12 +278,19 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
         headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL",
           ...(method === "POST" ? { "Content-Type": "application/x-www-form-urlencoded" } : {}) },
         body: method === "POST" ? signed : undefined,
+        redirect: "error",
         signal: AbortSignal.timeout(10000),
       });
+      if (!res.ok) {
+        throw new Error(method === "GET" ? `BingX HTTP ${res.status}` : "OUTCOME_UNKNOWN: check operation status before any new write");
+      }
       const json = JSONBigParse.parse(await res.text());
       if (json.code !== 0) throw new Error(`BingX error ${json.code}: ${json.msg}`);
       return json.data;
     } catch (e) {
+      if (method !== "GET" && (isNetworkOrTimeout(e) || (e instanceof SyntaxError || (e as { name?: string })?.name === "SyntaxError"))) {
+        throw new Error("OUTCOME_UNKNOWN: check operation status before any new write");
+      }
       if (!isNetworkOrTimeout(e) || base === urls[urls.length - 1]) throw e;
     }
   }
@@ -287,11 +302,13 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
 - **MUST** copy `fetchSigned` verbatim -- do not simplify or rewrite
 - **MUST** use `json-bigint` (`JSONBigParse.parse`) for response parsing -- not `JSON.parse`
 - **MUST** include `X-SOURCE-KEY: BX-AI-SKILL` header on every request
-- **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check
+- **MUST NOT** retry writes or override the fixed official destinations. GET fallback is limited to network/timeout errors
 - **MUST** normalize and serialize all business parameters before creating the timestamp and signature. If any parameter changes, discard the previous timestamp/signature and sign a new request
 - **MUST NOT** interpolate object values directly with `${params[k]}`; object values must be serialized with `JSON.stringify`, otherwise they become `[object Object]`
 
 ---
+
+A write response confirms API acceptance only. Query order status and fills before reporting an execution. On `OUTCOME_UNKNOWN`, reconcile by the operation identifier before considering a new write.
 
 ## Common Calls
 

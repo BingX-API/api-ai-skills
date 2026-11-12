@@ -113,8 +113,7 @@ Authenticated endpoints for managing BingX sub-accounts (master account operatio
 
 > **CONSTRAINT**: You MUST copy the `fetchSigned` function below verbatim
 > when generating code. Do NOT rewrite the signing, request, or JSON parsing
-> logic. Only modify: (1) `BASE` URL entries for custom environments,
-> (2) business parameters passed to `fetchSigned`. For the full client with
+> logic. Only modify: business parameters passed to `fetchSigned`. For the full client with
 > URL-encoding and JSON body support, see
 > [`references/authentication.md`](../references/authentication.md).
 
@@ -123,7 +122,7 @@ import * as crypto from "crypto";
 import JSONBig from "json-bigint";
 const JSONBigParse = JSONBig({ storeAsString: true });
 // Full signing details & edge cases → references/authentication.md
-// Domain priority: .com is mandatory primary; .pro is fallback for network/timeout errors ONLY.
+// Domain priority: .com is mandatory primary; .pro is fallback for GET network/timeout errors ONLY. Writes use the primary once.
 const BASE = {
   "prod-live": ["https://open-api.bingx.com", "https://open-api.bingx.pro"],
   "prod-vst":  ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"],
@@ -145,19 +144,32 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
   method: "GET" | "POST", path: string, params: Record<string, unknown> = {},
   bodyType: "form" | "json" = "form"
 ) {
-  const urls = BASE[env] ?? BASE["prod-live"];
+  const urls = Object.prototype.hasOwnProperty.call(BASE, env) ? BASE[env] : undefined;
+  if (env !== "prod-live" && env !== "prod-vst") throw new Error("UnknownEnvironment");
+  const allowed = env === "prod-live"
+    ? ["https://open-api.bingx.com", "https://open-api.bingx.pro"]
+    : ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"];
+  if (!Array.isArray(urls) || urls.length !== 2 || urls.some((url, i) => url !== allowed[i])) {
+    throw new Error("Invalid authenticated destination");
+  }
+  if (!/^\/openApi\/[A-Za-z0-9/_-]+$/.test(path)) throw new Error("Invalid API path");
+  if (!["GET", "POST", "DELETE"].includes(method)) throw new Error("Invalid HTTP method");
   const all = { ...params, timestamp: Date.now() };
   validateParams(all);
   const qs = Object.keys(all).sort().map(k => {
     const v = all[k]; return `${k}=${Array.isArray(v) ? JSON.stringify(v) : v}`;
   }).join("&");
   const sig = crypto.createHmac("sha256", secretKey).update(qs).digest("hex");
-  for (const base of urls) {
+  for (const base of (method === "GET" ? urls : urls.slice(0, 1))) {
     try {
       if (method === "GET") {
         const r = await fetch(`${base}${path}?${qs}&signature=${sig}`,
           { headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL" },
+            redirect: "error",
             signal: AbortSignal.timeout(10000) });
+        if (!r.ok) {
+          throw new Error(`BingX HTTP ${r.status}`);
+        }
         const j = JSONBigParse.parse(await r.text()); if (j.code !== 0) throw new Error(`BingX error ${j.code}: ${j.msg}`);
         return j.data;
       }
@@ -165,10 +177,17 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
       const body = bodyType === "json" ? JSON.stringify({ ...all, signature: sig }) : `${qs}&signature=${sig}`;
       const r = await fetch(`${base}${path}`, { method: "POST",
         headers: { "X-BX-APIKEY": apiKey, "X-SOURCE-KEY": "BX-AI-SKILL", "Content-Type": ct }, body,
+        redirect: "error",
         signal: AbortSignal.timeout(10000) });
+      if (!r.ok) {
+        throw new Error("OUTCOME_UNKNOWN: check operation status before any new write");
+      }
       const j = JSONBigParse.parse(await r.text()); if (j.code !== 0) throw new Error(`BingX error ${j.code}: ${j.msg}`);
       return j.data;
     } catch (e) {
+      if (method !== "GET" && (isNetworkOrTimeout(e) || (e instanceof SyntaxError || (e as { name?: string })?.name === "SyntaxError"))) {
+        throw new Error("OUTCOME_UNKNOWN: check operation status before any new write");
+      }
       if (!isNetworkOrTimeout(e) || base === urls[urls.length - 1]) throw e;
     }
   }
@@ -180,9 +199,11 @@ async function fetchSigned(env: string, apiKey: string, secretKey: string,
 - **MUST** copy `fetchSigned` verbatim -- do not simplify or rewrite
 - **MUST** use `json-bigint` (`JSONBigParse.parse`) for response parsing -- not `JSON.parse`
 - **MUST** include `X-SOURCE-KEY: BX-AI-SKILL` header on every request
-- **MUST NOT** remove the domain fallback loop or `isNetworkOrTimeout` check
+- **MUST NOT** retry writes or override the fixed official destinations. GET fallback is limited to network/timeout errors
 
 ---
+
+A write response confirms API acceptance only. Query order status and fills before reporting an execution. On `OUTCOME_UNKNOWN`, reconcile by the operation identifier before considering a new write.
 
 ## Common Calls
 

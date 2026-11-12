@@ -9,14 +9,14 @@ All BingX OpenAPI endpoints share the same base URL prefix. Choose the environme
 | `prod-live` | Production Live | `https://open-api.bingx.com` | `https://open-api.bingx.pro` |
 | `prod-vst` | Production Simulated (Testnet) | `https://open-api-vst.bingx.com` | `https://open-api-vst.bingx.pro` |
 
-> **Default:** Use `prod-live` for real trading. Use `prod-vst` for paper trading / testing without real funds.
+Select `prod-live` for real trading or `prod-vst` for simulation explicitly. Missing or unknown environments must fail before any request. Keep authenticated destinations fixed to the official URLs in this table and disable HTTP redirects.
 
 ## Domain Priority Constraint
 
 **The `.com` domain is the mandatory primary endpoint. The `.pro` domain is a fallback ONLY for network-level failures.**
 
 1. **Always call `.com` first** — every request must target the primary `.com` domain.
-2. **Fallback to `.pro` only on timeout or network unreachable** — if the `.com` domain fails due to a connection error (DNS failure, TCP refused, TLS handshake failure) or a request timeout (default 10 s), retry the same request against the `.pro` fallback domain.
+2. **Fallback for GET only** — a read-only GET may use `.pro` after a network error or timeout. Writes must use the primary once. On a timeout, interrupted response, invalid response or HTTP error for a write, report `OUTCOME_UNKNOWN` and reconcile the operation status before considering a new write. A lost response does not prove the operation failed.
 3. **Never fallback on business errors** — if the `.com` domain responds with an HTTP status and a valid JSON body (even if `code !== 0`), that is a successful network round-trip. Do **not** retry with `.pro`; throw the business error immediately.
 
 ## TypeScript Helper
@@ -29,8 +29,9 @@ const BASE_URLS: Record<string, string[]> = {
   "prod-vst":  ["https://open-api-vst.bingx.com", "https://open-api-vst.bingx.pro"],
 };
 
-function getBaseUrls(env: string = "prod-live"): string[] {
-  return BASE_URLS[env] ?? BASE_URLS["prod-live"];
+function getBaseUrls(env: string): string[] {
+  if (env !== "prod-live" && env !== "prod-vst") throw new Error("UnknownEnvironment");
+  return BASE_URLS[env];
 }
 
 function isNetworkOrTimeout(e: unknown): boolean {

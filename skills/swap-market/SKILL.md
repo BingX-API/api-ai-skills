@@ -103,7 +103,8 @@ async function fetchSwapMarket(env: string,
       throw new Error("Trading Schedule accepts only the optional symbol parameter; omit time and authentication parameters");
     }
   }
-  const urls = isTradingSchedule ? [BASE["prod-live"][0]] : (BASE[env] ?? BASE["prod-live"]);
+  if (env !== "prod-live" && env !== "prod-vst") throw new Error("UnknownEnvironment");
+  const urls = isTradingSchedule ? [BASE["prod-live"][0]] : BASE[env];
   const requiresTimestamp = path === "/openApi/swap/v1/tradingRules"
     || path === "/openApi/swap/v1/market/historicalTrades";
   const all = requiresTimestamp ? { ...params, timestamp: Date.now() } : { ...params };

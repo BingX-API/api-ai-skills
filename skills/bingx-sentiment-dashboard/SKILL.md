@@ -125,41 +125,88 @@ Pass the result JSON as `--fear-greed`.
 
 ### Step 4 - Compute AHR999
 
-```bash
-python3 scripts/ahr999.py \
-  --btc-kline '{btc_daily_kline_json}'
+```typescript
+import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// Use serialized JSON strings from the preceding data steps as individual arguments.
+// Run from this skill directory; this child receives no API credentials.
+const output = execFileSync("python3", [
+  "scripts/ahr999.py",
+  "--btc-kline",
+  btc_daily_kline_json
+], { shell: false, encoding: "utf8", maxBuffer: 16 * 1024 * 1024,
+  env: { PATH: process.env.PATH, HOME: homedir(), LANG: "en_US.UTF-8" } });
 ```
 
 Pass the result JSON as `--ahr999-result`.
 
 ### Step 5 - Compute Sentiment Score
 
-```bash
-python3 scripts/sentiment.py \
-  --mode {mode} \
-  --fear-greed '{fear_greed_json_or_empty}' \
-  --funding '{funding_json}' \
-  --oi '{oi_json}' \
-  --tickers '{tickers_json}' \
-  --ahr999-result '{ahr999_result_json}'
+```typescript
+import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// Use serialized JSON strings from the preceding data steps as individual arguments.
+// Run from this skill directory; this child receives no API credentials.
+const output = execFileSync("python3", [
+  "scripts/sentiment.py",
+  "--mode",
+  String(mode),
+  "--fear-greed",
+  fear_greed_json_or_empty,
+  "--funding",
+  funding_json,
+  "--oi",
+  oi_json,
+  "--tickers",
+  tickers_json,
+  "--ahr999-result",
+  ahr999_result_json
+], { shell: false, encoding: "utf8", maxBuffer: 16 * 1024 * 1024,
+  env: { PATH: process.env.PATH, HOME: homedir(), LANG: "en_US.UTF-8" } });
 ```
 
 ### Step 6 - Generate Funding Heatmap
 
-```bash
-python3 scripts/heatmap.py \
-  --funding '{funding_json}' \
-  --output ~/.bingx-skills/sentiment/funding_heatmap.png
+```typescript
+import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// Use serialized JSON strings from the preceding data steps as individual arguments.
+// Run from this skill directory; this child receives no API credentials.
+const output = execFileSync("python3", [
+  "scripts/heatmap.py",
+  "--funding",
+  funding_json,
+  "--output",
+  join(homedir(), ".bingx-skills/sentiment/funding_heatmap.png")
+], { shell: false, encoding: "utf8", maxBuffer: 16 * 1024 * 1024,
+  env: { PATH: process.env.PATH, HOME: homedir(), LANG: "en_US.UTF-8" } });
 ```
 
 If rendering fails, output the top funding rates as text.
 
 ### Step 7 - Detect OI Anomalies
 
-```bash
-python3 scripts/oi_alert.py \
-  --oi '{oi_json}' \
-  --tickers '{tickers_json}'
+```typescript
+import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// Use serialized JSON strings from the preceding data steps as individual arguments.
+// Run from this skill directory; this child receives no API credentials.
+const output = execFileSync("python3", [
+  "scripts/oi_alert.py",
+  "--oi",
+  oi_json,
+  "--tickers",
+  tickers_json
+], { shell: false, encoding: "utf8", maxBuffer: 16 * 1024 * 1024,
+  env: { PATH: process.env.PATH, HOME: homedir(), LANG: "en_US.UTF-8" } });
 ```
 
 ### Step 8 - Present Output
