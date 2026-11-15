@@ -256,6 +256,10 @@ Starts or stops a countdown timer. When the timer expires, all open orders are a
 
 Rate limit: 5/s per UID.
 
+This endpoint is not a universal validity check for all conditional TP/SL orders. It only returns an order accepted by its `PENDING` status check. An active conditional order shown as `NEW` in `openOrders` can therefore return `109421` here, with the message `the status of this order is not PENDING,maybe it has completed`. That response alone does not establish that protection has expired, been cancelled, triggered, or filled.
+
+For an active TP/SL, find its full order ID in `openOrders`, query `order` for subsequent status and executed quantity, and compare the associated position with `positions`. Preserve order and position IDs as strings. If query endpoints disagree about `workingType`, `reduceOnly` or other configuration, retain the original requests and responses for investigation; do not assume one endpoint's configuration is authoritative for every order type.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -277,7 +281,7 @@ Rate limit: 5/s per UID.
 | `executedQty` | string | Filled quantity |
 | `price` | string | Order price |
 | `avgPrice` | string | Average fill price |
-| `status` | string | Order status: `NEW`, `PARTIALLY_FILLED`, `FILLED`, `CANCELED`, `EXPIRED` |
+| `status` | string | Order status; this endpoint's successful path requires `PENDING`. Use `order` to query later states such as `NEW`, `PARTIALLY_FILLED`, `FILLED`, `CANCELED` or `EXPIRED` |
 | `time` | int | Order placement time (milliseconds) |
 | `updateTime` | int | Last update time (milliseconds) |
 
@@ -982,7 +986,7 @@ Do not send `lastFillId`, even with an empty value or `0`: its presence returns 
 
 Rate limit: 5/s per UID.
 
-Query closed position history with pagination.
+Query closed position history with zero-based pagination: `pageIndex=0` is the first page and `pageIndex=1` is the second. Omitting `pageIndex` defaults to `0`. Keep the same symbol, time range and page size for subsequent pages. This differs from `fillHistory`, whose first page is `1`.
 
 **Parameters:**
 
@@ -993,15 +997,14 @@ Query closed position history with pagination.
 | `positionId` | int64 | No | Position ID; omit for all position histories of the pair |
 | `startTs` | int64 | Yes | Start timestamp in milliseconds, max span 3 months |
 | `endTs` | int64 | Yes | End timestamp in milliseconds, max span 3 months |
-| `pageIndex` | int64 | No | Page number, default 1 |
-| `pageSize` | int64 | No | Page size, must be greater than 0, maximum value is 100, if not provided, the default is 1000 |
+| `pageIndex` | int64 | No | Zero-based page number, default `0`; increment to `1`, `2`, etc. for later pages |
+| `pageSize` | int64 | No | Page size, default `100`; the downstream position-history service caps the effective size at `100` |
 
 **Response `data`:**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `total` | int | Total records |
-| `list` | array | Array of historical position objects |
+| `positionHistory` | array | Array of historical position objects for the requested page. This V1 response does not expose a `total` or `list` field |
 
 ---
 
@@ -1156,7 +1159,7 @@ Futures-specific error codes:
 | `101481` | The clientOrderID has already been used. Use a unique clientOrderID for each new order. |
 | `104103` | Cannot switch position mode while positions or pending orders exist. Close all first. |
 | `109400` | Invalid request parameters — symbol format, missing fields, value range, timestamp, or position mode mismatch. |
-| `109421` | The specified order does not exist — may have been filled, cancelled, or order ID is incorrect. |
+| `109421` | Order lookup failed or the query does not support the order's current state. Inspect `msg`: `openOrder` also rejects non-`PENDING` records, even when an active conditional order is visible in `openOrders`. Do not infer a fill or cancellation from this code alone. |
 | `109425` | The trading pair does not exist or is not supported. Call /openApi/swap/v2/quote/contracts to verify. |
 
 Rate limit: 1/s per IP.

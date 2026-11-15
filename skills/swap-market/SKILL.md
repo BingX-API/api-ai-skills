@@ -17,7 +17,7 @@ Public market data for BingX perpetual futures. No API key or HMAC signature is 
 | `/openApi/swap/v2/quote/trades` | GET | Recent public trades | symbol | limit, timestamp, recvWindow |
 | `/openApi/swap/v1/market/historicalTrades` | GET | Historical trade lookup | timestamp | symbol, limit, fromId, recvWindow |
 | `/openApi/swap/v2/quote/premiumIndex` | GET | Mark price and funding rate | None | symbol, timestamp, recvWindow |
-| `/openApi/swap/v2/quote/fundingRate` | GET | Current & next funding rate | None | symbol, startTime, endTime, limit, timestamp, recvWindow |
+| `/openApi/swap/v2/quote/fundingRate` | GET | Historical settled funding rates | None | symbol, startTime, endTime, limit, timestamp, recvWindow |
 | `/openApi/swap/v3/quote/klines` | GET | OHLCV candlestick data | symbol, interval | startTime, endTime, limit, timestamp, recvWindow |
 | `/openApi/swap/v1/market/markPriceKlines` | GET | Mark price kline data | symbol, interval | startTime, endTime, limit, timestamp, recvWindow |
 | `/openApi/swap/v2/quote/openInterest` | GET | Total open interest | symbol | timestamp, recvWindow |
@@ -154,7 +154,8 @@ const ticker = await fetchSwapMarket("prod-live",
 const depth = await fetchSwapMarket("prod-live",
   "/openApi/swap/v2/quote/depth", { symbol: "BTC-USDT", limit: 20 }
 );
-// depth.bids: [price, qty][], depth.asks: [price, qty][]
+// depth.bids / depth.asks: [price, base-asset quantity][]; do not multiply quantity by contracts.size.
+// REST depth has no lastUpdateId; do not use it as an incremental WebSocket sequence baseline.
 ```
 
 **1-hour klines (last 100 candles):**
@@ -163,16 +164,18 @@ const depth = await fetchSwapMarket("prod-live",
 const klines = await fetchSwapMarket("prod-live",
   "/openApi/swap/v3/quote/klines", { symbol: "BTC-USDT", interval: "1h", limit: 100 }
 );
-// Each item: [openTime, open, high, low, close, volume, closeTime]
+// Each item is an object: { open, high, low, close, volume, time }.
+// Read fields by name. time is the candle opening time in Unix milliseconds; no closeTime is returned.
 ```
 
-**Current funding rate:**
+**Historical settled funding rates:**
 
 ```typescript
 const funding = await fetchSwapMarket("prod-live",
   "/openApi/swap/v2/quote/fundingRate", { symbol: "BTC-USDT" }
 );
-// funding.fundingRate, funding.nextFundingTime
+// funding is an array: each record has symbol, fundingRate, fundingTime and markPrice.
+// This endpoint does not return nextFundingTime; query premiumIndex for the next settlement time.
 ```
 
 **Best bid/ask price:**

@@ -225,14 +225,79 @@ function isNetworkOrTimeout(e: unknown): boolean {
   return false;
 }
 
-/**
- * Reject parameter values containing query-string metacharacters to prevent
- * signed parameter pollution (e.g. "BTC-USDT&side=SELL&quantity=100").
- */
+// Normalize attached Swap TP/SL numeric fields before serializing and signing.
+function toPositiveNumber(value: unknown, field: string): number {
+  const numberValue = Number(value);
+  if (!Number.isFinite(numberValue) || numberValue <= 0) {
+    throw new Error(`${field} must be a finite positive number`);
+  }
+  return numberValue;
+}
+
+function normalizeAttachedOrder(
+  key: "stopLoss" | "takeProfit", value: unknown
+): string {
+  let parsed: unknown = value;
+  if (typeof value === "string") {
+    try { parsed = JSON.parse(value); }
+    catch { throw new Error(`${key} must be valid JSON`); }
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error(`${key} must be an object or a JSON object string`);
+  }
+  const nested = { ...(parsed as Record<string, unknown>) };
+  const allowedTypes = key === "stopLoss"
+    ? new Set(["STOP_MARKET", "STOP"])
+    : new Set(["TAKE_PROFIT_MARKET", "TAKE_PROFIT"]);
+  if (typeof nested.type !== "string" || !allowedTypes.has(nested.type)) {
+    throw new Error(`${key}.type is invalid`);
+  }
+  nested.stopPrice = toPositiveNumber(nested.stopPrice, `${key}.stopPrice`);
+  if (nested.price !== undefined) {
+    nested.price = toPositiveNumber(nested.price, `${key}.price`);
+  }
+  if (nested.workingType !== undefined &&
+      nested.workingType !== "MARK_PRICE" &&
+      nested.workingType !== "CONTRACT_PRICE") {
+    throw new Error(`${key}.workingType is invalid`);
+  }
+  if (nested.stopGuaranteed !== undefined &&
+      typeof nested.stopGuaranteed !== "boolean") {
+    throw new Error(`${key}.stopGuaranteed must be a boolean`);
+  }
+  return JSON.stringify(nested);
+}
+
+function normalizeParams(path: string, params: Record<string, unknown>): Record<string, unknown> {
+  const normalized = { ...params };
+  if (path.startsWith("/openApi/swap/")) {
+    for (const key of ["stopLoss", "takeProfit"] as const) {
+      if (normalized[key] !== undefined) {
+        normalized[key] = normalizeAttachedOrder(key, normalized[key]);
+      }
+    }
+    if (Array.isArray(normalized.batchOrders)) {
+      normalized.batchOrders = normalized.batchOrders.map((order: unknown) => {
+        if (!order || typeof order !== "object" || Array.isArray(order)) {
+          throw new Error("Each batch order must be an object");
+        }
+        return normalizeParams(path, order as Record<string, unknown>);
+      });
+    }
+  }
+  return normalized;
+}
+
+function serializeParamValue(value: unknown): string {
+  if (value !== null && typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+// Reject query-string metacharacters, including those inside serialized objects.
 function validateParams(params: Record<string, unknown>): void {
   const FORBIDDEN = /[&=?#\r\n]/;
   for (const [k, v] of Object.entries(params)) {
-    const s = String(v);
+    const s = serializeParamValue(v);
     if (FORBIDDEN.test(s)) {
       throw new Error(
         `Parameter "${k}" contains forbidden character in value: "${s}". ` +
@@ -249,7 +314,7 @@ function validateParams(params: Record<string, unknown>): void {
 function buildCanonical(params: Record<string, unknown>): string {
   return Object.keys(params)
     .sort()
-    .map((k) => `${k}=${params[k]}`)
+    .map((k) => `${k}=${serializeParamValue(params[k])}`)
     .join("&");
 }
 
@@ -261,7 +326,7 @@ function encodeQueryValues(params: Record<string, unknown>, signature: string): 
   const pairs = Object.keys(params)
     .sort()
     .map((k) => {
-      const v = String(params[k]);
+      const v = serializeParamValue(params[k]);
       const needsEncoding = v.includes("[") || v.includes("{");
       return `${k}=${needsEncoding ? encodeURIComponent(v) : v}`;
     });
@@ -295,8 +360,9 @@ async function fetchSigned(
   }
   if (!/^\/openApi\/[A-Za-z0-9/_-]+$/.test(path)) throw new Error("Invalid API path");
   if (!["GET", "POST", "DELETE"].includes(method)) throw new Error("Invalid HTTP method");
+  const normalized = normalizeParams(path, params);
   const timestamp = Date.now();
-  const allParams = { ...params, timestamp };
+  const allParams = { ...normalized, timestamp };
 
   validateParams(allParams);
 
@@ -367,6 +433,8 @@ async function fetchSigned(
 - **MUST** include `X-BX-APIKEY` and `X-SOURCE-KEY: BX-AI-SKILL` headers
 - **MUST NOT** use native `JSON.parse` to parse API responses
 - **MUST NOT** rewrite the HMAC signing logic -- use `buildCanonical` + `crypto.createHmac` exactly as provided
+- **MUST** normalize Swap attached `stopLoss`/`takeProfit` before signing. Their nested `stopPrice` and optional `price` must be JSON numbers; accept an object or a JSON object string and serialize the validated object exactly once. The helper also normalizes each order when Swap `batchOrders` is supplied as an array. Pre-serialized `batchOrders` JSON is transmitted unchanged to preserve integer IDs; normalize its attached orders before serializing it.
+- **MUST** serialize object and array parameter values with `serializeParamValue`; never sign `[object Object]`. The canonical string and transmitted values must describe the same normalized parameters. If parameters change, create a new timestamp and signature.
 - **MUST NOT** remove `validateParams` -- it guards against parameter injection attacks (e.g. values containing `&`, `=`, `?`, `#`, or newlines)
 - **MUST NOT** remove `encodeQueryValues` URL-encoding for batch parameters
 - **MUST NOT** remove `AbortSignal.timeout(10000)` request timeout
@@ -433,7 +501,7 @@ const result = await fetchSigned(
 
 ## Success Response
 
-An HTTP `200` status code indicates a successful response. The response body is JSON:
+HTTP `200` alone does not establish business success. For endpoints using the following JSON envelope, require `code: 0` and validate the expected payload:
 
 ```json
 {
