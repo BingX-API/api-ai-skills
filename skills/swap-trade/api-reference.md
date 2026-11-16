@@ -82,10 +82,12 @@ After any conversion or serialization change, generate a fresh `timestamp` and r
 | `price` | string | Order price |
 | `stopPrice` | string | Trigger price |
 | `workingType` | string | Trigger price source |
-| `status` | string | Order status: `NEW`, `PARTIALLY_FILLED`, `FILLED`, `CANCELED`, `EXPIRED` |
+| `status` | string | Documented REST order states: `NEW`, `PENDING`, `FILLED`, `PARTIALLYFILLED`, `CANCELLED`, `FAILED` |
 | `clientOrderId` | string | Custom order ID |
 
 > **Important:** BingX order IDs can exceed JavaScript's `Number.MAX_SAFE_INTEGER`. Always use the string `orderID` field (capital "ID") instead of the numeric `orderId` field when working in JavaScript/TypeScript to avoid precision loss.
+
+**REST and WebSocket status names differ:** USDT-M V2 REST `order.status` uses `PARTIALLYFILLED` and `CANCELLED`; the account stream's `ORDER_TRADE_UPDATE.o.X` uses `PARTIALLY_FILLED` and `CANCELED`. Match each interface's actual field values instead of copying the other interface's enum spelling. `EXPIRED` is documented for the WebSocket stream; it is not part of the documented REST state list above.
 
 ---
 
@@ -256,6 +258,10 @@ Starts or stops a countdown timer. When the timer expires, all open orders are a
 
 Rate limit: 5/s per UID.
 
+This endpoint is not a universal validity check for all conditional TP/SL orders. It only returns an order accepted by its `PENDING` status check. An active conditional order shown as `NEW` in `openOrders` can therefore return `109421` here, with the message `the status of this order is not PENDING,maybe it has completed`. That response alone does not establish that protection has expired, been cancelled, triggered, or filled.
+
+For an active TP/SL, find its full order ID in `openOrders`, query `order` for subsequent status and executed quantity, and compare the associated position with `positions`. Preserve order and position IDs as strings. If query endpoints disagree about `workingType`, `reduceOnly` or other configuration, retain the original requests and responses for investigation; do not assume one endpoint's configuration is authoritative for every order type.
+
 **Parameters:**
 
 | Parameter | Type | Required | Description |
@@ -277,7 +283,7 @@ Rate limit: 5/s per UID.
 | `executedQty` | string | Filled quantity |
 | `price` | string | Order price |
 | `avgPrice` | string | Average fill price |
-| `status` | string | Order status: `NEW`, `PARTIALLY_FILLED`, `FILLED`, `CANCELED`, `EXPIRED` |
+| `status` | string | Order status; this endpoint's successful path requires `PENDING`. Use `order` for later REST states such as `NEW`, `PARTIALLYFILLED`, `FILLED`, `CANCELLED` or `FAILED`. WebSocket state spellings differ; see [REST and WebSocket status names](#1-place-order) |
 | `time` | int | Order placement time (milliseconds) |
 | `updateTime` | int | Last update time (milliseconds) |
 
@@ -603,7 +609,7 @@ Rate limit: 4/s per UID.
 
 Rate limit: 5/s per UID.
 
-Modifies the quantity of an existing open order. The order must still be open (`NEW` or `PARTIALLY_FILLED`).
+Modifies the quantity of an existing open order. The order must still be open (`NEW` or `PARTIALLYFILLED` in REST order responses).
 
 **Parameters:**
 
@@ -646,7 +652,7 @@ Atomic operation: cancels an existing open order and immediately submits a new o
 | `quantity` | float | No | Order quantity in contract coin units. Mandatory for `STOP_MARKET` and `TAKE_PROFIT_MARKET` even when `closePosition=true`. |
 | `price` | float | No | Price, represents the trailing stop distance in TRAILING_STOP_MARKET and TRAILING_TP_SL |
 | `cancelReplaceMode` | string | Yes | STOP_ON_FAILURE: If the order cancellation fails, the replacement order will not continue. ALLOW_FAILURE: Regardless of whether the cancellation succeeds or not, a new order is placed. |
-| `cancelRestrictions` | string | No | ONLY_NEW: If the order status is NEW, the cancellation will succeed. ONLY_PENDING: If the order status is PENDING, the cancellation will succeed. ONLY_PARTIALLY_FILLED: If the order status is PARTIALLY_FILLED, the cancellation will succeed. |
+| `cancelRestrictions` | string | No | ONLY_NEW: If the order status is NEW, the cancellation will succeed. ONLY_PENDING: If the order status is PENDING, the cancellation will succeed. ONLY_PARTIALLY_FILLED: Restrict cancellation to a partially filled order (`PARTIALLYFILLED` in REST order responses). Keep the request enum `ONLY_PARTIALLY_FILLED` unchanged. |
 | `reduceOnly` | string | No | `true` or `false`; defaults to `false` in One-way Mode. Do not send this parameter in Hedge Mode. |
 | `stopPrice` | float64 | No | Trigger price (for stop/take-profit types) |
 | `priceRate` | float64 | No | For type: TRAILING_STOP_MARKET or TRAILING_TP_SL ; Maximum: 1 |
@@ -982,7 +988,7 @@ Do not send `lastFillId`, even with an empty value or `0`: its presence returns 
 
 Rate limit: 5/s per UID.
 
-Query closed position history with pagination.
+Query closed position history with zero-based pagination: `pageIndex=0` is the first page and `pageIndex=1` is the second. Omitting `pageIndex` defaults to `0`. Keep the same symbol, time range and page size for subsequent pages. This differs from `fillHistory`, whose first page is `1`.
 
 **Parameters:**
 
@@ -993,15 +999,14 @@ Query closed position history with pagination.
 | `positionId` | int64 | No | Position ID; omit for all position histories of the pair |
 | `startTs` | int64 | Yes | Start timestamp in milliseconds, max span 3 months |
 | `endTs` | int64 | Yes | End timestamp in milliseconds, max span 3 months |
-| `pageIndex` | int64 | No | Page number, default 1 |
-| `pageSize` | int64 | No | Page size, must be greater than 0, maximum value is 100, if not provided, the default is 1000 |
+| `pageIndex` | int64 | No | Zero-based page number, default `0`; increment to `1`, `2`, etc. for later pages |
+| `pageSize` | int64 | No | Page size, default `100`; the downstream position-history service caps the effective size at `100` |
 
 **Response `data`:**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `total` | int | Total records |
-| `list` | array | Array of historical position objects |
+| `positionHistory` | array | Array of historical position objects for the requested page. This V1 response does not expose a `total` or `list` field |
 
 ---
 
@@ -1156,7 +1161,7 @@ Futures-specific error codes:
 | `101481` | The clientOrderID has already been used. Use a unique clientOrderID for each new order. |
 | `104103` | Cannot switch position mode while positions or pending orders exist. Close all first. |
 | `109400` | Invalid request parameters — symbol format, missing fields, value range, timestamp, or position mode mismatch. |
-| `109421` | The specified order does not exist — may have been filled, cancelled, or order ID is incorrect. |
+| `109421` | Order lookup failed or the query does not support the order's current state. Inspect `msg`: `openOrder` also rejects non-`PENDING` records, even when an active conditional order is visible in `openOrders`. Do not infer a fill or cancellation from this code alone. |
 | `109425` | The trading pair does not exist or is not supported. Call /openApi/swap/v2/quote/contracts to verify. |
 
 Rate limit: 1/s per IP.

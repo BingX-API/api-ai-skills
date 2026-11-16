@@ -70,9 +70,15 @@ Returns current order book bids and asks.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `bids` | `[string, string][]` | `[price, quantity]` pairs, best bid first |
-| `asks` | `[string, string][]` | `[price, quantity]` pairs, best ask first |
-| `T` | integer | Timestamp (ms) |
+| `bids` | `[string, string][]` | `[price, quantity]` pairs, best bid first; quantity is in the contract's base-asset units, the same units as order `quantity` |
+| `asks` | `[string, string][]` | `[price, quantity]` pairs, best ask first; same quantity units as `bids` |
+| `bidsCoin` | `[string, string][]` | Base-asset bid levels; current responses return the same price/quantity levels as `bids` |
+| `asksCoin` | `[string, string][]` | Base-asset ask levels; current responses return the same price/quantity levels as `asks` |
+| `T` | integer | Response timestamp (Unix milliseconds); not a depth sequence number |
+
+For BTC-USDT, quantity `0.01` means `0.01 BTC`, not contracts or USDT. Do not multiply an already base-asset quantity by `contracts.size` again. For bundled symbols, such as 1000PEPE, use that contract's asset unit consistently for price, depth and order quantity.
+
+REST depth does not return `lastUpdateId`. It cannot supply a sequence baseline for `{symbol}@incrDepth`, and comparing REST and WebSocket responses does not establish that they represent the same book version. Follow the [incremental stream's initialization and recovery rules](../swap-ws-market/api-reference.md#how-to-maintain-incremental-depth-locally).
 
 ---
 
@@ -89,18 +95,23 @@ Returns the most recent public trades.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `symbol` | string | Yes | Trading pair, e.g. `BTC-USDT` |
-| `limit` | integer | No | Number of trades. Default `500`. Max `1000`. |
+| `limit` | integer | No | Documented default `500`, max `1000`. Current production observations return `1000` records both when omitted and when set to `1`; see the limitation below |
+
+**Known limit behavior (production BTC-USDT, verified 2026-11-15):** the requested limit is not reliably enforced. Do not assume the returned count equals `limit` or infer a complete history from that count. This documents an observed server limitation, not a server-side fix or a guarantee for every symbol.
 
 **Response `data` — array of trade objects:**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | integer | Trade ID |
+| `fillId` | string | Matching-trade identifier; preserve as a string and do not assume it is a unique deduplication key |
 | `price` | string | Trade price |
 | `qty` | string | Trade quantity |
 | `quoteQty` | string | Quote asset quantity |
 | `time` | integer | Trade timestamp (ms) |
-| `buyerMaker` | boolean | `true` if buyer was the maker |
+| `ts` | integer | Trade timestamp (Unix milliseconds); current V2 maps it from the same trade-time source as `time` |
+| `isBuyerMaker` | boolean | `true`: buyer is maker and seller is taker; `false`: buyer is taker |
+
+Use `fillId` and `isBuyerMaker` for this V2 endpoint. The former `id` / `buyerMaker` descriptions do not match its current response; do not silently treat these names as interchangeable with other endpoints' fields. `qty` is base-asset quantity and `quoteQty` is quote-asset turnover.
 
 ---
 
@@ -162,7 +173,7 @@ This is the documented IP limit, not a guarantee of an exclusive per-endpoint qu
 
 Rate limit: 1/s per IP.
 
-Returns the current funding rate and next funding time.
+Returns historical settled funding-rate records. It does not provide an estimated next-settlement funding rate or a `nextFundingTime` field. To query the next settlement time, use `premiumIndex.nextFundingTime`; a settlement time is not an estimated funding rate.
 
 **Parameters:**
 
@@ -173,14 +184,14 @@ Returns the current funding rate and next funding time.
 | `endTime` | int64 | No | End time in milliseconds |
 | `limit` | int32 | No | default: 100 maximum: 1000 |
 
-**Response `data`:**
+**Response `data` — array of historical funding records:**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `symbol` | string | Trading pair |
-| `fundingRate` | string | Current funding rate (e.g. `"0.0001"`) |
-| `fundingTime` | integer | Current funding time (ms) |
-| `nextFundingTime` | integer | Next funding settlement time (ms) |
+| `fundingRate` | string | Settled funding rate for this record, as a decimal (e.g. `"0.0001"`) |
+| `fundingTime` | integer | Historical settlement time (Unix milliseconds) |
+| `markPrice` | string | Mark price associated with the historical funding record |
 
 ---
 
@@ -205,21 +216,18 @@ Returns OHLCV candlestick data.
 **Valid `interval` values:**
 `1m` `3m` `5m` `15m` `30m` `1h` `2h` `4h` `6h` `8h` `12h` `1d` `3d` `1w` `1M`
 
-**Response `data` — array of candles (each candle is an array):**
+**Response `data` — array of candle objects:**
 
-| Index | Description |
-|-------|-------------|
-| `[0]` | Open time (ms) |
-| `[1]` | Open price |
-| `[2]` | High price |
-| `[3]` | Low price |
-| `[4]` | Close price |
-| `[5]` | Volume (base asset) |
-| `[6]` | Close time (ms) |
-| `[7]` | Quote asset volume |
-| `[8]` | Number of trades |
-| `[9]` | Taker buy base asset volume |
-| `[10]` | Taker buy quote asset volume |
+| Field | Type | Description |
+|-------|------|-------------|
+| `open` | string | Opening price |
+| `high` | string | Highest price |
+| `low` | string | Lowest price |
+| `close` | string | Closing or latest price within the candle |
+| `volume` | string | Base-asset traded quantity within the candle |
+| `time` | integer | Candle opening time in Unix milliseconds |
+
+Read these six named fields, not positional array indices. This endpoint does not return `closeTime`, quote-asset volume, trade count, or taker-volume fields. The currently forming candle may be returned; a successful response does not by itself certify candle finality or a publication delay.
 
 ---
 

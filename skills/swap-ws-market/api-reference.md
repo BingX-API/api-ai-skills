@@ -281,9 +281,12 @@ Example: `BTC-USDT@lastPrice`
 | Field | Description |
 |-------|-------------|
 | dataType | `BTC-USDT@lastPrice` |
+| data.e | Event type: `lastPriceUpdate` |
+| data.E | Unix millisecond timestamp for the price update |
 | data.s | Symbol |
 | data.c | Latest price |
-| data.T | Timestamp (ms) |
+
+This channel uses `data.E`, not `data.T`. Do not copy timestamp field names from other channels or interpret this timestamp as a cross-service order-book sequence baseline.
 
 ---
 

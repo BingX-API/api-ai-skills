@@ -75,7 +75,7 @@ Authenticated trading endpoints for BingX perpetual futures. All endpoints requi
 * **clientOrderId**: Custom order ID, 1–40 chars (converted to lowercase)
 * **recvWindow**: Request validity window in milliseconds (max 60000)
 * **orderId**: System order ID (for cancel/query operations)
-* **workingType**: Price source used to trigger conditional orders — `MARK_PRICE` (mark price) or `CONTRACT_PRICE` (last traded price, default)
+* **workingType**: Price source used to trigger conditional orders — `MARK_PRICE` (mark price, default) or `CONTRACT_PRICE` (last traded price)
 * **stopGuaranteed**: `true` | `false` — Whether stop-loss execution is guaranteed; guaranteed stops may incur an additional fee
 * **closePosition**: `true` | `false` — When the trigger fires, close the **entire** position quantity. Supported only for `STOP_MARKET` and `TAKE_PROFIT_MARKET`; `quantity` and `stopPrice` remain mandatory. Do not combine it with `reduceOnly`.
 * **reduceOnly**: `true` | `false` — Order can only reduce (never increase) position size. Do not send this parameter in Hedge Mode.
@@ -114,8 +114,8 @@ Authenticated trading endpoints for BingX perpetual futures. All endpoints requi
 **timeInForce**: `GTC` | `IOC` | `FOK` | `PostOnly`
 
 **workingType** (trigger price source for conditional orders):
-- `MARK_PRICE` — Use mark price to evaluate trigger condition
-- `CONTRACT_PRICE` — Use last traded price (default)
+- `MARK_PRICE` — Use mark price to evaluate trigger condition (default)
+- `CONTRACT_PRICE` — Use last traded price; set it explicitly when this trigger source is required
 
 ### Stop-Loss / Take-Profit Object Structure
 
@@ -494,7 +494,7 @@ If the user's intent is unclear, present options:
 - If type is `MARKET` or `LIMIT`: optionally offer to attach a `stopLoss` and/or `takeProfit` object (ask for trigger price and type).
 
 **Optional advanced parameters** (ask only if relevant or user mentions them):
-- `workingType`: trigger price source — `MARK_PRICE` or `CONTRACT_PRICE` (default)
+- `workingType`: trigger price source — `MARK_PRICE` (default) or `CONTRACT_PRICE`
 - `reduceOnly`: `true` to ensure the order only reduces position size; do not send it in Hedge Mode
 - `closePosition`: `true` to close the entire position when triggered; only for `STOP_MARKET` and `TAKE_PROFIT_MARKET`, with both `quantity` and `stopPrice` still required
 - `stopGuaranteed`: `true` for guaranteed stop execution (extra fee may apply)

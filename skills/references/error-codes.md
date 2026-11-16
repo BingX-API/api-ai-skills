@@ -88,7 +88,7 @@ Errors related to USDT-M and Coin-M perpetual futures (swap and cswap endpoints)
 | `109403` | Request blocked by risk control — rate too high or cancellation rate exceeded. Fix the request and retry after the restriction period. |
 | `109417` | This trading pair is in pre-launch status and not yet open. Check the contract list for opening time. |
 | `109420` | No position exists for the specified symbol. Query position information first. |
-| `109421` | The specified order does not exist — it may have been filled, cancelled, or the order ID is incorrect. |
+| `109421` | Order lookup failed or its current state is unsupported by the query. Inspect `msg`: Swap `openOrder` also rejects non-`PENDING` records, even when an active conditional order appears in `openOrders`. This code alone does not prove a fill, cancellation, or loss of protection. |
 | `109425` | The trading pair does not exist or is not supported. Call /openApi/swap/v2/quote/contracts to verify. |
 | `109429` | Too many invalid requests in a short period; temporarily restricted. Fix the root cause and retry later. |
 | `109430` | The account has pending TWAP orders. Wait for or cancel existing TWAP orders first. |
